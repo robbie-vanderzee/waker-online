@@ -1,0 +1,6 @@
+[submodule "waker-online/includes/spdlog"]
+	path = waker-online/includes/spdlog
+	url = https://github.com/gabime/spdlog.git
+[submodule "waker-online/includes/glfw"]
+	path = waker-online/includes/glfw
+	url = https://github.com/glfw/glfw.git
