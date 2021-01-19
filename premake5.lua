@@ -12,7 +12,7 @@ workspace "waker-online"
 
   include_directories = {}
   include_directories["spdlog"] = "%{wks.location}/waker-online/includes/spdlog/include"
-  include_directories["glfw"] = "%{wks.location}/waker-online/includes/glfw/include"
+  include_directories["glfw"] = "%{wks.location}/waker-online/includes/glfw/include/GLFW"
 
   newoption {
     trigger = "logging",
@@ -41,6 +41,9 @@ workspace "waker-online"
   filter "system:linux"
     defines {
       "LINUX"
+    }
+    links {
+      "glfw"
     }
 
   include "waker-online/andromeda"

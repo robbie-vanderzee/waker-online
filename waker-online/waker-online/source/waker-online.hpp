@@ -5,10 +5,10 @@
 namespace Waker {
     class Waker : public ::Andromeda::Instance {
       public:
-        Waker();
+        Waker(const std::string & name = "Waker Online [ ~ ]");
         ~Waker();
-        int8_t start();
-
+      private:
+        std::string m_Instance_Name;
     };
 } /* Waker */
 

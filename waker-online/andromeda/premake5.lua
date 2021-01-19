@@ -11,12 +11,16 @@ project "andromeda"
   files {
     "source/**.hpp",
     "source/**.cpp",
-
     "source/**.h",
     "source/**.c"
   }
 
   includedirs {
     "source",
-    "%{include_directories.spdlog}"
+    "%{include_directories.spdlog}",
+    "%{include_directories.glfw}"
+  }
+
+  links {
+    "glfw3"
   }
