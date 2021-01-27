@@ -42,7 +42,6 @@ namespace Andromeda {
 
                 ANDROMEDA_CORE_INFO("Vulkan Extensions: ");
                 for (auto &extension : m_Extensions) ANDROMEDA_CORE_TRACE("{0}", extension.extensionName);
-
             }
         } /* Vulkan */
     } /* Graphics */

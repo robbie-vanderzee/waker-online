@@ -11,7 +11,7 @@ namespace Andromeda {
         void Log::initialize() {
             std::vector<spdlog::sink_ptr> log_sinks;
             log_sinks.emplace_back(std::make_shared<spdlog::sinks::stdout_color_sink_mt>());
-            log_sinks.emplace_back(std::make_shared<spdlog::sinks::basic_file_sink_mt>("waker-online/logging/sys.log", true));
+            log_sinks.emplace_back(std::make_shared<spdlog::sinks::basic_file_sink_mt>("logging/andromeda.log", true));
 
             log_sinks[0]->set_pattern("%^[%T] %n: %v%$");
             log_sinks[1]->set_pattern("[%T] [%l] %n: %v");
