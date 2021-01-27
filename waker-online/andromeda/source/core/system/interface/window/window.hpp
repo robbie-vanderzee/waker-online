@@ -9,8 +9,8 @@ namespace Andromeda {
         uint32_t width, height, x, y;
 
         Window_Properties(const std::string& title = "Andromeda /env",
-                          uint32_t width = 1280,
-                          uint32_t height = 720,
+                          uint32_t width = 1920,
+                          uint32_t height = 1080,
                           uint32_t x = 0,
                           uint32_t y = 0
                          ) : title(title), width(width), height(height), x(x), y(y) {}
