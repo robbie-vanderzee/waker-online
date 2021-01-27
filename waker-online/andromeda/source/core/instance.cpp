@@ -1,5 +1,7 @@
 #include "instance.hpp"
 
+#include "core/graphics/renderer.hpp"
+
 namespace Andromeda {
     Instance * Instance::s_Instance = nullptr;
 
@@ -8,6 +10,7 @@ namespace Andromeda {
         m_Instance_Name = name;
         m_Window = Window::create(Window_Properties(name));
         m_Window->set_event_callback(ANDROMEDA_BIND_FN(Instance::on_event));
+        Graphics::Renderer::initialize();
     }
 
     Instance::~Instance() {
@@ -28,7 +31,7 @@ namespace Andromeda {
         dispatcher.dispatch<Event::Window_Close>(ANDROMEDA_BIND_FN(Instance::on_window_close));
     }
 
-    bool Instance::on_window_close(Event::Window_Close &e) {
+    bool Instance::on_window_close(Event::Window_Close &) {
         m_Running = false;
         return true;
     }

@@ -1,11 +1,11 @@
 workspace "waker-online"
+  flags {
+    "MultiProcessorCompile"
+  }
+
   configurations {
     "debug",
     "release"
-  }
-
-  flags {
-    "MultiProcessorCompile"
   }
 
   binary_directory = "%{cfg.buildcfg}/%{cfg.system}"
@@ -13,15 +13,35 @@ workspace "waker-online"
   include_directories = {}
   include_directories["spdlog"] = "%{wks.location}/waker-online/includes/spdlog/include"
   include_directories["glfw"] = "%{wks.location}/waker-online/includes/glfw/include/GLFW"
+  include_directories["glm"] = "%{wks.location}/waker-online/includes/glm"
+  include_directories["shaderc"] = "%{wks.location}/waker-online/includes/shaderc/libshaderc/include"
 
   newoption {
     trigger = "logging",
     description = "Enable console logging."
   }
 
-  configuration "logging"
+  filter "options:logging"
     defines {
       "LOGGING"
+    }
+
+  newoption {
+    trigger = "gfxapi",
+    value = "API",
+    description = "Select graphics API",
+    default = "vulkan",
+    allowed = {
+      { "vulkan", "Vulkan" }
+    }
+  }
+
+  filter "options:gfxapi=vulkan"
+    defines {
+      "VULKAN"
+    }
+    links {
+      "vulkan"
     }
 
   filter "configurations:debug"
@@ -36,6 +56,7 @@ workspace "waker-online"
     defines {
       "RELEASE"
     }
+    runtime "release"
     optimize "on"
 
   filter "system:linux"

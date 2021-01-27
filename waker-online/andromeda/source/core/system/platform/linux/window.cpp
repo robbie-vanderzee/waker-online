@@ -55,7 +55,7 @@ namespace Andromeda {
                 data.Event_Callback(event);
             });
 
-            glfwSetKeyCallback(m_Window, [](GLFWwindow* window, int32_t key, int32_t scancode, int32_t action, int32_t mods) {
+            glfwSetKeyCallback(m_Window, [](GLFWwindow* window, int32_t key, int32_t /*scancode*/, int32_t action, int32_t /*mods*/) {
                 Window_Data &data = *(Window_Data*)glfwGetWindowUserPointer(window);
 
                 switch(action) {
@@ -88,7 +88,7 @@ namespace Andromeda {
                 data.Event_Callback(event);
             });
 
-            glfwSetMouseButtonCallback(m_Window, [](GLFWwindow* window, int32_t button, int32_t action, int32_t mods) {
+            glfwSetMouseButtonCallback(m_Window, [](GLFWwindow* window, int32_t button, int32_t action, int32_t /*mods*/) {
                 Window_Data &data = *(Window_Data*)glfwGetWindowUserPointer(window);
 
                 switch(action) {
@@ -130,7 +130,6 @@ namespace Andromeda {
 
         void Window::on_update() {
             glfwPollEvents();
-            glfwSwapBuffers(m_Window);
         }
 
         void Window::set_v_sync(bool vsync_on) {

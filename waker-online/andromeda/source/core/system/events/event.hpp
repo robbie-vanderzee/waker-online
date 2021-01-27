@@ -32,7 +32,7 @@ namespace Andromeda {
 #define EVENT_CLASS_CATEGORY(category) virtual uint32_t get_category_flags() const override { return category; }
 
         class Event {
-            friend class Event_Dispatcher;
+            friend class Dispatcher;
           public:
             virtual EVENT_TYPE get_event_type() const = 0;
             virtual const char* get_event_name() const = 0;

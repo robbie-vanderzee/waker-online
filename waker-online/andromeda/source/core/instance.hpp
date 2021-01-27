@@ -39,7 +39,7 @@ namespace Andromeda {
         std::unique_ptr<Window> m_Window;
       private:
         static Instance * s_Instance;
-        friend int main(int argc, char const * argv[]);
+        friend int ::main(int argc, char const * argv[]);
     };
 
     Instance * create_instance();

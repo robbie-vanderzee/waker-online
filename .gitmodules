@@ -4,3 +4,12 @@
 [submodule "waker-online/includes/glfw"]
 	path = waker-online/includes/glfw
 	url = https://github.com/glfw/glfw.git
+[submodule "waker-online/includes/vulkan"]
+	path = waker-online/includes/vulkan
+	url = https://github.com/LunarG/VulkanTools.git
+[submodule "waker-online/includes/glm"]
+	path = waker-online/includes/glm
+	url = https://github.com/g-truc/glm.git
+[submodule "waker-online/includes/shaderc"]
+	path = waker-online/includes/shaderc
+	url = https://github.com/google/shaderc.git
