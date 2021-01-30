@@ -10,6 +10,7 @@ namespace Andromeda {
                 ANDROMEDA_CORE_ASSERT(m_Window, "Invalid window.");
             }
             void Context::initialize() {
+                ANDROMEDA_CORE_INFO("Initializing Vulkan Context.");
                 glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
                 glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
             }

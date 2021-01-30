@@ -16,12 +16,12 @@ namespace Andromeda {
 
         class Window_Resize : public Event {
           public:
-            Window_Resize(uint32_t width, uint32_t height) : m_Width(width), m_Height(height) {}
+            Window_Resize(unsigned int width, unsigned int height) : m_Width(width), m_Height(height) {}
 
-            inline uint32_t get_window_width() const {
+            inline unsigned int get_window_width() const {
                 return m_Width;
             }
-            inline uint32_t get_window_height() const {
+            inline unsigned int get_window_height() const {
                 return m_Height;
             }
 
@@ -34,17 +34,17 @@ namespace Andromeda {
             EVENT_CLASS_TYPE(Window_Resize)
             EVENT_CLASS_CATEGORY(Event_Category_Instance)
           private:
-            uint32_t m_Width, m_Height;
+            unsigned int m_Width, m_Height;
         };
 
         class Window_Move : public Event {
           public:
-            Window_Move(int32_t x, int32_t y) : m_X(x), m_Y(y) {}
+            Window_Move(int x, int y) : m_X(x), m_Y(y) {}
 
-            inline int32_t get_window_x() const {
+            inline int get_window_x() const {
                 return m_X;
             }
-            inline int32_t get_Window_y() const {
+            inline int get_Window_y() const {
                 return m_Y;
             }
 
@@ -56,7 +56,7 @@ namespace Andromeda {
             EVENT_CLASS_TYPE(Window_Move)
             EVENT_CLASS_CATEGORY(Event_Category_Instance)
           private:
-            int32_t m_X, m_Y;
+            int m_X, m_Y;
         };
 
         class Instance_Tick : public Event {

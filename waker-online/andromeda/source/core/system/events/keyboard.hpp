@@ -21,9 +21,9 @@ namespace Andromeda {
 
         class Key_Press : public Key_Event {
           public:
-            Key_Press(Key_Code key_code, uint32_t repeat_count) : Key_Event(key_code), m_Repeat_Count(repeat_count) {}
+            Key_Press(Key_Code key_code, unsigned int repeat_count) : Key_Event(key_code), m_Repeat_Count(repeat_count) {}
 
-            inline uint32_t get_repeat_count() const {
+            inline unsigned int get_repeat_count() const {
                 return m_Repeat_Count;
             }
 
@@ -36,7 +36,7 @@ namespace Andromeda {
             EVENT_CLASS_TYPE(Key_Press)
 
           private:
-            uint32_t m_Repeat_Count;
+            unsigned int m_Repeat_Count;
         };
 
         class Key_Release : public Key_Event {

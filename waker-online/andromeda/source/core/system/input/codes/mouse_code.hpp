@@ -1,7 +1,7 @@
 #pragma once
 
 namespace Andromeda {
-    typedef enum class Mouse_Code : uint16_t {
+    typedef enum class Mouse_Code : unsigned int {
         // From glfw3.h
         Button0                = 0,
         Button1                = 1,
@@ -18,8 +18,8 @@ namespace Andromeda {
         ButtonMiddle           = Button2
     } Mouse;
 
-    inline std::ostream& operator<<(std::ostream& os, Mouse_Code mouse_code) {
-        os << static_cast<int32_t>(mouse_code);
+    inline std::ostream & operator<<(std::ostream & os, Mouse_Code mouse_code) {
+        os << static_cast<int>(mouse_code);
         return os;
     }
 } /* Andromeda */

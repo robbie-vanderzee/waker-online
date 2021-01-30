@@ -30,7 +30,7 @@ namespace Andromeda {
             ANDROMEDA_CORE_INFO("Initializing window {0} ({1}, {2}).", m_Data.title, m_Data.width, m_Data.height);
 
             if(!s_GLFW_Initialized) {
-                int32_t response = glfwInit();
+                int response = glfwInit();
                 ANDROMEDA_CORE_ASSERT(response, "Failed to initialize GLFW.");
                 glfwSetErrorCallback(glfw_error_callback);
                 s_GLFW_Initialized = true;
@@ -41,7 +41,7 @@ namespace Andromeda {
             m_Context->initialize();
             glfwSetWindowUserPointer(m_Window, & m_Data);
 
-            glfwSetWindowSizeCallback(m_Window, [](GLFWwindow * window, int32_t width, int32_t height) {
+            glfwSetWindowSizeCallback(m_Window, [](GLFWwindow * window, int width, int height) {
                 Window_Data & data = *(Window_Data*)glfwGetWindowUserPointer(window);
                 data.width = width;
                 data.height = height;
@@ -56,7 +56,7 @@ namespace Andromeda {
                 data.Event_Callback(event);
             });
 
-            glfwSetKeyCallback(m_Window, [](GLFWwindow * window, int32_t key, int32_t /*scancode*/, int32_t action, int32_t /*mods*/) {
+            glfwSetKeyCallback(m_Window, [](GLFWwindow * window, int key, int /*scancode*/, int action, int /*mods*/) {
                 Window_Data & data = *(Window_Data *)glfwGetWindowUserPointer(window);
 
                 switch(action) {
@@ -82,14 +82,14 @@ namespace Andromeda {
                 }
             });
 
-            glfwSetCharCallback(m_Window, [](GLFWwindow * window, uint32_t key) {
+            glfwSetCharCallback(m_Window, [](GLFWwindow * window, unsigned int key) {
                 Window_Data & data = *(Window_Data *)glfwGetWindowUserPointer(window);
 
                 Event::Key_Type event(static_cast<Key_Code>(key));
                 data.Event_Callback(event);
             });
 
-            glfwSetMouseButtonCallback(m_Window, [](GLFWwindow * window, int32_t button, int32_t action, int32_t /*mods*/) {
+            glfwSetMouseButtonCallback(m_Window, [](GLFWwindow * window, int button, int action, int /*mods*/) {
                 Window_Data & data = *(Window_Data *)glfwGetWindowUserPointer(window);
 
                 switch(action) {

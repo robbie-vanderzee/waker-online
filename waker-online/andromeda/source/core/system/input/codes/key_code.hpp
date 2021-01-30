@@ -1,7 +1,7 @@
 #pragma once
 
 namespace Andromeda {
-    typedef enum class Key_Code : uint16_t {
+    typedef enum class Key_Code : unsigned int {
         // From glfw3.h
         Space               = 32,
         Apostrophe          = 39, /* ' */
@@ -135,8 +135,8 @@ namespace Andromeda {
         Menu                = 348
     } Key;
 
-    inline std::ostream& operator<<(std::ostream& os, Key_Code key_code) {
-        os << static_cast<int32_t>(key_code);
+    inline std::ostream & operator<<(std::ostream & os, Key_Code key_code) {
+        os << static_cast<int>(key_code);
         return os;
     }
 } /* Andromeda */
