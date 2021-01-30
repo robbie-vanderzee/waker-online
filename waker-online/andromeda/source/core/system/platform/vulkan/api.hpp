@@ -16,6 +16,10 @@ namespace Andromeda {
 
               private:
                 void generate_instance();
+
+              private:
+                std::vector<const char *> check_validation_layer_support(std::vector<const char*> validation_layers);
+
               private:
                 VkInstance m_Instance;
                 VkApplicationInfo m_ApplicationInfo;

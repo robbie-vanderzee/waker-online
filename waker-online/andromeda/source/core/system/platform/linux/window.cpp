@@ -1,5 +1,6 @@
 #include "window.hpp"
 
+#include "core/graphics/renderer.hpp"
 #include "core/system/events/event.hpp"
 #include "core/system/events/instance.hpp"
 #include "core/system/events/keyboard.hpp"
@@ -34,6 +35,15 @@ namespace Andromeda {
                 ANDROMEDA_CORE_ASSERT(response, "Failed to initialize GLFW.");
                 glfwSetErrorCallback(glfw_error_callback);
                 s_GLFW_Initialized = true;
+            }
+
+            switch(Graphics::Renderer::get_API()) {
+            case Graphics::API_TYPE::None:
+                break;
+            case Graphics::API_TYPE::Vulkan:
+                glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+                glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+                break;
             }
 
             m_Window = glfwCreateWindow(m_Data.width, m_Data.height, m_Data.title.c_str(), nullptr, nullptr);
