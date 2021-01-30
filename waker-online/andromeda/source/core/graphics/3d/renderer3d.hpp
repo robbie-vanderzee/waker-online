@@ -5,7 +5,6 @@ namespace Andromeda {
         class Renderer3D {
           public:
             static void initialize();
-            static void process();
             static void shutdown();
         };
     } /* Graphics */

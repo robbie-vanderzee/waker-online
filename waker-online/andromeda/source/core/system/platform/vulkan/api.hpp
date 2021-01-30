@@ -12,19 +12,15 @@ namespace Andromeda {
             class API : public Andromeda::Graphics::API {
               public:
                 virtual void initialize() override;
-                virtual void process() override;
                 virtual void shutdown() override;
 
-              public:
+              private:
                 void generate_instance();
               private:
                 VkInstance m_Instance;
                 VkApplicationInfo m_ApplicationInfo;
                 VkInstanceCreateInfo m_InstanceCreateInfo;
                 unsigned int m_ExtensionCount;
-
-                std::vector<VkExtensionProperties> m_Extensions;
-
 
                 unsigned int m_GlfwExtensionCount;
                 const char ** m_GlfwExtensions;

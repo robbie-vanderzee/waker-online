@@ -6,9 +6,6 @@ namespace Andromeda {
         void Renderer3D::initialize() {
 
         }
-        void Renderer3D::process() {
-
-        }
         void Renderer3D::shutdown() {
 
         }

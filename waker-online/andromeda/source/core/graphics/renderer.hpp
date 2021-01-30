@@ -7,11 +7,10 @@ namespace Andromeda {
         class Renderer {
           public:
             static void initialize();
-            static void process();
             static void shutdown();
 
             static API_TYPE get_API() {
-                return get_API();
+                return API::get_API();
             }
         };
     } /* Graphics */

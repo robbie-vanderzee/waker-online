@@ -3,9 +3,9 @@
 #include <andromeda.hpp>
 
 namespace Waker {
-    class Waker : public ::Andromeda::Instance {
+    class Waker : public Andromeda::Instance {
       public:
-        Waker(const std::string & name = "Waker Online [ ~ ]");
+        Waker(const std::string & name = "Waker [ ~ ]");
         ~Waker();
       private:
         std::string m_Instance_Name;
@@ -13,5 +13,5 @@ namespace Waker {
 } /* Waker */
 
 Andromeda::Instance * Andromeda::create_instance() {
-    return new Waker::Waker();
+    return new Waker::Waker("Waker Online [ ~ ]");
 }

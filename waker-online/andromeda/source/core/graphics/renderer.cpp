@@ -8,10 +8,6 @@ namespace Andromeda {
             Renderer3D::initialize();
         }
 
-        void Renderer::process() {
-            Renderer3D::process();
-        }
-
         void Renderer::shutdown() {
             Renderer3D::shutdown();
         }

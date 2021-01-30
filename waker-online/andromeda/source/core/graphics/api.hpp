@@ -12,7 +12,6 @@ namespace Andromeda {
             virtual ~API() = default;
 
             virtual void initialize() = 0;
-            virtual void process() = 0;
             virtual void shutdown() = 0;
 
             static API_TYPE get_API() {

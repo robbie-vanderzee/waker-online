@@ -8,7 +8,7 @@ namespace Andromeda {
         std::string title;
         uint32_t width, height, x, y;
 
-        Window_Properties(const std::string& title = "Andromeda /env",
+        Window_Properties(const std::string & title = "Andromeda /env",
                           uint32_t width = 1920,
                           uint32_t height = 1080,
                           uint32_t x = 0,
@@ -32,8 +32,8 @@ namespace Andromeda {
         virtual void set_v_sync(bool vsync_on) = 0;
         virtual bool is_v_synced() const = 0;
 
-        virtual void* get_native_window() const = 0;
+        virtual void * get_native_window() const = 0;
 
-        static std::unique_ptr<Window> create(const Window_Properties & properties = Window_Properties());
+        static std::unique_ptr<Window> create_window(const Window_Properties & properties = Window_Properties());
     };
 } /* Andromeda */

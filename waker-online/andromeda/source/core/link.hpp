@@ -14,12 +14,13 @@ int main(int argc, char const * argv[]) {
     auto instance = Andromeda::create_instance();
 
     ANDROMEDA_CORE_INFO("");
-    ANDROMEDA_CORE_TRACE("starting [andromeda] instance... ");
+    ANDROMEDA_CORE_TRACE("starting Andromeda / instance...");
+    ANDROMEDA_CORE_INFO("");
 
-    int8_t status;
+    int status;
     status = instance->run();
 
-    ANDROMEDA_CORE_TRACE("terminating [andromeda] instance... ");
+    ANDROMEDA_CORE_TRACE("terminating Andromeda / instance...");
     ANDROMEDA_CORE_INFO("");
 
     delete instance;

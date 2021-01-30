@@ -35,7 +35,7 @@ namespace Andromeda {
             friend class Dispatcher;
           public:
             virtual EVENT_TYPE get_event_type() const = 0;
-            virtual const char* get_event_name() const = 0;
+            virtual const char * get_event_name() const = 0;
             virtual uint32_t get_category_flags() const = 0;
             virtual std::string to_string() const {
                 return get_event_name();
@@ -49,13 +49,13 @@ namespace Andromeda {
 
         class Dispatcher {
           public:
-            Dispatcher(Event &event) : m_Event(event) {
+            Dispatcher(Event & event) : m_Event(event) {
 
             }
             template<typename T, typename F>
             bool dispatch(const F & function) {
                 if(m_Event.get_event_type() == T::get_static_type()) {
-                    m_Event.active = function(static_cast<T & >(m_Event));
+                    m_Event.active = function(static_cast<T &>(m_Event));
                     return true;
                 }
                 return false;
@@ -64,7 +64,7 @@ namespace Andromeda {
             Event & m_Event;
         };
 
-        inline std::ostream &operator<<(std::ostream & os, const Event & e) {
+        inline std::ostream & operator<<(std::ostream & os, const Event & e) {
             return os << e.to_string();
         }
 

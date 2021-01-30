@@ -15,11 +15,12 @@ namespace Andromeda {
         Instance(const std::string & name = "Andromeda /instance");
         virtual ~Instance();
 
-        virtual int8_t run();
+        virtual int run();
 
         void on_event(Event::Event & e);
 
       public:
+
         Window & get_window() {
             return * m_Window;
         }

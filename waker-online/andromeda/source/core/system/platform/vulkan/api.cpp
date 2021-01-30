@@ -9,8 +9,6 @@ namespace Andromeda {
                 ANDROMEDA_CORE_INFO("Initializing Vulkan API.");
                 generate_instance();
             }
-            void API::process() {
-            }
             void API::shutdown() {
                 vkDestroyInstance(m_Instance, nullptr);
             }
@@ -33,15 +31,15 @@ namespace Andromeda {
                 m_InstanceCreateInfo.enabledExtensionCount  = m_GlfwExtensionCount;
                 m_InstanceCreateInfo.ppEnabledExtensionNames = m_GlfwExtensions;
                 m_InstanceCreateInfo.enabledLayerCount = 0;
-
-                ANDROMEDA_CORE_ASSERT(vkCreateInstance(&m_InstanceCreateInfo, nullptr, &m_Instance) == VK_SUCCESS, "Failed to create Vulkan API instance.");
-
+                auto result = vkCreateInstance(&m_InstanceCreateInfo, nullptr, &m_Instance);
+#ifdef DEBUG
+                ANDROMEDA_CORE_ASSERT(result == VK_SUCCESS, "Failed to create Vulkan API instance.");
                 ANDROMEDA_CORE_ASSERT(vkEnumerateInstanceExtensionProperties(nullptr, &m_ExtensionCount, nullptr) == VK_SUCCESS, "Failed to count Vulkan extensions properties.");
-                m_Extensions.resize(m_ExtensionCount);
+                std::vector<VkExtensionProperties> m_Extensions(m_ExtensionCount);
                 ANDROMEDA_CORE_ASSERT(vkEnumerateInstanceExtensionProperties(nullptr, &m_ExtensionCount, m_Extensions.data()) == VK_SUCCESS, "Failed to enumerate Vulkan extension properties.");
-
                 ANDROMEDA_CORE_INFO("Vulkan Extensions: ");
                 for (auto &extension : m_Extensions) ANDROMEDA_CORE_TRACE("{0}", extension.extensionName);
+#endif
             }
         } /* Vulkan */
     } /* Graphics */

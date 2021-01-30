@@ -12,6 +12,7 @@ namespace Andromeda {
                 ANDROMEDA_CORE_ASSERT(false, "Renderer API <None> is unsupported.");
                 return nullptr;
             case API_TYPE::Vulkan:
+                ANDROMEDA_CORE_INFO("Generating Vulkan Context.");
                 return std::make_unique<Vulkan::Context>(static_cast<GLFWWindow *>(window));
             }
             ANDROMEDA_CORE_ASSERT(false, "Renderer API is undefined.");
