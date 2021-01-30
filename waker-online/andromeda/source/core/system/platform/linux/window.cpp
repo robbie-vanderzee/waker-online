@@ -75,10 +75,6 @@ namespace Andromeda {
                     data.Event_Callback(event);
                     break;
                 }
-                default: {
-                    ANDROMEDA_CORE_INFO("Unhandled key action {0}", action);
-                    break;
-                }
                 }
             });
 
@@ -101,10 +97,6 @@ namespace Andromeda {
                 case GLFW_RELEASE: {
                     Event::Mouse_Button_Release event((Mouse_Code)button);
                     data.Event_Callback(event);
-                    break;
-                }
-                default: {
-                    ANDROMEDA_CORE_INFO("Unhandled mouse action {0}", action);
                     break;
                 }
                 }
