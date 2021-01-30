@@ -44,7 +44,7 @@ namespace Andromeda {
                 ANDROMEDA_CORE_ASSERT(vkEnumerateInstanceExtensionProperties(nullptr, & m_ExtensionCount, m_Extensions.data()) == VK_SUCCESS, "Failed to enumerate Vulkan extension properties.");
                 ANDROMEDA_CORE_INFO("Vulkan Extensions: ");
                 for (auto & extension : m_Extensions) ANDROMEDA_CORE_TRACE("{0}", extension.extensionName);
-#elif
+#else
                 m_InstanceCreateInfo.enabledLayerCount = 0;
                 vkCreateInstance(& m_InstanceCreateInfo, nullptr, & m_Instance);
 #endif
