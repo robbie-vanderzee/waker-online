@@ -15,10 +15,13 @@ namespace Andromeda {
                 virtual void shutdown() override;
 
               private:
-                void generate_instance();
+                void generate_vulkan_instance();
 
               private:
-                std::vector<const char *> check_validation_layer_support(std::vector<const char*> validation_layers);
+                VkResult enumerate_instance_layer_properties(std::vector<VkLayerProperties> & instance_layer_properties);
+                VkResult enumerate_instance_extension_properties(std::vector<VkExtensionProperties> & instance_extension_properties);
+              private:
+                bool check_desired_validation_layer_support(const std::vector<const char *> & desired_validation_layers);
 
               private:
                 VkInstance m_Instance;
