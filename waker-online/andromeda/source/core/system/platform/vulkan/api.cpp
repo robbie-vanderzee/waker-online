@@ -11,6 +11,7 @@ namespace Andromeda {
             void API::initialize() {
                 ANDROMEDA_CORE_INFO("Initializing Vulkan API.");
                 generate_vulkan_instance();
+                select_physical_device();
             }
             void API::shutdown() {
                 vkDestroyInstance(m_API_Instance.instance, nullptr);
@@ -24,11 +25,36 @@ namespace Andromeda {
 #ifdef DEBUG
                 std::vector<VkExtensionProperties> instance_extension_properties;
                 VkResult enumerate_instance_extension_properties_status = enumerate_instance_extension_properties(instance_extension_properties);
-                ANDROMEDA_CORE_ASSERT(enumerate_instance_extension_properties_status == VK_SUCCESS, "Failed to enumate Vulkan extension layer properties.");
+                ANDROMEDA_CORE_ASSERT(enumerate_instance_extension_properties_status == VK_SUCCESS, "Failed to enumerate Vulkan extension layer properties.");
 
                 ANDROMEDA_CORE_INFO("Vulkan Extensions: ");
                 for (auto & instance_extension_property : instance_extension_properties) ANDROMEDA_CORE_TRACE("{0}", instance_extension_property.extensionName);
 #endif
+            }
+
+            void API::select_physical_device() {
+                m_API_Instance.physical_device = VK_NULL_HANDLE;
+                std::vector<VkPhysicalDevice> physical_devices;
+                VkResult enumerate_physical_devices_status = enumerate_physical_devices(physical_devices);
+                ANDROMEDA_CORE_ASSERT(enumerate_physical_devices_status == VK_SUCCESS, "Failed to enumerate Vulkan physical devices.");
+                #ifdef DEBUG
+                ANDROMEDA_CORE_INFO("Physical Devices: ");
+                VkPhysicalDeviceProperties physical_device_properties;
+                for (auto & physical_device : physical_devices) {
+                  vkGetPhysicalDeviceProperties(physical_device, & physical_device_properties);
+                  ANDROMEDA_CORE_TRACE("{0}", physical_device_properties.deviceName);
+                }
+                #endif
+                std::map<unsigned int, VkPhysicalDevice> sorted_physical_devices;
+                for( auto physical_device : physical_devices) {
+                    sorted_physical_devices.emplace(evaluate_physical_device(physical_device), physical_device);
+                }
+                auto best_physical_device = sorted_physical_devices.begin();
+                m_API_Instance.physical_device = best_physical_device->second;
+                ANDROMEDA_CORE_ASSERT(best_physical_device->first > 0, "No physical device sufficiently supports required Vulkan features.");
+                vkGetPhysicalDeviceProperties(m_API_Instance.physical_device, & m_API_Instance.physical_device_properties);
+                vkGetPhysicalDeviceFeatures(m_API_Instance.physical_device, & m_API_Instance.physical_device_features);
+                ANDROMEDA_CORE_INFO("Selected Device: {0}", m_API_Instance.physical_device_properties.deviceName);
             }
 
             void API::create_application_info() {
@@ -148,6 +174,49 @@ namespace Andromeda {
                     break;
                 }
                 return enumerate_instance_layer_properties_status;
+            }
+
+            VkResult API::enumerate_physical_devices(std::vector<VkPhysicalDevice> & physical_devices) {
+                unsigned int physical_device_count = 0;
+                VkResult count_physical_devices_status = vkEnumeratePhysicalDevices(m_API_Instance.instance, & physical_device_count, nullptr);
+                ANDROMEDA_CORE_ASSERT(count_physical_devices_status == VK_SUCCESS, "Failed to count Vulkan physical devices.");
+                ANDROMEDA_CORE_ASSERT(physical_device_count > 0, "No physical devices found.");
+                physical_devices.resize(physical_device_count);
+                VkResult enumerate_physical_devices_status = vkEnumeratePhysicalDevices(m_API_Instance.instance, & physical_device_count, physical_devices.data());
+                switch(enumerate_physical_devices_status) {
+                case VK_SUCCESS:
+                    ANDROMEDA_CORE_INFO("Successfully enumerated physical devices.");
+                    break;
+                case VK_INCOMPLETE:
+                    ANDROMEDA_CORE_WARN("Failed to enumerate physical devices. Provided physical_device_count {0} was invalid.", physical_device_count);
+                    break;
+                case VK_ERROR_OUT_OF_HOST_MEMORY:
+                    ANDROMEDA_CORE_ERROR("Failed to enumerate physical devices. Host out of memory.");
+                    break;
+                case VK_ERROR_OUT_OF_DEVICE_MEMORY:
+                    ANDROMEDA_CORE_ERROR("Failed to enumerate physical devices. Device out of memory.");
+                    break;
+                case VK_ERROR_INITIALIZATION_FAILED:
+                    ANDROMEDA_CORE_ERROR("Failed to enumerate physical devices. Initialization failed.");
+                    break;
+                default:
+                    ANDROMEDA_CORE_CRITICAL("Unhandled enumerate physical device result: {0}.", enumerate_physical_devices_status);
+                    break;
+                }
+                return enumerate_physical_devices_status;
+            }
+
+            unsigned int API::evaluate_physical_device(const VkPhysicalDevice & physical_device) {
+                int score = 0;
+                VkPhysicalDeviceProperties physical_device_properties;
+                VkPhysicalDeviceFeatures physical_device_features;
+                vkGetPhysicalDeviceProperties(physical_device, & physical_device_properties);
+                vkGetPhysicalDeviceFeatures(physical_device, & physical_device_features);
+
+                if (physical_device_properties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU) score++;
+                if(!physical_device_features.geometryShader) return 0;
+                score += physical_device_properties.limits.maxImageDimension3D;
+                return score;
             }
 
             bool API::check_desired_validation_layer_support(const std::vector<const char *> & desired_validation_layers) {
