@@ -1,5 +1,6 @@
 #include "instance.hpp"
 
+#include "core/graphics/command.hpp"
 #include "core/graphics/renderer.hpp"
 
 namespace Andromeda {
@@ -12,12 +13,12 @@ namespace Andromeda {
         m_Window = Window::create_window(Window_Properties(m_Instance_Name));
         m_Window->set_event_callback(ANDROMEDA_BIND_FN(Instance::on_event));
         Graphics::Renderer::initialize();
+        Graphics::Command::set_context(m_Window);
     }
 
     Instance::~Instance() {
         Graphics::Renderer::shutdown();
     }
-
 
     int Instance::run() {
         while(m_Running) {

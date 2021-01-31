@@ -1,15 +1,13 @@
 #include "renderer.hpp"
-#include "3d/renderer3d.hpp"
 
 namespace Andromeda {
     namespace Graphics {
         void Renderer::initialize() {
-            Render::initialize();
-            Renderer3D::initialize();
+            Command::initialize();
         }
 
         void Renderer::shutdown() {
-            Renderer3D::shutdown();
+            Command::shutdown();
         }
     } /* Graphics */
 } /* Andromeda */

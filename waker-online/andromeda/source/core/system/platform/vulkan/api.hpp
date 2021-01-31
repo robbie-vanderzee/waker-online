@@ -1,11 +1,10 @@
 #pragma once
 
 #include "core/graphics/api.hpp"
+#include "core/graphics/context.hpp"
+#include "core/system/interface/window/window.hpp"
 
 #include <vulkan/vulkan.h>
-
-#include <vector>
-#include <map>
 
 namespace Andromeda {
     namespace Graphics {
@@ -34,6 +33,8 @@ namespace Andromeda {
               public:
                 virtual void initialize() override;
                 virtual void shutdown() override;
+
+                virtual void set_context(std::shared_ptr<Window> window);
 
               private:
                 void generate_vulkan_instance();
@@ -66,6 +67,7 @@ namespace Andromeda {
 
               private:
                 API_Instance m_API_Instance;
+                std::unique_ptr<Graphics::Context> m_Context;
             };
         } /* Vulkan */
     } /* Graphics */

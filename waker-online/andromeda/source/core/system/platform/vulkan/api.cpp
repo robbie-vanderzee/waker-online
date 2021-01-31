@@ -3,8 +3,6 @@
 
 #include <GLFW/glfw3.h>
 
-#include <cstring>
-
 namespace Andromeda {
     namespace Graphics {
         namespace Vulkan {
@@ -15,8 +13,14 @@ namespace Andromeda {
                 create_logical_device();
             }
             void API::shutdown() {
+                ANDROMEDA_CORE_INFO("Terminating Vulkan API.");
+                m_Context->shutdown();
                 vkDestroyDevice(m_API_Instance.logical_device, nullptr);
                 vkDestroyInstance(m_API_Instance.instance, nullptr);
+            }
+            void API::set_context(std::shared_ptr<Window> window) {
+                m_Context = Graphics::Context::create_context(window);
+                m_Context->initialize(m_API_Instance.instance);
             }
 
             void API::generate_vulkan_instance() {
@@ -135,36 +139,36 @@ namespace Andromeda {
                 return create_instance_status;
             }
 
-            VkResult API::create_device(){
+            VkResult API::create_device() {
                 VkResult create_device_status = vkCreateDevice(m_API_Instance.physical_device, &m_API_Instance.device_create_info, nullptr, &m_API_Instance.logical_device);
-                switch(create_device_status){
-                  case VK_SUCCESS:
-                      ANDROMEDA_CORE_INFO("Successfully initialized Vulkan API Device.");
-                      break;
-                  case VK_ERROR_OUT_OF_HOST_MEMORY:
-                      ANDROMEDA_CORE_ERROR("Failed to initialize Vulkan API Device Host out of memory.");
-                      break;
-                  case VK_ERROR_OUT_OF_DEVICE_MEMORY:
-                      ANDROMEDA_CORE_ERROR("Failed to initialize Vulkan API Device. Device out of memory.");
-                      break;
-                  case VK_ERROR_INITIALIZATION_FAILED:
-                      ANDROMEDA_CORE_ERROR("Failed to initialize Vulkan API Device. Initialization failed.");
-                      break;
-                  case VK_ERROR_EXTENSION_NOT_PRESENT:
-                      ANDROMEDA_CORE_ERROR("Failed to initialize Vulkan API Device. Extensions not present.");
-                      break;
-                  case VK_ERROR_FEATURE_NOT_PRESENT:
-                      ANDROMEDA_CORE_ERROR("Failed to initialize Vulkan API Device. Features not present.");
-                      break;
-                  case VK_ERROR_TOO_MANY_OBJECTS:
-                      ANDROMEDA_CORE_ERROR("Failed to initialize Vulkan API Device. Too many objects.");
-                      break;
-                  case VK_ERROR_DEVICE_LOST:
-                      ANDROMEDA_CORE_ERROR("Failed to initialize Vulkan API Device. The device was lost.");
-                      break;
-                  default:
-                      ANDROMEDA_CORE_CRITICAL("Unhandled Vulkan create device result: {0}.", create_device_status);
-                      break;
+                switch(create_device_status) {
+                case VK_SUCCESS:
+                    ANDROMEDA_CORE_INFO("Successfully initialized Vulkan API Device.");
+                    break;
+                case VK_ERROR_OUT_OF_HOST_MEMORY:
+                    ANDROMEDA_CORE_ERROR("Failed to initialize Vulkan API Device Host out of memory.");
+                    break;
+                case VK_ERROR_OUT_OF_DEVICE_MEMORY:
+                    ANDROMEDA_CORE_ERROR("Failed to initialize Vulkan API Device. Device out of memory.");
+                    break;
+                case VK_ERROR_INITIALIZATION_FAILED:
+                    ANDROMEDA_CORE_ERROR("Failed to initialize Vulkan API Device. Initialization failed.");
+                    break;
+                case VK_ERROR_EXTENSION_NOT_PRESENT:
+                    ANDROMEDA_CORE_ERROR("Failed to initialize Vulkan API Device. Extensions not present.");
+                    break;
+                case VK_ERROR_FEATURE_NOT_PRESENT:
+                    ANDROMEDA_CORE_ERROR("Failed to initialize Vulkan API Device. Features not present.");
+                    break;
+                case VK_ERROR_TOO_MANY_OBJECTS:
+                    ANDROMEDA_CORE_ERROR("Failed to initialize Vulkan API Device. Too many objects.");
+                    break;
+                case VK_ERROR_DEVICE_LOST:
+                    ANDROMEDA_CORE_ERROR("Failed to initialize Vulkan API Device. The device was lost.");
+                    break;
+                default:
+                    ANDROMEDA_CORE_CRITICAL("Unhandled Vulkan create device result: {0}.", create_device_status);
+                    break;
                 }
                 return create_device_status;
             }

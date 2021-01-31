@@ -32,13 +32,13 @@ namespace Andromeda {
 
         class Mouse_Scroll : public Event {
           public:
-            Mouse_Scroll(int x_Offset, int y_Offset) : m_X_Offset(x_Offset), m_Y_Offset(y_Offset) {}
+            Mouse_Scroll(double x_Offset, double y_Offset) : m_X_Offset(x_Offset), m_Y_Offset(y_Offset) {}
 
-            inline int get_x_offset() const {
+            inline double get_x_offset() const {
                 return m_X_Offset;
             }
 
-            inline int get_y_offset() const {
+            inline double get_y_offset() const {
                 return m_Y_Offset;
             }
 
@@ -51,7 +51,7 @@ namespace Andromeda {
             EVENT_CLASS_TYPE(Mouse_Scroll)
             EVENT_CLASS_CATEGORY(Event_Category_Input | Event_Category_Mouse)
           private:
-            int m_X_Offset, m_Y_Offset;
+            double m_X_Offset, m_Y_Offset;
         };
 
         class Mouse_Button : public Event {

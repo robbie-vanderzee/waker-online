@@ -15,10 +15,10 @@ namespace Andromeda {
 
             void on_update() override;
 
-            inline uint32_t get_width() const override {
+            inline unsigned int get_width() const override {
                 return m_Data.width;
             }
-            inline uint32_t get_height() const override {
+            inline unsigned int get_height() const override {
                 return m_Data.height;
             }
 
@@ -37,12 +37,11 @@ namespace Andromeda {
             virtual void initialize(const Window_Properties& properties);
             virtual void shutdown();
           private:
-            GLFWwindow* m_Window;
-            std::unique_ptr<Graphics::Context> m_Context;
+            GLFWwindow * m_Window;
 
             struct Window_Data {
                 std::string title;
-                uint32_t width, height;
+                unsigned int width, height;
                 bool vsync_on;
 
                 Event_Callback_Function Event_Callback;

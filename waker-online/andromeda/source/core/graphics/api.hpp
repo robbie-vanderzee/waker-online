@@ -1,6 +1,7 @@
 #pragma once
 
 #include "core/core.hpp"
+#include "core/system/interface/window/window.hpp"
 
 namespace Andromeda {
     namespace Graphics {
@@ -13,6 +14,8 @@ namespace Andromeda {
 
             virtual void initialize() = 0;
             virtual void shutdown() = 0;
+
+            virtual void set_context(std::shared_ptr<Window> window) = 0;
 
             static API_TYPE get_API() {
                 return s_API;

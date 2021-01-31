@@ -1,6 +1,6 @@
 #pragma once
 
-#include "render.hpp"
+#include "command.hpp"
 
 namespace Andromeda {
     namespace Graphics {
@@ -9,7 +9,7 @@ namespace Andromeda {
             static void initialize();
             static void shutdown();
 
-            static API_TYPE get_API() {
+            inline static API_TYPE get_API() {
                 return API::get_API();
             }
         };

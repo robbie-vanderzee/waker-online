@@ -2,8 +2,6 @@
 
 #include "event.hpp"
 
-#include <sstream>
-
 namespace Andromeda {
     namespace Event {
         class Window_Close : public Event {

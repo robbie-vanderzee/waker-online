@@ -1,8 +1,5 @@
 #pragma once
 
-#include <string>
-#include <functional>
-
 #include "core/core.hpp"
 
 namespace Andromeda {
