@@ -24,6 +24,9 @@ namespace Andromeda {
         Window & get_window() {
             return * m_Window;
         }
+        std::string get_instance_name() {
+            return m_Instance_Name;
+        }
 
         void set_v_sync(bool v_sync);
 
