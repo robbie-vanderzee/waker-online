@@ -15,11 +15,20 @@ namespace Andromeda {
                 VkApplicationInfo application_info;
                 VkInstanceCreateInfo instance_create_info;
                 VkInstance instance;
-                VkResult status;
+                VkResult instance_status;
                 /* Physical Device */
                 VkPhysicalDevice physical_device;
                 VkPhysicalDeviceProperties physical_device_properties;
                 VkPhysicalDeviceFeatures physical_device_features;
+                std::vector<VkQueueFamilyProperties> queue_family_properties;
+                /* Logical Device */
+                VkDeviceQueueCreateInfo device_queue_create_info;
+                VkDeviceCreateInfo device_create_info;
+                VkDevice logical_device;
+                VkResult logical_device_status;
+                /* Pipeline */
+                VkQueue graphics_queue;
+
             };
             class API : public Andromeda::Graphics::API {
               public:
@@ -29,6 +38,7 @@ namespace Andromeda {
               private:
                 void generate_vulkan_instance();
                 void select_physical_device();
+                void create_logical_device();
 
               private:
                 void create_application_info();
@@ -40,11 +50,19 @@ namespace Andromeda {
 
               private:
                 VkResult enumerate_physical_devices(std::vector<VkPhysicalDevice> & physical_devices);
+                void get_queue_family_properties(std::vector<VkQueueFamilyProperties> & queue_family_properties);
+
                 unsigned int evaluate_physical_device(const VkPhysicalDevice & physical_device);
+                void verify_queue_family_properties();
+
+              private:
+                void create_device_queue_create_info(float & queue_priorities);
+                void create_device_create_info();
+                VkResult create_device();
 
               private:
                 const std::vector<const char *> desired_validation_layers = { "VK_LAYER_KHRONOS_validation" };
-                bool check_desired_validation_layer_support(const std::vector<const char *> & desired_validation_layers);
+                bool verify_desired_validation_layer_support(const std::vector<const char *> & desired_validation_layers);
 
               private:
                 API_Instance m_API_Instance;
