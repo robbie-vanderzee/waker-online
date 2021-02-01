@@ -1,4 +1,4 @@
-# Waker Online [MMORPG]
+# Waker [ ~ ] Online [MMORPG] [![shields](https://img.shields.io/badge/License-MIT-blue)](https://shields.io)
 [![forthebadge](https://forthebadge.com/images/badges/built-with-love.svg)](https://forthebadge.com)
 [![forthebadge](https://forthebadge.com/images/badges/made-with-c-plus-plus.svg)](https://forthebadge.com)
 
@@ -38,9 +38,9 @@ A C++ based MMORPG. Vulkan based & raytraced. Long term educational / life proje
 [(Back to top)](#table-of-contents)
 
 1. Install dependencies
-    * premake (version >= 5.0 alpha),
-    * glfw
-    * vulkan
+  * premake (version >= 5.0 alpha),
+  * glfw
+  * vulkan
 
 2. Run preliminary submodule downloads
 
