@@ -20,8 +20,8 @@ namespace Andromeda {
 
       public:
 
-        inline static Instance & get_instance() {
-            return * s_Instance;
+        inline static Instance * get_instance() {
+            return s_Instance;
         }
 
         inline std::shared_ptr<Window> get_window() {
@@ -33,7 +33,6 @@ namespace Andromeda {
         }
 
         void set_v_sync(bool v_sync);
-
 
       private:
         bool on_window_close(Event::Window_Close &e);

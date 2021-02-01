@@ -126,6 +126,8 @@ namespace Andromeda {
 
         void Window::shutdown() {
             glfwDestroyWindow(m_Window);
+            s_GLFW_Windows--;
+            if(s_GLFW_Windows == 0) glfwTerminate();
         }
 
         void Window::on_update() {

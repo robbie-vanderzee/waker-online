@@ -7,6 +7,7 @@ namespace Andromeda {
     namespace Graphics {
         class Context {
           public:
+            virtual ~Context() = default;
             virtual void initialize(void * instance) = 0;
             virtual void shutdown() = 0;
 

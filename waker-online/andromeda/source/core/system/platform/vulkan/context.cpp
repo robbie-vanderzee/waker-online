@@ -6,10 +6,16 @@ namespace Andromeda {
             Context::Context(std::shared_ptr<Window> window) : m_Window(window) {
                 ANDROMEDA_CORE_ASSERT(m_Window, "Invalid window.");
             }
+
+            Context::~Context(){
+                
+            }
+
             void Context::shutdown() {
                 ANDROMEDA_CORE_INFO("Destroying Vulkan Context.");
                 vkDestroySurfaceKHR(m_Instance, m_Surface, nullptr);
             }
+
             void Context::initialize(void * instance) {
                 ANDROMEDA_CORE_INFO("Initializing Vulkan Context.");
                 m_Instance = static_cast<VkInstance>(instance);

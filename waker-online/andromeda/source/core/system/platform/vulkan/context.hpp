@@ -12,7 +12,7 @@ namespace Andromeda {
             class Context : public Andromeda::Graphics::Context {
               public:
                 Context(std::shared_ptr<Window> window);
-
+                virtual ~Context();
                 virtual void initialize(void * instance) override;
                 virtual void shutdown() override;
 

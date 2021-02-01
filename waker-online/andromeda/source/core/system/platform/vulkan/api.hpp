@@ -34,7 +34,7 @@ namespace Andromeda {
                 virtual void initialize() override;
                 virtual void shutdown() override;
 
-                virtual void set_context(std::shared_ptr<Window> window);
+                virtual void set_context(std::shared_ptr<Window> window) override;
 
               private:
                 void generate_vulkan_instance();

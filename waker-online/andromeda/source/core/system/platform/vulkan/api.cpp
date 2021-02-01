@@ -12,12 +12,14 @@ namespace Andromeda {
                 select_physical_device();
                 create_logical_device();
             }
+
             void API::shutdown() {
                 ANDROMEDA_CORE_INFO("Terminating Vulkan API.");
-                m_Context->shutdown();
+                if(m_Context) m_Context->shutdown();
                 vkDestroyDevice(m_API_Instance.logical_device, nullptr);
                 vkDestroyInstance(m_API_Instance.instance, nullptr);
             }
+
             void API::set_context(std::shared_ptr<Window> window) {
                 m_Context = Graphics::Context::create_context(window);
                 m_Context->initialize(m_API_Instance.instance);
@@ -77,7 +79,7 @@ namespace Andromeda {
             void API::create_application_info() {
                 m_API_Instance.application_info.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
                 m_API_Instance.application_info.pNext = nullptr;
-                m_API_Instance.application_info.pApplicationName = Instance::get_instance().get_instance_name().c_str();
+                m_API_Instance.application_info.pApplicationName = Instance::get_instance()->get_instance_name().c_str();
                 m_API_Instance.application_info.applicationVersion = VK_MAKE_VERSION(1, 0, 0);
                 m_API_Instance.application_info.pEngineName = ANDROMEDA;
                 m_API_Instance.application_info.engineVersion = VK_MAKE_VERSION(1, 0, 0);

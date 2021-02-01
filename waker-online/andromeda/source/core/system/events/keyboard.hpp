@@ -12,7 +12,6 @@ namespace Andromeda {
             }
 
             EVENT_CLASS_CATEGORY(Event_Category_Input | Event_Category_Keyboard)
-
           protected:
             Key_Event(Key_Code key_code) : m_Key_Code(key_code) {}
 

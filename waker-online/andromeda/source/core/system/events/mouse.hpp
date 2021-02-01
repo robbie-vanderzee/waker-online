@@ -25,7 +25,6 @@ namespace Andromeda {
 
             EVENT_CLASS_TYPE(Mouse_Move)
             EVENT_CLASS_CATEGORY(Event_Category_Input | Event_Category_Mouse)
-
           private:
             int m_Mouse_X, m_Mouse_Y;
         };

@@ -17,8 +17,7 @@ int main(int argc, char const * argv[]) {
     ANDROMEDA_CORE_TRACE("starting Andromeda / instance...");
     ANDROMEDA_CORE_INFO("");
 
-    int status;
-    status = instance->run();
+    int status = instance->run();
 
     ANDROMEDA_CORE_TRACE("terminating Andromeda / instance...");
     ANDROMEDA_CORE_INFO("");
