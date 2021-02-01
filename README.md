@@ -1,6 +1,8 @@
-# Waker [ ~ ] Online [MMORPG] [![shields](https://img.shields.io/badge/License-MIT-blue)](https://shields.io)
-[![forthebadge](https://forthebadge.com/images/badges/built-with-love.svg)](https://forthebadge.com)
-[![forthebadge](https://forthebadge.com/images/badges/made-with-c-plus-plus.svg)](https://forthebadge.com)
+# Waker [ ~ ] Online [MMORPG] [![shields](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge&logo=appveyor)](https://shields.io) [![shields](https://img.shields.io/badge/platform-linux-blue?style=for-the-badge&logo=arch-linux)](https://shields.io)
+
+[![shields](https://img.shields.io/badge/Built%20with-C%2B%2B-blue?style=for-the-badge&logo=c)](https://shields.io)
+
+<img src="https://upload.wikimedia.org/wikipedia/commons/0/03/Vulkan_RGB_Dec16.svg" width="250">
 
 A C++ based MMORPG. Vulkan based & raytraced. Long term educational / life project.
 
