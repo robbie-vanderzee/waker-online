@@ -1,13 +1,14 @@
 #pragma once
 
 #include <algorithm>
-#include <memory>
-#include <string>
-#include <functional>
-#include <sstream>
+#include <any>
 #include <cstring>
-#include <vector>
+#include <functional>
 #include <map>
+#include <memory>
+#include <sstream>
+#include <string>
+#include <vector>
 
 #ifdef LOGGING
 #include "logging/logging.hpp"

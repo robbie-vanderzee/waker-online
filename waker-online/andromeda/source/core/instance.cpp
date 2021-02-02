@@ -4,10 +4,11 @@
 #include "core/graphics/renderer.hpp"
 
 namespace Andromeda {
+
     Instance * Instance::s_Instance = nullptr;
 
     Instance::Instance(const std::string & name) {
-        s_Instance = this;
+        s_Instance = std::move(this);
         m_Instance_Name = name;
         ANDROMEDA_CORE_INFO(m_Instance_Name);
         m_Window = Window::create_window(Window_Properties(m_Instance_Name));

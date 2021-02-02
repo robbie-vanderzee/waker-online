@@ -1,8 +1,6 @@
 #include "api.hpp"
 #include "core/instance.hpp"
 
-#include <GLFW/glfw3.h>
-
 namespace Andromeda {
     namespace Graphics {
         namespace Vulkan {
@@ -259,6 +257,28 @@ namespace Andromeda {
                 return enumerate_physical_devices_status;
             }
 
+            VkResult API::get_physical_device_surface_support_KHR(VkPhysicalDevice device, unsigned int queue_family_index, VkSurfaceKHR surface, VkBool32 * supported){
+                VkResult get_physical_device_surface_support_KHR_status = vkGetPhysicalDeviceSurfaceSupportKHR(device, queue_family_index, surface, supported);
+                ANDROMEDA_CORE_ASSERT(get_physical_device_surface_support_KHR_status == VK_SUCCESS, "Failed to determine device surface support.");
+                switch (get_physical_device_surface_support_KHR_status) {
+                  case VK_SUCCESS:
+                      ANDROMEDA_CORE_INFO("Successfully determined phyiscal device surface support.");
+                      break;
+                  case VK_ERROR_OUT_OF_HOST_MEMORY:
+                      ANDROMEDA_CORE_ERROR("Failed to determine phyiscal device surface support. Host out of memory.");
+                      break;
+                  case VK_ERROR_OUT_OF_DEVICE_MEMORY:
+                      ANDROMEDA_CORE_ERROR("Failed to determine phyiscal device surface support. Device out of memory.");
+                      break;
+                  case VK_ERROR_SURFACE_LOST_KHR:
+                      ANDROMEDA_CORE_ERROR("Failed to determine phyiscal device surface support. Surface lost.");
+                      break;
+                  default:
+                      ANDROMEDA_CORE_CRITICAL("Unhandled determine phyiscal device surface support result: {0}.", get_physical_device_surface_support_KHR_status);
+                      break;
+                }
+                return get_physical_device_surface_support_KHR_status;
+            }
 
             void API::get_queue_family_properties(std::vector<VkQueueFamilyProperties> & queue_family_properties) {
                 unsigned int queue_family_properties_count = 0;

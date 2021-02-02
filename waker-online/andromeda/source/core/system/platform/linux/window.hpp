@@ -9,7 +9,7 @@ namespace Andromeda {
     namespace Linux {
         class Window : public Andromeda::Window {
           public:
-            Window(const Window_Properties& properties);
+            Window(const Window_Properties & properties);
 
             virtual ~Window();
 
@@ -22,19 +22,19 @@ namespace Andromeda {
                 return m_Data.height;
             }
 
-            inline void set_event_callback(const Event_Callback_Function& callback) override {
+            inline void set_event_callback(const Event_Callback_Function & callback) override {
                 m_Data.Event_Callback = callback;
             }
 
             void set_v_sync(bool vsync_on) override;
             bool is_v_synced() const override;
 
-            inline virtual void * get_native_window() const override {
+            inline virtual std::any get_native_window() const override {
                 return m_Window;
             }
 
           private:
-            virtual void initialize(const Window_Properties& properties);
+            virtual void initialize(const Window_Properties & properties);
             virtual void shutdown();
           private:
             GLFWwindow * m_Window;

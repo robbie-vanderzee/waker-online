@@ -21,7 +21,7 @@ int main(int argc, char const * argv[]) {
 
     ANDROMEDA_CORE_TRACE("terminating Andromeda / instance...");
     ANDROMEDA_CORE_INFO("");
-
+    
     delete instance;
     return status;
 }

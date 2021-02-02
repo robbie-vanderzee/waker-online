@@ -32,7 +32,7 @@ namespace Andromeda {
         virtual void set_v_sync(bool vsync_on) = 0;
         virtual bool is_v_synced() const = 0;
 
-        virtual void * get_native_window() const = 0;
+        virtual std::any get_native_window() const = 0;
 
         static std::shared_ptr<Window> create_window(const Window_Properties & properties = Window_Properties());
     };

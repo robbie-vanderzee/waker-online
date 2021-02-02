@@ -2,7 +2,7 @@ workspace "waker-online"
   flags {
     "MultiProcessorCompile"
   }
-  
+
   configurations {
     "debug",
     "release"

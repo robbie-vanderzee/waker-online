@@ -13,7 +13,7 @@ namespace Andromeda {
               public:
                 Context(std::shared_ptr<Window> window);
                 virtual ~Context();
-                virtual void initialize(void * instance) override;
+                virtual void initialize(std::any instance) override;
                 virtual void shutdown() override;
 
               private:

@@ -12,7 +12,7 @@ A C++ based MMORPG. Vulkan based & raytraced. Long term educational / life proje
 
 - [Plans](#plans)
 - [Installation](#installation)
-- [Usage](#updating)
+- [Usage](#usage)
 - [Uninstallation](#uninstallation)
 - [Contributing](#contributing)
 - [License](#license)
@@ -92,4 +92,4 @@ No Guidelines are currently set. They will be specified in [contribution guideli
 
 This is subject to change once development reaches beta stage (I won't want it to be used commercially.). The liscensing provided is only valid while it exists in the respository.
 
-MIT Liscense 2021 - [Robbie VanDerzee](https://github.com/robbie-vanderzee/). Please have a look at the [LICENSE.md](LICENSE.md) for more details.
+MIT Liscense 2021 - [Robbie VanDerzee](https://github.com/robbie-vanderzee/). Please have a look at the [LICENSE](LICENSE) for more details.

@@ -15,6 +15,9 @@ namespace Andromeda {
         Instance(const std::string & name = "Andromeda /instance");
         virtual ~Instance();
 
+        Instance (const Instance &) = delete;
+        Instance& operator=(const Instance &) = delete;
+
         virtual int run();
         void on_event(Event::Event & e);
 

@@ -5,6 +5,7 @@
 #include "core/system/interface/window/window.hpp"
 
 #include <vulkan/vulkan.h>
+#include <GLFW/glfw3.h>
 
 namespace Andromeda {
     namespace Graphics {
@@ -52,6 +53,8 @@ namespace Andromeda {
               private:
                 VkResult enumerate_physical_devices(std::vector<VkPhysicalDevice> & physical_devices);
                 void get_queue_family_properties(std::vector<VkQueueFamilyProperties> & queue_family_properties);
+
+                VkResult get_physical_device_surface_support_KHR(VkPhysicalDevice device, unsigned int queue_family_index, VkSurfaceKHR surface, VkBool32 * supported);
 
                 unsigned int evaluate_physical_device(const VkPhysicalDevice & physical_device);
                 void verify_queue_family_properties();
