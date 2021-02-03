@@ -6,7 +6,8 @@
 namespace Andromeda {
     namespace Graphics {
         enum class API_TYPE {
-            None = 0, Vulkan = 1
+            None = 0,
+            Vulkan = 1
         };
         class API {
           public:
@@ -15,7 +16,7 @@ namespace Andromeda {
             virtual void initialize() = 0;
             virtual void shutdown() = 0;
 
-            virtual void set_context(std::shared_ptr<Window> window) = 0;
+            virtual void set_window_context(std::shared_ptr<Window> window) = 0;
 
             static API_TYPE get_API() {
                 return s_API;

@@ -35,7 +35,7 @@ namespace Andromeda {
                 virtual void initialize() override;
                 virtual void shutdown() override;
 
-                virtual void set_context(std::shared_ptr<Window> window) override;
+                virtual void set_window_context(std::shared_ptr<Window> window) override;
 
               private:
                 void generate_vulkan_instance();
@@ -61,6 +61,7 @@ namespace Andromeda {
 
               private:
                 void create_device_queue_create_info(float & queue_priorities);
+
                 void create_device_create_info();
                 VkResult create_device();
 

@@ -14,8 +14,8 @@ namespace Andromeda {
             static void shutdown() {
                 s_API->shutdown();
             }
-            static void set_context(std::shared_ptr<Window> window) {
-                s_API->set_context(window);
+            static void set_window_context(std::shared_ptr<Window> window) {
+                s_API->set_window_context(window);
             }
           private:
             static std::unique_ptr<API> s_API;

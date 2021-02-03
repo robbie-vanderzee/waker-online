@@ -18,7 +18,7 @@ namespace Andromeda {
                 vkDestroyInstance(m_API_Instance.instance, nullptr);
             }
 
-            void API::set_context(std::shared_ptr<Window> window) {
+            void API::set_window_context(std::shared_ptr<Window> window) {
                 m_Context = Graphics::Context::create_context(window);
                 m_Context->initialize(m_API_Instance.instance);
             }
@@ -51,7 +51,7 @@ namespace Andromeda {
                     ANDROMEDA_CORE_TRACE("{0}", physical_device_properties.deviceName);
                 }
 #endif
-                std::map<unsigned int, VkPhysicalDevice> sorted_physical_devices;
+                std::multimap<unsigned int, VkPhysicalDevice> sorted_physical_devices;
                 for( auto physical_device : physical_devices) {
                     sorted_physical_devices.emplace(evaluate_physical_device(physical_device), physical_device);
                 }
@@ -72,6 +72,12 @@ namespace Andromeda {
                 m_API_Instance.logical_device_status = create_device();
                 ANDROMEDA_CORE_ASSERT(m_API_Instance.logical_device_status == VK_SUCCESS, "Failed to create Vulkan logical device.");
                 vkGetDeviceQueue(m_API_Instance.logical_device, 0, 0, & m_API_Instance.graphics_queue);
+                if(m_Context) {
+                  VkSurfaceKHR surface = std::any_cast<VkSurfaceKHR> (m_Context->get_native_context());
+                  VkBool32 * supported = nullptr;
+                  auto get_physical_device_surface_support_KHR_status = get_physical_device_surface_support_KHR(m_API_Instance.physical_device, 0, surface, supported);
+                  ANDROMEDA_CORE_ASSERT(get_physical_device_surface_support_KHR_status, "Failed to get physical device surface support KHR");
+                }
             }
 
             void API::create_application_info() {
@@ -308,12 +314,15 @@ namespace Andromeda {
             }
 
             void API::create_device_queue_create_info(float & queue_priorities) {
+                auto result = std::find_if(m_API_Instance.queue_family_properties.begin(), m_API_Instance.queue_family_properties.end(), [](const auto & queue_family_property) {
+                    return queue_family_property.queueFlags & VK_QUEUE_GRAPHICS_BIT;
+                });
                 m_API_Instance.device_queue_create_info.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
                 m_API_Instance.device_queue_create_info.pNext = nullptr;
                 m_API_Instance.device_queue_create_info.flags = 0;
-                m_API_Instance.device_queue_create_info.queueFamilyIndex = 0;
+                m_API_Instance.device_queue_create_info.queueFamilyIndex = std::distance(m_API_Instance.queue_family_properties.begin(), result);
                 m_API_Instance.device_queue_create_info.queueCount = 1;
-                m_API_Instance.device_queue_create_info.pQueuePriorities = &queue_priorities;
+                m_API_Instance.device_queue_create_info.pQueuePriorities = & queue_priorities;
             }
 
             void API::create_device_create_info() {
@@ -326,7 +335,7 @@ namespace Andromeda {
                 m_API_Instance.device_create_info.ppEnabledLayerNames = nullptr;
                 m_API_Instance.device_create_info.enabledExtensionCount = 0;
                 m_API_Instance.device_create_info.ppEnabledExtensionNames = nullptr;
-                m_API_Instance.device_create_info.pEnabledFeatures = & m_API_Instance.physical_device_features;
+                m_API_Instance.device_create_info.pEnabledFeatures = nullptr;
 #ifdef DEBUG
                 m_API_Instance.device_create_info.enabledLayerCount = m_API_Instance.instance_create_info.enabledLayerCount;
                 m_API_Instance.device_create_info.ppEnabledLayerNames = m_API_Instance.instance_create_info.ppEnabledLayerNames;

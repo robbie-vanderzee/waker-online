@@ -14,7 +14,7 @@ namespace Andromeda {
         m_Window = Window::create_window(Window_Properties(m_Instance_Name));
         m_Window->set_event_callback(ANDROMEDA_BIND_FN(Instance::on_event));
         Graphics::Renderer::initialize();
-        Graphics::Command::set_context(m_Window);
+        Graphics::Command::set_window_context(m_Window);
     }
 
     Instance::~Instance() {

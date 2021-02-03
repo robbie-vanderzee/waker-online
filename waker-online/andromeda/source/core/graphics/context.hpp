@@ -8,8 +8,11 @@ namespace Andromeda {
         class Context {
           public:
             virtual ~Context() = default;
+
             virtual void initialize(std::any instance) = 0;
             virtual void shutdown() = 0;
+
+            virtual std::any get_native_context() const = 0;
 
             static std::unique_ptr<Context> create_context(std::shared_ptr<Window> window);
         };

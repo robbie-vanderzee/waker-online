@@ -12,9 +12,14 @@ namespace Andromeda {
             class Context : public Andromeda::Graphics::Context {
               public:
                 Context(std::shared_ptr<Window> window);
-                virtual ~Context();
+                virtual ~Context() override;
+
                 virtual void initialize(std::any instance) override;
                 virtual void shutdown() override;
+
+                std::any get_native_context() const override {
+                  return m_Surface;
+                }
 
               private:
                 std::shared_ptr<Window> m_Window;
