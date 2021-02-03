@@ -3,15 +3,15 @@
 #include <andromeda.hpp>
 
 namespace Waker {
-    class Waker : public Andromeda::Instance {
+    class Instance : public Andromeda::Instance {
       public:
-        Waker(const std::string & name = "Waker [ ~ ]");
-        ~Waker();
+        Instance(const std::string & name = "Waker [ ~ ]");
+        ~Instance();
       private:
         std::string m_Instance_Name;
     };
 } /* Waker */
 
 Andromeda::Instance * Andromeda::create_instance() {
-    return new Waker::Waker("Waker Online [ ~ ]");
+    return new Waker::Instance("Waker Online [ ~ ]");
 }

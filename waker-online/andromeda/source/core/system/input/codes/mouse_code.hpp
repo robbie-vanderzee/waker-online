@@ -18,7 +18,7 @@ namespace Andromeda {
         ButtonMiddle           = Button2
     } Mouse;
 
-    inline std::ostream & operator<<(std::ostream & os, Mouse_Code mouse_code) {
+    inline std::ostream & operator<< (std::ostream & os, Mouse_Code mouse_code) {
         os << static_cast<int>(mouse_code);
         return os;
     }

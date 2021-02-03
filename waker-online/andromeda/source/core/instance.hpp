@@ -15,8 +15,8 @@ namespace Andromeda {
         Instance(const std::string & name = "Andromeda /instance");
         virtual ~Instance();
 
-        Instance (const Instance &) = delete;
-        Instance& operator=(const Instance &) = delete;
+        Instance(const Instance &) = delete;
+        Instance & operator= (const Instance &) = delete;
 
         virtual int run();
         void on_event(Event::Event & e);
@@ -38,7 +38,7 @@ namespace Andromeda {
         void set_v_sync(bool v_sync);
 
       private:
-        bool on_window_close(Event::Window_Close &e);
+        bool on_window_close(Event::Window_Close & e);
 
       private:
         bool m_Running = true;

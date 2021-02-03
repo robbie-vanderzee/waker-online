@@ -23,8 +23,8 @@ namespace Andromeda {
 
 // Event type instantiation macro
 #define EVENT_CLASS_TYPE(type) static EVENT_TYPE get_static_type() { return EVENT_TYPE::type; }\
-								virtual EVENT_TYPE get_event_type() const override { return get_static_type(); }\
-								virtual const char * get_event_name() const override { return #type; }
+    virtual EVENT_TYPE get_event_type() const override { return get_static_type(); }\
+    virtual const char * get_event_name() const override { return #type; }
 // Event category instantiation macro
 #define EVENT_CLASS_CATEGORY(category) virtual unsigned int get_category_flags() const override { return category; }
 
@@ -47,7 +47,6 @@ namespace Andromeda {
         class Dispatcher {
           public:
             Dispatcher(Event & event) : m_Event(event) {
-
             }
             template<typename T, typename F>
             bool dispatch(const F & function) {
@@ -61,7 +60,7 @@ namespace Andromeda {
             Event & m_Event;
         };
 
-        inline std::ostream & operator<<(std::ostream & os, const Event & e) {
+        inline std::ostream & operator<< (std::ostream & os, const Event & e) {
             return os << e.to_string();
         }
 

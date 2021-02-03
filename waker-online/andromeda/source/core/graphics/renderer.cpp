@@ -2,12 +2,14 @@
 
 namespace Andromeda {
     namespace Graphics {
-        void Renderer::initialize() {
-            Command::initialize();
-        }
+        namespace Renderer {
+            void initialize() {
+                Command::initialize();
+            }
 
-        void Renderer::shutdown() {
-            Command::shutdown();
-        }
+            void shutdown() {
+                Command::shutdown();
+            }
+        } /* Renderer */
     } /* Graphics */
 } /* Andromeda */

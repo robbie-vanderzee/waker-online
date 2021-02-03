@@ -135,7 +135,7 @@ namespace Andromeda {
         Menu                = 348
     } Key;
 
-    inline std::ostream & operator<<(std::ostream & os, Key_Code key_code) {
+    inline std::ostream & operator<< (std::ostream & os, Key_Code key_code) {
         os << static_cast<int>(key_code);
         return os;
     }

@@ -32,9 +32,8 @@ namespace Andromeda {
                 std::vector<VkExtensionProperties> instance_extension_properties;
                 VkResult enumerate_instance_extension_properties_status = enumerate_instance_extension_properties(instance_extension_properties);
                 ANDROMEDA_CORE_ASSERT(enumerate_instance_extension_properties_status == VK_SUCCESS, "Failed to enumerate Vulkan extension layer properties.");
-
                 ANDROMEDA_CORE_INFO("Vulkan Extensions: ");
-                for (auto & instance_extension_property : instance_extension_properties) ANDROMEDA_CORE_TRACE("{0}", instance_extension_property.extensionName);
+                for(auto & instance_extension_property : instance_extension_properties) ANDROMEDA_CORE_TRACE("{0}", instance_extension_property.extensionName);
 #endif
             }
 
@@ -46,13 +45,13 @@ namespace Andromeda {
 #ifdef DEBUG
                 ANDROMEDA_CORE_INFO("Physical Devices: ");
                 VkPhysicalDeviceProperties physical_device_properties;
-                for (auto & physical_device : physical_devices) {
+                for(auto & physical_device : physical_devices) {
                     vkGetPhysicalDeviceProperties(physical_device, & physical_device_properties);
                     ANDROMEDA_CORE_TRACE("{0}", physical_device_properties.deviceName);
                 }
 #endif
                 std::multimap<unsigned int, VkPhysicalDevice> sorted_physical_devices;
-                for( auto physical_device : physical_devices) {
+                for(auto physical_device : physical_devices) {
                     sorted_physical_devices.emplace(evaluate_physical_device(physical_device), physical_device);
                 }
                 auto best_physical_device = sorted_physical_devices.begin();
@@ -73,10 +72,10 @@ namespace Andromeda {
                 ANDROMEDA_CORE_ASSERT(m_API_Instance.logical_device_status == VK_SUCCESS, "Failed to create Vulkan logical device.");
                 vkGetDeviceQueue(m_API_Instance.logical_device, 0, 0, & m_API_Instance.graphics_queue);
                 if(m_Context) {
-                  VkSurfaceKHR surface = std::any_cast<VkSurfaceKHR> (m_Context->get_native_context());
-                  VkBool32 * supported = nullptr;
-                  auto get_physical_device_surface_support_KHR_status = get_physical_device_surface_support_KHR(m_API_Instance.physical_device, 0, surface, supported);
-                  ANDROMEDA_CORE_ASSERT(get_physical_device_surface_support_KHR_status, "Failed to get physical device surface support KHR");
+                    VkSurfaceKHR surface = std::any_cast<VkSurfaceKHR> (m_Context->get_native_context());
+                    VkBool32 * supported = nullptr;
+                    auto get_physical_device_surface_support_KHR_status = get_physical_device_surface_support_KHR(m_API_Instance.physical_device, 0, surface, supported);
+                    ANDROMEDA_CORE_ASSERT(get_physical_device_surface_support_KHR_status, "Failed to get physical device surface support KHR");
                 }
             }
 
@@ -92,7 +91,7 @@ namespace Andromeda {
 
             void API::create_instance_create_info() {
                 unsigned int glfw_instance_extension_count = 0;
-                const char ** glfw_instance_extensions = glfwGetRequiredInstanceExtensions( & glfw_instance_extension_count);
+                const char ** glfw_instance_extensions = glfwGetRequiredInstanceExtensions(& glfw_instance_extension_count);
                 m_API_Instance.instance_create_info.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
                 m_API_Instance.instance_create_info.pNext = nullptr;
                 m_API_Instance.instance_create_info.flags = 0;
@@ -101,46 +100,43 @@ namespace Andromeda {
                 m_API_Instance.instance_create_info.ppEnabledLayerNames = nullptr;
                 m_API_Instance.instance_create_info.enabledExtensionCount  = glfw_instance_extension_count;
                 m_API_Instance.instance_create_info.ppEnabledExtensionNames = glfw_instance_extensions;
-
 #ifdef DEBUG
                 bool verify_desired_validation_layer_support_status = verify_desired_validation_layer_support(desired_validation_layers);
                 ANDROMEDA_CORE_ASSERT(verify_desired_validation_layer_support_status, "Failed to apply all Vulkan validation layers.");
-
                 m_API_Instance.instance_create_info.enabledLayerCount = desired_validation_layers.size();
                 m_API_Instance.instance_create_info.ppEnabledLayerNames = desired_validation_layers.data();
-
                 ANDROMEDA_CORE_INFO("Enabled Vulkan Validation Layers: ");
-                for (auto & enabled_validation_layer : desired_validation_layers) ANDROMEDA_CORE_TRACE("{0}", enabled_validation_layer);
+                for(auto & enabled_validation_layer : desired_validation_layers) ANDROMEDA_CORE_TRACE("{0}", enabled_validation_layer);
 #endif
             }
 
             VkResult API::create_instance() {
                 VkResult create_instance_status = vkCreateInstance(& m_API_Instance.instance_create_info, nullptr, & m_API_Instance.instance);
                 switch(create_instance_status) {
-                case VK_SUCCESS:
-                    ANDROMEDA_CORE_INFO("Successfully initialized Vulkan API Instance.");
-                    break;
-                case VK_ERROR_OUT_OF_HOST_MEMORY:
-                    ANDROMEDA_CORE_ERROR("Failed to initialize Vulkan API Instance. Host out of memory.");
-                    break;
-                case VK_ERROR_OUT_OF_DEVICE_MEMORY:
-                    ANDROMEDA_CORE_ERROR("Failed to initialize Vulkan API Instance. Device out of memory.");
-                    break;
-                case VK_ERROR_INITIALIZATION_FAILED:
-                    ANDROMEDA_CORE_ERROR("Failed to initialize Vulkan API Instance. Initialization failed.");
-                    break;
-                case VK_ERROR_LAYER_NOT_PRESENT:
-                    ANDROMEDA_CORE_ERROR("Failed to initialize Vulkan API Instance. Validation Layers not present.");
-                    break;
-                case VK_ERROR_EXTENSION_NOT_PRESENT:
-                    ANDROMEDA_CORE_ERROR("Failed to initialize Vulkan API Instance. Extensions not present.");
-                    break;
-                case VK_ERROR_INCOMPATIBLE_DRIVER:
-                    ANDROMEDA_CORE_ERROR("Failed to initialize Vulkan API Instance. Incompatible Driver.");
-                    break;
-                default:
-                    ANDROMEDA_CORE_CRITICAL("Unhandled Vulkan create instance result: {0}.", create_instance_status);
-                    break;
+                    case VK_SUCCESS:
+                        ANDROMEDA_CORE_INFO("Successfully initialized Vulkan API Instance.");
+                        break;
+                    case VK_ERROR_OUT_OF_HOST_MEMORY:
+                        ANDROMEDA_CORE_ERROR("Failed to initialize Vulkan API Instance. Host out of memory.");
+                        break;
+                    case VK_ERROR_OUT_OF_DEVICE_MEMORY:
+                        ANDROMEDA_CORE_ERROR("Failed to initialize Vulkan API Instance. Device out of memory.");
+                        break;
+                    case VK_ERROR_INITIALIZATION_FAILED:
+                        ANDROMEDA_CORE_ERROR("Failed to initialize Vulkan API Instance. Initialization failed.");
+                        break;
+                    case VK_ERROR_LAYER_NOT_PRESENT:
+                        ANDROMEDA_CORE_ERROR("Failed to initialize Vulkan API Instance. Validation Layers not present.");
+                        break;
+                    case VK_ERROR_EXTENSION_NOT_PRESENT:
+                        ANDROMEDA_CORE_ERROR("Failed to initialize Vulkan API Instance. Extensions not present.");
+                        break;
+                    case VK_ERROR_INCOMPATIBLE_DRIVER:
+                        ANDROMEDA_CORE_ERROR("Failed to initialize Vulkan API Instance. Incompatible Driver.");
+                        break;
+                    default:
+                        ANDROMEDA_CORE_CRITICAL("Unhandled Vulkan create instance result: {0}.", create_instance_status);
+                        break;
                 }
                 return create_instance_status;
             }
@@ -148,33 +144,33 @@ namespace Andromeda {
             VkResult API::create_device() {
                 VkResult create_device_status = vkCreateDevice(m_API_Instance.physical_device, &m_API_Instance.device_create_info, nullptr, &m_API_Instance.logical_device);
                 switch(create_device_status) {
-                case VK_SUCCESS:
-                    ANDROMEDA_CORE_INFO("Successfully initialized Vulkan API Device.");
-                    break;
-                case VK_ERROR_OUT_OF_HOST_MEMORY:
-                    ANDROMEDA_CORE_ERROR("Failed to initialize Vulkan API Device Host out of memory.");
-                    break;
-                case VK_ERROR_OUT_OF_DEVICE_MEMORY:
-                    ANDROMEDA_CORE_ERROR("Failed to initialize Vulkan API Device. Device out of memory.");
-                    break;
-                case VK_ERROR_INITIALIZATION_FAILED:
-                    ANDROMEDA_CORE_ERROR("Failed to initialize Vulkan API Device. Initialization failed.");
-                    break;
-                case VK_ERROR_EXTENSION_NOT_PRESENT:
-                    ANDROMEDA_CORE_ERROR("Failed to initialize Vulkan API Device. Extensions not present.");
-                    break;
-                case VK_ERROR_FEATURE_NOT_PRESENT:
-                    ANDROMEDA_CORE_ERROR("Failed to initialize Vulkan API Device. Features not present.");
-                    break;
-                case VK_ERROR_TOO_MANY_OBJECTS:
-                    ANDROMEDA_CORE_ERROR("Failed to initialize Vulkan API Device. Too many objects.");
-                    break;
-                case VK_ERROR_DEVICE_LOST:
-                    ANDROMEDA_CORE_ERROR("Failed to initialize Vulkan API Device. The device was lost.");
-                    break;
-                default:
-                    ANDROMEDA_CORE_CRITICAL("Unhandled Vulkan create device result: {0}.", create_device_status);
-                    break;
+                    case VK_SUCCESS:
+                        ANDROMEDA_CORE_INFO("Successfully initialized Vulkan API Device.");
+                        break;
+                    case VK_ERROR_OUT_OF_HOST_MEMORY:
+                        ANDROMEDA_CORE_ERROR("Failed to initialize Vulkan API Device Host out of memory.");
+                        break;
+                    case VK_ERROR_OUT_OF_DEVICE_MEMORY:
+                        ANDROMEDA_CORE_ERROR("Failed to initialize Vulkan API Device. Device out of memory.");
+                        break;
+                    case VK_ERROR_INITIALIZATION_FAILED:
+                        ANDROMEDA_CORE_ERROR("Failed to initialize Vulkan API Device. Initialization failed.");
+                        break;
+                    case VK_ERROR_EXTENSION_NOT_PRESENT:
+                        ANDROMEDA_CORE_ERROR("Failed to initialize Vulkan API Device. Extensions not present.");
+                        break;
+                    case VK_ERROR_FEATURE_NOT_PRESENT:
+                        ANDROMEDA_CORE_ERROR("Failed to initialize Vulkan API Device. Features not present.");
+                        break;
+                    case VK_ERROR_TOO_MANY_OBJECTS:
+                        ANDROMEDA_CORE_ERROR("Failed to initialize Vulkan API Device. Too many objects.");
+                        break;
+                    case VK_ERROR_DEVICE_LOST:
+                        ANDROMEDA_CORE_ERROR("Failed to initialize Vulkan API Device. The device was lost.");
+                        break;
+                    default:
+                        ANDROMEDA_CORE_CRITICAL("Unhandled Vulkan create device result: {0}.", create_device_status);
+                        break;
                 }
                 return create_device_status;
             }
@@ -188,21 +184,21 @@ namespace Andromeda {
                 VkResult enumerate_instance_extensions_properties_status = vkEnumerateInstanceExtensionProperties(nullptr, & instance_extension_properties_count, instance_extension_properties.data());
                 ANDROMEDA_CORE_ASSERT(enumerate_instance_extensions_properties_status == VK_SUCCESS, "Failed to enumerate Vulkan extension properties.");
                 switch(enumerate_instance_extensions_properties_status) {
-                case VK_SUCCESS:
-                    ANDROMEDA_CORE_INFO("Successfully enumerated extension properties.");
-                    break;
-                case VK_INCOMPLETE:
-                    ANDROMEDA_CORE_WARN("Failed to enumerate extension properties. Provided instance_extension_properties_count {0} was invalid.", instance_extension_properties_count);
-                    break;
-                case VK_ERROR_OUT_OF_HOST_MEMORY:
-                    ANDROMEDA_CORE_ERROR("Failed to enumerate extension properties. Host out of memory.");
-                    break;
-                case VK_ERROR_OUT_OF_DEVICE_MEMORY:
-                    ANDROMEDA_CORE_ERROR("Failed to enumerate extension properties. Device out of memory.");
-                    break;
-                default:
-                    ANDROMEDA_CORE_CRITICAL("Unhandled enumerate extension result: {0}.", enumerate_instance_extensions_properties_status);
-                    break;
+                    case VK_SUCCESS:
+                        ANDROMEDA_CORE_INFO("Successfully enumerated extension properties.");
+                        break;
+                    case VK_INCOMPLETE:
+                        ANDROMEDA_CORE_WARN("Failed to enumerate extension properties. Provided instance_extension_properties_count {0} was invalid.", instance_extension_properties_count);
+                        break;
+                    case VK_ERROR_OUT_OF_HOST_MEMORY:
+                        ANDROMEDA_CORE_ERROR("Failed to enumerate extension properties. Host out of memory.");
+                        break;
+                    case VK_ERROR_OUT_OF_DEVICE_MEMORY:
+                        ANDROMEDA_CORE_ERROR("Failed to enumerate extension properties. Device out of memory.");
+                        break;
+                    default:
+                        ANDROMEDA_CORE_CRITICAL("Unhandled enumerate extension result: {0}.", enumerate_instance_extensions_properties_status);
+                        break;
                 }
                 return enumerate_instance_extensions_properties_status;
             }
@@ -214,21 +210,21 @@ namespace Andromeda {
                 available_validation_layers.resize(layer_count);
                 VkResult enumerate_instance_layer_properties_status = vkEnumerateInstanceLayerProperties(& layer_count, available_validation_layers.data());
                 switch(enumerate_instance_layer_properties_status) {
-                case VK_SUCCESS:
-                    ANDROMEDA_CORE_INFO("Successfully enumerated validation layer properties.");
-                    break;
-                case VK_INCOMPLETE:
-                    ANDROMEDA_CORE_WARN("Failed to enumerate validation layer properties. Provided layer_count {0} was invalid.", layer_count);
-                    break;
-                case VK_ERROR_OUT_OF_HOST_MEMORY:
-                    ANDROMEDA_CORE_ERROR("Failed to enumerate validation layer properties. Host out of memory.");
-                    break;
-                case VK_ERROR_OUT_OF_DEVICE_MEMORY:
-                    ANDROMEDA_CORE_ERROR("Failed to enumerate validation layer properties. Device out of memory.");
-                    break;
-                default:
-                    ANDROMEDA_CORE_CRITICAL("Unhandled enumerate validation layer result: {0}.", enumerate_instance_layer_properties_status);
-                    break;
+                    case VK_SUCCESS:
+                        ANDROMEDA_CORE_INFO("Successfully enumerated validation layer properties.");
+                        break;
+                    case VK_INCOMPLETE:
+                        ANDROMEDA_CORE_WARN("Failed to enumerate validation layer properties. Provided layer_count {0} was invalid.", layer_count);
+                        break;
+                    case VK_ERROR_OUT_OF_HOST_MEMORY:
+                        ANDROMEDA_CORE_ERROR("Failed to enumerate validation layer properties. Host out of memory.");
+                        break;
+                    case VK_ERROR_OUT_OF_DEVICE_MEMORY:
+                        ANDROMEDA_CORE_ERROR("Failed to enumerate validation layer properties. Device out of memory.");
+                        break;
+                    default:
+                        ANDROMEDA_CORE_CRITICAL("Unhandled enumerate validation layer result: {0}.", enumerate_instance_layer_properties_status);
+                        break;
                 }
                 return enumerate_instance_layer_properties_status;
             }
@@ -241,47 +237,47 @@ namespace Andromeda {
                 physical_devices.resize(physical_device_count);
                 VkResult enumerate_physical_devices_status = vkEnumeratePhysicalDevices(m_API_Instance.instance, & physical_device_count, physical_devices.data());
                 switch(enumerate_physical_devices_status) {
-                case VK_SUCCESS:
-                    ANDROMEDA_CORE_INFO("Successfully enumerated physical devices.");
-                    break;
-                case VK_INCOMPLETE:
-                    ANDROMEDA_CORE_WARN("Failed to enumerate physical devices. Provided physical_device_count {0} was invalid.", physical_device_count);
-                    break;
-                case VK_ERROR_OUT_OF_HOST_MEMORY:
-                    ANDROMEDA_CORE_ERROR("Failed to enumerate physical devices. Host out of memory.");
-                    break;
-                case VK_ERROR_OUT_OF_DEVICE_MEMORY:
-                    ANDROMEDA_CORE_ERROR("Failed to enumerate physical devices. Device out of memory.");
-                    break;
-                case VK_ERROR_INITIALIZATION_FAILED:
-                    ANDROMEDA_CORE_ERROR("Failed to enumerate physical devices. Initialization failed.");
-                    break;
-                default:
-                    ANDROMEDA_CORE_CRITICAL("Unhandled enumerate physical device result: {0}.", enumerate_physical_devices_status);
-                    break;
+                    case VK_SUCCESS:
+                        ANDROMEDA_CORE_INFO("Successfully enumerated physical devices.");
+                        break;
+                    case VK_INCOMPLETE:
+                        ANDROMEDA_CORE_WARN("Failed to enumerate physical devices. Provided physical_device_count {0} was invalid.", physical_device_count);
+                        break;
+                    case VK_ERROR_OUT_OF_HOST_MEMORY:
+                        ANDROMEDA_CORE_ERROR("Failed to enumerate physical devices. Host out of memory.");
+                        break;
+                    case VK_ERROR_OUT_OF_DEVICE_MEMORY:
+                        ANDROMEDA_CORE_ERROR("Failed to enumerate physical devices. Device out of memory.");
+                        break;
+                    case VK_ERROR_INITIALIZATION_FAILED:
+                        ANDROMEDA_CORE_ERROR("Failed to enumerate physical devices. Initialization failed.");
+                        break;
+                    default:
+                        ANDROMEDA_CORE_CRITICAL("Unhandled enumerate physical device result: {0}.", enumerate_physical_devices_status);
+                        break;
                 }
                 return enumerate_physical_devices_status;
             }
 
-            VkResult API::get_physical_device_surface_support_KHR(VkPhysicalDevice device, unsigned int queue_family_index, VkSurfaceKHR surface, VkBool32 * supported){
+            VkResult API::get_physical_device_surface_support_KHR(VkPhysicalDevice device, unsigned int queue_family_index, VkSurfaceKHR surface, VkBool32 * supported) {
                 VkResult get_physical_device_surface_support_KHR_status = vkGetPhysicalDeviceSurfaceSupportKHR(device, queue_family_index, surface, supported);
                 ANDROMEDA_CORE_ASSERT(get_physical_device_surface_support_KHR_status == VK_SUCCESS, "Failed to determine device surface support.");
-                switch (get_physical_device_surface_support_KHR_status) {
-                  case VK_SUCCESS:
-                      ANDROMEDA_CORE_INFO("Successfully determined phyiscal device surface support.");
-                      break;
-                  case VK_ERROR_OUT_OF_HOST_MEMORY:
-                      ANDROMEDA_CORE_ERROR("Failed to determine phyiscal device surface support. Host out of memory.");
-                      break;
-                  case VK_ERROR_OUT_OF_DEVICE_MEMORY:
-                      ANDROMEDA_CORE_ERROR("Failed to determine phyiscal device surface support. Device out of memory.");
-                      break;
-                  case VK_ERROR_SURFACE_LOST_KHR:
-                      ANDROMEDA_CORE_ERROR("Failed to determine phyiscal device surface support. Surface lost.");
-                      break;
-                  default:
-                      ANDROMEDA_CORE_CRITICAL("Unhandled determine phyiscal device surface support result: {0}.", get_physical_device_surface_support_KHR_status);
-                      break;
+                switch(get_physical_device_surface_support_KHR_status) {
+                    case VK_SUCCESS:
+                        ANDROMEDA_CORE_INFO("Successfully determined phyiscal device surface support.");
+                        break;
+                    case VK_ERROR_OUT_OF_HOST_MEMORY:
+                        ANDROMEDA_CORE_ERROR("Failed to determine phyiscal device surface support. Host out of memory.");
+                        break;
+                    case VK_ERROR_OUT_OF_DEVICE_MEMORY:
+                        ANDROMEDA_CORE_ERROR("Failed to determine phyiscal device surface support. Device out of memory.");
+                        break;
+                    case VK_ERROR_SURFACE_LOST_KHR:
+                        ANDROMEDA_CORE_ERROR("Failed to determine phyiscal device surface support. Surface lost.");
+                        break;
+                    default:
+                        ANDROMEDA_CORE_CRITICAL("Unhandled determine phyiscal device surface support result: {0}.", get_physical_device_surface_support_KHR_status);
+                        break;
                 }
                 return get_physical_device_surface_support_KHR_status;
             }
@@ -299,8 +295,7 @@ namespace Andromeda {
                 VkPhysicalDeviceFeatures physical_device_features;
                 vkGetPhysicalDeviceProperties(physical_device, & physical_device_properties);
                 vkGetPhysicalDeviceFeatures(physical_device, & physical_device_features);
-
-                if (physical_device_properties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU) score++;
+                if(physical_device_properties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU) score++;
                 if(!physical_device_features.geometryShader) return 0;
                 score += physical_device_properties.limits.maxImageDimension3D;
                 return score;
@@ -317,12 +312,14 @@ namespace Andromeda {
                 auto result = std::find_if(m_API_Instance.queue_family_properties.begin(), m_API_Instance.queue_family_properties.end(), [](const auto & queue_family_property) {
                     return queue_family_property.queueFlags & VK_QUEUE_GRAPHICS_BIT;
                 });
-                m_API_Instance.device_queue_create_info.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-                m_API_Instance.device_queue_create_info.pNext = nullptr;
-                m_API_Instance.device_queue_create_info.flags = 0;
-                m_API_Instance.device_queue_create_info.queueFamilyIndex = std::distance(m_API_Instance.queue_family_properties.begin(), result);
-                m_API_Instance.device_queue_create_info.queueCount = 1;
-                m_API_Instance.device_queue_create_info.pQueuePriorities = & queue_priorities;
+                VkDeviceQueueCreateInfo device_queue_create_info;
+                device_queue_create_info.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+                device_queue_create_info.pNext = nullptr;
+                device_queue_create_info.flags = 0;
+                device_queue_create_info.queueFamilyIndex = std::distance(m_API_Instance.queue_family_properties.begin(), result);
+                device_queue_create_info.queueCount = 1;
+                device_queue_create_info.pQueuePriorities = & queue_priorities;
+                m_API_Instance.device_queue_create_info = device_queue_create_info;
             }
 
             void API::create_device_create_info() {
@@ -346,10 +343,8 @@ namespace Andromeda {
                 std::vector<VkLayerProperties> available_validation_layers;
                 VkResult enumerate_instance_layer_properties_status = enumerate_instance_layer_properties(available_validation_layers);
                 ANDROMEDA_CORE_ASSERT(enumerate_instance_layer_properties_status == VK_SUCCESS, "Failed to enumate Vulkan validation layer properties.");
-
                 ANDROMEDA_CORE_INFO("Available Vulkan Validation Layers: ");
-                for (auto & available_validation_layer : available_validation_layers) ANDROMEDA_CORE_TRACE("{0}", available_validation_layer.layerName);
-
+                for(auto & available_validation_layer : available_validation_layers) ANDROMEDA_CORE_TRACE("{0}", available_validation_layer.layerName);
                 auto result = std::all_of(desired_validation_layers.begin(), desired_validation_layers.end(), [available_validation_layers](const char * desired_validation_layer) {
                     auto result = std::find_if(available_validation_layers.begin(), available_validation_layers.end(), [desired_validation_layer](const VkLayerProperties & vkLayer) {
                         return strcmp(desired_validation_layer, vkLayer.layerName) == 0;

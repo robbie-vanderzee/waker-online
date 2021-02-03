@@ -18,7 +18,7 @@ namespace Andromeda {
                 virtual void shutdown() override;
 
                 std::any get_native_context() const override {
-                  return m_Surface;
+                    return m_Surface;
                 }
 
               private:

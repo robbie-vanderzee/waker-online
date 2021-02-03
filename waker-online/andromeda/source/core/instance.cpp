@@ -14,7 +14,7 @@ namespace Andromeda {
         m_Window = Window::create_window(Window_Properties(m_Instance_Name));
         m_Window->set_event_callback(ANDROMEDA_BIND_FN(Instance::on_event));
         Graphics::Renderer::initialize();
-        Graphics::Command::set_window_context(m_Window);
+        Graphics::Renderer::Command::set_window_context(m_Window);
     }
 
     Instance::~Instance() {
@@ -33,7 +33,7 @@ namespace Andromeda {
         ANDROMEDA_CORE_INFO(e);
 #endif
         Event::Dispatcher dispatcher(e);
-        dispatcher.dispatch<Event::Window_Close>(ANDROMEDA_BIND_FN(Instance::on_window_close));
+        dispatcher.dispatch<Event::Window_Close> (ANDROMEDA_BIND_FN(Instance::on_window_close));
     }
 
     bool Instance::on_window_close(Event::Window_Close &) {

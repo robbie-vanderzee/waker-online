@@ -17,7 +17,7 @@ namespace Andromeda {
     };
     class Window {
       public:
-        using Event_Callback_Function = std::function<void(Event::Event & )>;
+        using Event_Callback_Function = std::function<void (Event::Event &) >;
 
         virtual ~Window() = default;
 

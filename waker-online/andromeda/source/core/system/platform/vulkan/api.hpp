@@ -28,6 +28,7 @@ namespace Andromeda {
                 VkResult logical_device_status;
                 /* Pipeline */
                 VkQueue graphics_queue;
+                VkQueue present_queue;
 
             };
             class API : public Andromeda::Graphics::API {
