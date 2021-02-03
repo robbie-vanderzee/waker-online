@@ -13,5 +13,5 @@ namespace Waker {
 } /* Waker */
 
 Andromeda::Instance * Andromeda::create_instance() {
-    return new Waker::Instance("Waker Online [ ~ ]");
+    return new Waker::Instance("Waker [ ~ ] Online");
 }
