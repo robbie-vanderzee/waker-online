@@ -50,8 +50,9 @@ A C++ based MMORPG. Vulkan based & raytraced. Long term educational / life proje
   git submodule update --init
   ```
 3. Run premake build generation
-  *Note configuration options --logging to enable debug logging
-  *Note premake5 --help for a full list of build options
+
+  * Note configuration options --logging to enable debug logging
+  * Note premake5 --help for a full list of build options
 
   ```
   premake5 gmake2 --logging
@@ -59,7 +60,7 @@ A C++ based MMORPG. Vulkan based & raytraced. Long term educational / life proje
 
 4. Run make on desired configuration
 
-  *Note debug has Vulkan Validation layers included
+  * Note debug has Vulkan Validation layers included
   ```
   make config=debug
   make config=release
