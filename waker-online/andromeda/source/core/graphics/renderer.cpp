@@ -7,6 +7,10 @@ namespace Andromeda {
                 Command::initialize();
             }
 
+            void process() {
+                Command::process();
+            }
+
             void shutdown() {
                 Command::shutdown();
             }

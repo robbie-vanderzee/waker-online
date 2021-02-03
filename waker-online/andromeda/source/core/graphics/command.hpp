@@ -12,6 +12,9 @@ namespace Andromeda {
                 static void initialize() {
                     s_API->initialize();
                 }
+                static void process() {
+                    s_API->process();
+                }
                 static void shutdown() {
                     s_API->shutdown();
                 }

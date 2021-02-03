@@ -14,6 +14,7 @@ namespace Andromeda {
             virtual ~API() = default;
 
             virtual void initialize() = 0;
+            virtual void process() = 0;
             virtual void shutdown() = 0;
 
             virtual void set_window_context(std::shared_ptr<Window> window) = 0;

@@ -7,8 +7,11 @@ namespace Andromeda {
             void API::initialize() {
                 ANDROMEDA_CORE_INFO("Initializing Vulkan API.");
                 generate_vulkan_instance();
-                select_physical_device();
-                create_logical_device();
+            }
+
+            void API::process() {
+              select_physical_device();
+              create_logical_device();
             }
 
             void API::shutdown() {
@@ -61,6 +64,19 @@ namespace Andromeda {
                 vkGetPhysicalDeviceFeatures(m_API_Instance.physical_device, & m_API_Instance.physical_device_features);
                 get_queue_family_properties(m_API_Instance.queue_family_properties);
                 verify_queue_family_properties();
+                if(m_Context) {
+                    VkSurfaceKHR surface = std::any_cast<VkSurfaceKHR> (m_Context->get_native_context());
+                    auto result = std::find_if(m_API_Instance.queue_family_properties.begin(), m_API_Instance.queue_family_properties.end(), [this, surface](const auto &, int index = 0) {
+                        VkBool32 supported = VK_FALSE;
+                        auto get_physical_device_surface_support_KHR_status = get_physical_device_surface_support_KHR(m_API_Instance.physical_device, index++, surface, & supported);
+                        ANDROMEDA_CORE_ASSERT(get_physical_device_surface_support_KHR_status == VK_SUCCESS, "Failed to get physical device surface support KHR");
+                        return supported == VK_TRUE;
+                    });
+                    ANDROMEDA_CORE_ASSERT(result != m_API_Instance.queue_family_properties.end(), "Failed to find a present capable queue!");
+                    m_API_Instance.present_queue_index = std::distance(result, m_API_Instance.queue_family_properties.begin());
+                } else {
+                    ANDROMEDA_CORE_INFO("No present queue selected.");
+                }
                 ANDROMEDA_CORE_INFO("Selected Device: {0}", m_API_Instance.physical_device_properties.deviceName);
             }
 
@@ -70,13 +86,8 @@ namespace Andromeda {
                 create_device_create_info();
                 m_API_Instance.logical_device_status = create_device();
                 ANDROMEDA_CORE_ASSERT(m_API_Instance.logical_device_status == VK_SUCCESS, "Failed to create Vulkan logical device.");
-                vkGetDeviceQueue(m_API_Instance.logical_device, 0, 0, & m_API_Instance.graphics_queue);
-                if(m_Context) {
-                    VkSurfaceKHR surface = std::any_cast<VkSurfaceKHR> (m_Context->get_native_context());
-                    VkBool32 * supported = nullptr;
-                    auto get_physical_device_surface_support_KHR_status = get_physical_device_surface_support_KHR(m_API_Instance.physical_device, 0, surface, supported);
-                    ANDROMEDA_CORE_ASSERT(get_physical_device_surface_support_KHR_status, "Failed to get physical device surface support KHR");
-                }
+                vkGetDeviceQueue(m_API_Instance.logical_device, m_API_Instance.graphics_queue_index.value(), 0, & m_API_Instance.graphics_queue);
+                vkGetDeviceQueue(m_API_Instance.logical_device, m_API_Instance.present_queue_index.value(), 0, & m_API_Instance.present_queue);
             }
 
             void API::create_application_info() {
@@ -306,28 +317,29 @@ namespace Andromeda {
                     return queue_family_property.queueFlags & VK_QUEUE_GRAPHICS_BIT;
                 });
                 ANDROMEDA_CORE_ASSERT(result != m_API_Instance.queue_family_properties.end(), "Failed to find necessary queue families in physical device");
+                m_API_Instance.graphics_queue_index = std::distance(result, m_API_Instance.queue_family_properties.begin());
             }
 
             void API::create_device_queue_create_info(float & queue_priorities) {
-                auto result = std::find_if(m_API_Instance.queue_family_properties.begin(), m_API_Instance.queue_family_properties.end(), [](const auto & queue_family_property) {
-                    return queue_family_property.queueFlags & VK_QUEUE_GRAPHICS_BIT;
-                });
-                VkDeviceQueueCreateInfo device_queue_create_info;
-                device_queue_create_info.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-                device_queue_create_info.pNext = nullptr;
-                device_queue_create_info.flags = 0;
-                device_queue_create_info.queueFamilyIndex = std::distance(m_API_Instance.queue_family_properties.begin(), result);
-                device_queue_create_info.queueCount = 1;
-                device_queue_create_info.pQueuePriorities = & queue_priorities;
-                m_API_Instance.device_queue_create_info = device_queue_create_info;
+                std::set<unsigned int> queues = {m_API_Instance.graphics_queue_index.value(), m_API_Instance.present_queue_index.value()};
+                for (auto index : queues) {
+                  VkDeviceQueueCreateInfo device_queue_create_info;
+                  device_queue_create_info.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+                  device_queue_create_info.pNext = nullptr;
+                  device_queue_create_info.flags = 0;
+                  device_queue_create_info.queueFamilyIndex = index;
+                  device_queue_create_info.queueCount = 1;
+                  device_queue_create_info.pQueuePriorities = & queue_priorities;
+                  m_API_Instance.device_queue_create_infos.push_back(device_queue_create_info);
+                }
             }
 
             void API::create_device_create_info() {
                 m_API_Instance.device_create_info.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
                 m_API_Instance.device_create_info.pNext = nullptr;
                 m_API_Instance.device_create_info.flags = 0;
-                m_API_Instance.device_create_info.queueCreateInfoCount = 1;
-                m_API_Instance.device_create_info.pQueueCreateInfos = & m_API_Instance.device_queue_create_info;
+                m_API_Instance.device_create_info.queueCreateInfoCount = m_API_Instance.device_queue_create_infos.size();
+                m_API_Instance.device_create_info.pQueueCreateInfos = m_API_Instance.device_queue_create_infos.data();
                 m_API_Instance.device_create_info.enabledLayerCount = 0;
                 m_API_Instance.device_create_info.ppEnabledLayerNames = nullptr;
                 m_API_Instance.device_create_info.enabledExtensionCount = 0;

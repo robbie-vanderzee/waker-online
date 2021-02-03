@@ -22,7 +22,9 @@ namespace Andromeda {
                 VkPhysicalDeviceFeatures physical_device_features;
                 std::vector<VkQueueFamilyProperties> queue_family_properties;
                 /* Logical Device */
-                VkDeviceQueueCreateInfo device_queue_create_info;
+                std::vector<VkDeviceQueueCreateInfo> device_queue_create_infos;
+                std::optional<unsigned int> graphics_queue_index;
+                std::optional<unsigned int> present_queue_index;
                 VkDeviceCreateInfo device_create_info;
                 VkDevice logical_device;
                 VkResult logical_device_status;
@@ -34,6 +36,7 @@ namespace Andromeda {
             class API : public Andromeda::Graphics::API {
               public:
                 virtual void initialize() override;
+                virtual void process() override;
                 virtual void shutdown() override;
 
                 virtual void set_window_context(std::shared_ptr<Window> window) override;
