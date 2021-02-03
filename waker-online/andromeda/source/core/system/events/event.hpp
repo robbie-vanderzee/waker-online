@@ -50,7 +50,7 @@ namespace Andromeda {
             }
             template<typename T, typename F>
             bool dispatch(const F & function) {
-                if(m_Event.get_event_type() == T::get_static_type()) {
+                if (m_Event.get_event_type() == T::get_static_type()) {
                     m_Event.active = function(static_cast<T &>(m_Event));
                     return true;
                 }

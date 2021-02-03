@@ -23,7 +23,7 @@ namespace Andromeda {
     }
 
     int Instance::run() {
-        while(m_Running) {
+        while (m_Running) {
             m_Window->on_update();
         }
         return EXIT_SUCCESS;

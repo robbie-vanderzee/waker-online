@@ -48,16 +48,17 @@ workspace "waker-online"
     defines {
       "DEBUG"
     }
-    warnings "extra"
-    runtime "debug"
-    symbols "on"
+    warnings "Extra"
+    runtime "Debug"
+    symbols "On"
 
   filter "configurations:release"
     defines {
       "RELEASE"
     }
-    runtime "release"
-    optimize "on"
+    warnings "Extra"
+    runtime "Release"
+    optimize "Speed"
 
   filter "system:linux"
     defines {

@@ -8,7 +8,7 @@ namespace Andromeda {
         API_TYPE API::s_API = API_TYPE::Vulkan;
 #endif
         std::unique_ptr<API> API::create_API() {
-            switch(s_API) {
+            switch (s_API) {
                 case API_TYPE::None:
                     ANDROMEDA_CORE_ASSERT(false, "Graphics API <NONE> is unsupported.");
                     return nullptr;

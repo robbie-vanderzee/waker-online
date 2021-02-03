@@ -10,13 +10,13 @@ namespace Andromeda {
             }
 
             void API::process() {
-              select_physical_device();
-              create_logical_device();
+                select_physical_device();
+                create_logical_device();
             }
 
             void API::shutdown() {
                 ANDROMEDA_CORE_INFO("Terminating Vulkan API.");
-                if(m_Context) m_Context->shutdown();
+                if (m_Context) m_Context->shutdown();
                 vkDestroyDevice(m_API_Instance.logical_device, nullptr);
                 vkDestroyInstance(m_API_Instance.instance, nullptr);
             }
@@ -36,7 +36,7 @@ namespace Andromeda {
                 VkResult enumerate_instance_extension_properties_status = enumerate_instance_extension_properties(instance_extension_properties);
                 ANDROMEDA_CORE_ASSERT(enumerate_instance_extension_properties_status == VK_SUCCESS, "Failed to enumerate Vulkan extension layer properties.");
                 ANDROMEDA_CORE_INFO("Vulkan Extensions: ");
-                for(auto & instance_extension_property : instance_extension_properties) ANDROMEDA_CORE_TRACE("{0}", instance_extension_property.extensionName);
+                for (auto & instance_extension_property : instance_extension_properties) ANDROMEDA_CORE_TRACE("{0}", instance_extension_property.extensionName);
 #endif
             }
 
@@ -48,13 +48,13 @@ namespace Andromeda {
 #ifdef DEBUG
                 ANDROMEDA_CORE_INFO("Physical Devices: ");
                 VkPhysicalDeviceProperties physical_device_properties;
-                for(auto & physical_device : physical_devices) {
+                for (auto & physical_device : physical_devices) {
                     vkGetPhysicalDeviceProperties(physical_device, & physical_device_properties);
                     ANDROMEDA_CORE_TRACE("{0}", physical_device_properties.deviceName);
                 }
 #endif
                 std::multimap<unsigned int, VkPhysicalDevice> sorted_physical_devices;
-                for(auto physical_device : physical_devices) {
+                for (auto physical_device : physical_devices) {
                     sorted_physical_devices.emplace(evaluate_physical_device(physical_device), physical_device);
                 }
                 auto best_physical_device = sorted_physical_devices.begin();
@@ -64,7 +64,7 @@ namespace Andromeda {
                 vkGetPhysicalDeviceFeatures(m_API_Instance.physical_device, & m_API_Instance.physical_device_features);
                 get_queue_family_properties(m_API_Instance.queue_family_properties);
                 verify_queue_family_properties();
-                if(m_Context) {
+                if (m_Context) {
                     VkSurfaceKHR surface = std::any_cast<VkSurfaceKHR> (m_Context->get_native_context());
                     auto result = std::find_if(m_API_Instance.queue_family_properties.begin(), m_API_Instance.queue_family_properties.end(), [this, surface](const auto &, int index = 0) {
                         VkBool32 supported = VK_FALSE;
@@ -117,13 +117,13 @@ namespace Andromeda {
                 m_API_Instance.instance_create_info.enabledLayerCount = desired_validation_layers.size();
                 m_API_Instance.instance_create_info.ppEnabledLayerNames = desired_validation_layers.data();
                 ANDROMEDA_CORE_INFO("Enabled Vulkan Validation Layers: ");
-                for(auto & enabled_validation_layer : desired_validation_layers) ANDROMEDA_CORE_TRACE("{0}", enabled_validation_layer);
+                for (auto & enabled_validation_layer : desired_validation_layers) ANDROMEDA_CORE_TRACE("{0}", enabled_validation_layer);
 #endif
             }
 
             VkResult API::create_instance() {
                 VkResult create_instance_status = vkCreateInstance(& m_API_Instance.instance_create_info, nullptr, & m_API_Instance.instance);
-                switch(create_instance_status) {
+                switch (create_instance_status) {
                     case VK_SUCCESS:
                         ANDROMEDA_CORE_INFO("Successfully initialized Vulkan API Instance.");
                         break;
@@ -154,7 +154,7 @@ namespace Andromeda {
 
             VkResult API::create_device() {
                 VkResult create_device_status = vkCreateDevice(m_API_Instance.physical_device, &m_API_Instance.device_create_info, nullptr, &m_API_Instance.logical_device);
-                switch(create_device_status) {
+                switch (create_device_status) {
                     case VK_SUCCESS:
                         ANDROMEDA_CORE_INFO("Successfully initialized Vulkan API Device.");
                         break;
@@ -194,7 +194,7 @@ namespace Andromeda {
                 instance_extension_properties.resize(instance_extension_properties_count);
                 VkResult enumerate_instance_extensions_properties_status = vkEnumerateInstanceExtensionProperties(nullptr, & instance_extension_properties_count, instance_extension_properties.data());
                 ANDROMEDA_CORE_ASSERT(enumerate_instance_extensions_properties_status == VK_SUCCESS, "Failed to enumerate Vulkan extension properties.");
-                switch(enumerate_instance_extensions_properties_status) {
+                switch (enumerate_instance_extensions_properties_status) {
                     case VK_SUCCESS:
                         ANDROMEDA_CORE_INFO("Successfully enumerated extension properties.");
                         break;
@@ -220,7 +220,7 @@ namespace Andromeda {
                 ANDROMEDA_CORE_ASSERT(count_instance_layer_properties_status == VK_SUCCESS, "Failed to count Vulkan validation layers.");
                 available_validation_layers.resize(layer_count);
                 VkResult enumerate_instance_layer_properties_status = vkEnumerateInstanceLayerProperties(& layer_count, available_validation_layers.data());
-                switch(enumerate_instance_layer_properties_status) {
+                switch (enumerate_instance_layer_properties_status) {
                     case VK_SUCCESS:
                         ANDROMEDA_CORE_INFO("Successfully enumerated validation layer properties.");
                         break;
@@ -247,7 +247,7 @@ namespace Andromeda {
                 ANDROMEDA_CORE_ASSERT(physical_device_count > 0, "No physical devices found.");
                 physical_devices.resize(physical_device_count);
                 VkResult enumerate_physical_devices_status = vkEnumeratePhysicalDevices(m_API_Instance.instance, & physical_device_count, physical_devices.data());
-                switch(enumerate_physical_devices_status) {
+                switch (enumerate_physical_devices_status) {
                     case VK_SUCCESS:
                         ANDROMEDA_CORE_INFO("Successfully enumerated physical devices.");
                         break;
@@ -273,7 +273,7 @@ namespace Andromeda {
             VkResult API::get_physical_device_surface_support_KHR(VkPhysicalDevice device, unsigned int queue_family_index, VkSurfaceKHR surface, VkBool32 * supported) {
                 VkResult get_physical_device_surface_support_KHR_status = vkGetPhysicalDeviceSurfaceSupportKHR(device, queue_family_index, surface, supported);
                 ANDROMEDA_CORE_ASSERT(get_physical_device_surface_support_KHR_status == VK_SUCCESS, "Failed to determine device surface support.");
-                switch(get_physical_device_surface_support_KHR_status) {
+                switch (get_physical_device_surface_support_KHR_status) {
                     case VK_SUCCESS:
                         ANDROMEDA_CORE_INFO("Successfully determined phyiscal device surface support.");
                         break;
@@ -306,8 +306,8 @@ namespace Andromeda {
                 VkPhysicalDeviceFeatures physical_device_features;
                 vkGetPhysicalDeviceProperties(physical_device, & physical_device_properties);
                 vkGetPhysicalDeviceFeatures(physical_device, & physical_device_features);
-                if(physical_device_properties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU) score++;
-                if(!physical_device_features.geometryShader) return 0;
+                if (physical_device_properties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU) score++;
+                if (!physical_device_features.geometryShader) return 0;
                 score += physical_device_properties.limits.maxImageDimension3D;
                 return score;
             }
@@ -323,14 +323,14 @@ namespace Andromeda {
             void API::create_device_queue_create_info(float & queue_priorities) {
                 std::set<unsigned int> queues = {m_API_Instance.graphics_queue_index.value(), m_API_Instance.present_queue_index.value()};
                 for (auto index : queues) {
-                  VkDeviceQueueCreateInfo device_queue_create_info;
-                  device_queue_create_info.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-                  device_queue_create_info.pNext = nullptr;
-                  device_queue_create_info.flags = 0;
-                  device_queue_create_info.queueFamilyIndex = index;
-                  device_queue_create_info.queueCount = 1;
-                  device_queue_create_info.pQueuePriorities = & queue_priorities;
-                  m_API_Instance.device_queue_create_infos.push_back(device_queue_create_info);
+                    VkDeviceQueueCreateInfo device_queue_create_info;
+                    device_queue_create_info.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+                    device_queue_create_info.pNext = nullptr;
+                    device_queue_create_info.flags = 0;
+                    device_queue_create_info.queueFamilyIndex = index;
+                    device_queue_create_info.queueCount = 1;
+                    device_queue_create_info.pQueuePriorities = & queue_priorities;
+                    m_API_Instance.device_queue_create_infos.push_back(device_queue_create_info);
                 }
             }
 
@@ -356,12 +356,12 @@ namespace Andromeda {
                 VkResult enumerate_instance_layer_properties_status = enumerate_instance_layer_properties(available_validation_layers);
                 ANDROMEDA_CORE_ASSERT(enumerate_instance_layer_properties_status == VK_SUCCESS, "Failed to enumate Vulkan validation layer properties.");
                 ANDROMEDA_CORE_INFO("Available Vulkan Validation Layers: ");
-                for(auto & available_validation_layer : available_validation_layers) ANDROMEDA_CORE_TRACE("{0}", available_validation_layer.layerName);
+                for (auto & available_validation_layer : available_validation_layers) ANDROMEDA_CORE_TRACE("{0}", available_validation_layer.layerName);
                 auto result = std::all_of(desired_validation_layers.begin(), desired_validation_layers.end(), [available_validation_layers](const char * desired_validation_layer) {
                     auto result = std::find_if(available_validation_layers.begin(), available_validation_layers.end(), [desired_validation_layer](const VkLayerProperties & vkLayer) {
                         return strcmp(desired_validation_layer, vkLayer.layerName) == 0;
                     });
-                    if(result == available_validation_layers.end()) {
+                    if (result == available_validation_layers.end()) {
                         ANDROMEDA_CORE_ERROR("The {0} validation layer is not available.", desired_validation_layer);
                         return false;
                     }
