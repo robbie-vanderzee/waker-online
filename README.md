@@ -40,9 +40,9 @@ A C++ based MMORPG. Vulkan based & raytraced. Long term educational / life proje
 [(Back to top)](#table-of-contents)
 
 1. Install dependencies
-  * premake (version >= 5.0 alpha),
-  * glfw
-  * vulkan
+  * `premake` (version >= 5.0 alpha),
+  * `glfw`
+  * `vulkan`
 
 2. Run preliminary submodule downloads
 
@@ -51,8 +51,8 @@ A C++ based MMORPG. Vulkan based & raytraced. Long term educational / life proje
   ```
 3. Run premake build generation
 
-  * Note configuration options --logging to enable debug logging
-  * Note premake5 --help for a full list of build options
+  * Note configuration options `--logging` to enable debug logging
+  * Note `premake5 --help` for a full list of build options
 
   ```
   premake5 gmake2 --logging
