@@ -26,9 +26,6 @@ namespace Andromeda {
                 m_Data.Event_Callback = callback;
             }
 
-            void set_v_sync(bool vsync_on) override;
-            bool is_v_synced() const override;
-
             inline virtual std::any get_native_window() const override {
                 return m_Window;
             }
@@ -42,7 +39,6 @@ namespace Andromeda {
             struct Window_Data {
                 std::string title;
                 unsigned int width, height;
-                bool vsync_on;
 
                 Event_Callback_Function Event_Callback;
             };

@@ -29,8 +29,6 @@ namespace Andromeda {
         // Attributes
 
         virtual void set_event_callback(const Event_Callback_Function & callback) = 0;
-        virtual void set_v_sync(bool vsync_on) = 0;
-        virtual bool is_v_synced() const = 0;
 
         virtual std::any get_native_window() const = 0;
 

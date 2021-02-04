@@ -77,6 +77,8 @@ namespace Andromeda {
                 } else {
                     ANDROMEDA_CORE_INFO("No present queue selected.");
                 }
+                bool suitable = verify_device_is_suitable();
+                ANDROMEDA_CORE_ASSERT(suitable, "Device is not suitable for use; lacking surface requirements.");
                 ANDROMEDA_CORE_INFO("Selected Device: {0}", m_API_Instance.physical_device_properties.deviceName);
             }
 
@@ -240,6 +242,36 @@ namespace Andromeda {
                 return enumerate_instance_layer_properties_status;
             }
 
+            VkResult API::enumerate_physical_device_extension_properties(std::vector<VkExtensionProperties> & device_extension_properties) {
+                unsigned int device_extension_properties_count;
+                VkResult count_device_extension_properties_status = vkEnumerateDeviceExtensionProperties(m_API_Instance.physical_device, nullptr, & device_extension_properties_count, nullptr);
+                ANDROMEDA_CORE_ASSERT(count_device_extension_properties_status == VK_SUCCESS, "Failed to count Vulkan device extensions properties.");
+                device_extension_properties.resize(device_extension_properties_count);
+                VkResult enumerate_device_extensions_properties_status = vkEnumerateDeviceExtensionProperties(m_API_Instance.physical_device, nullptr, & device_extension_properties_count, device_extension_properties.data());
+                ANDROMEDA_CORE_ASSERT(enumerate_device_extensions_properties_status == VK_SUCCESS, "Failed to enumerate Vulkan extension properties.");
+                switch (enumerate_device_extensions_properties_status) {
+                    case VK_SUCCESS:
+                        ANDROMEDA_CORE_INFO("Successfully enumerated extension properties.");
+                        break;
+                    case VK_INCOMPLETE:
+                        ANDROMEDA_CORE_WARN("Failed to enumerate extension properties. Provided device_extension_properties_count {0} was invalid.", device_extension_properties_count);
+                        break;
+                    case VK_ERROR_OUT_OF_HOST_MEMORY:
+                        ANDROMEDA_CORE_ERROR("Failed to enumerate extension properties. Host out of memory.");
+                        break;
+                    case VK_ERROR_OUT_OF_DEVICE_MEMORY:
+                        ANDROMEDA_CORE_ERROR("Failed to enumerate extension properties. Device out of memory.");
+                        break;
+                    case VK_ERROR_LAYER_NOT_PRESENT:
+                        ANDROMEDA_CORE_ERROR("Failed to enumerate exxtension properties. Layer not present.");
+                        break;
+                    default:
+                        ANDROMEDA_CORE_CRITICAL("Unhandled enumerate extension result: {0}.", enumerate_device_extensions_properties_status);
+                        break;
+                }
+                return enumerate_device_extensions_properties_status;
+            }
+
             VkResult API::enumerate_physical_devices(std::vector<VkPhysicalDevice> & physical_devices) {
                 unsigned int physical_device_count = 0;
                 VkResult count_physical_devices_status = vkEnumeratePhysicalDevices(m_API_Instance.instance, & physical_device_count, nullptr);
@@ -275,22 +307,105 @@ namespace Andromeda {
                 ANDROMEDA_CORE_ASSERT(get_physical_device_surface_support_KHR_status == VK_SUCCESS, "Failed to determine device surface support.");
                 switch (get_physical_device_surface_support_KHR_status) {
                     case VK_SUCCESS:
-                        ANDROMEDA_CORE_INFO("Successfully determined phyiscal device surface support.");
+                        ANDROMEDA_CORE_INFO("Successfully determined physical device surface support.");
                         break;
                     case VK_ERROR_OUT_OF_HOST_MEMORY:
-                        ANDROMEDA_CORE_ERROR("Failed to determine phyiscal device surface support. Host out of memory.");
+                        ANDROMEDA_CORE_ERROR("Failed to determine physical device surface support. Host out of memory.");
                         break;
                     case VK_ERROR_OUT_OF_DEVICE_MEMORY:
-                        ANDROMEDA_CORE_ERROR("Failed to determine phyiscal device surface support. Device out of memory.");
+                        ANDROMEDA_CORE_ERROR("Failed to determine physical device surface support. Device out of memory.");
                         break;
                     case VK_ERROR_SURFACE_LOST_KHR:
-                        ANDROMEDA_CORE_ERROR("Failed to determine phyiscal device surface support. Surface lost.");
+                        ANDROMEDA_CORE_ERROR("Failed to determine physical device surface support. Surface lost.");
                         break;
                     default:
-                        ANDROMEDA_CORE_CRITICAL("Unhandled determine phyiscal device surface support result: {0}.", get_physical_device_surface_support_KHR_status);
+                        ANDROMEDA_CORE_CRITICAL("Unhandled determine physical device surface support result: {0}.", get_physical_device_surface_support_KHR_status);
                         break;
                 }
                 return get_physical_device_surface_support_KHR_status;
+            }
+
+            VkResult API::get_physical_device_surface_capabilities_KHR(VkPhysicalDevice device, VkSurfaceKHR surface, VkSurfaceCapabilitiesKHR & capabilities) {
+                VkResult get_physical_device_surface_capabilities_KHR_status = vkGetPhysicalDeviceSurfaceCapabilitiesKHR(device, surface, & capabilities);
+                ANDROMEDA_CORE_ASSERT(get_physical_device_surface_capabilities_KHR_status == VK_SUCCESS, "Failed to determine device surface capabilities.");
+                switch (get_physical_device_surface_capabilities_KHR_status) {
+                    case VK_SUCCESS:
+                        ANDROMEDA_CORE_INFO("Successfully determined physical device surface capabilities.");
+                        break;
+                    case VK_ERROR_OUT_OF_HOST_MEMORY:
+                        ANDROMEDA_CORE_ERROR("Failed to determine physical device surface capabilities. Host out of memory.");
+                        break;
+                    case VK_ERROR_OUT_OF_DEVICE_MEMORY:
+                        ANDROMEDA_CORE_ERROR("Failed to determine physical device surface capabilities. Device out of memory.");
+                        break;
+                    case VK_ERROR_SURFACE_LOST_KHR:
+                        ANDROMEDA_CORE_ERROR("Failed to determine physical device surface capabilities. Surface lost.");
+                        break;
+                    default:
+                        ANDROMEDA_CORE_CRITICAL("Unhandled determine physical device surface support result: {0}.", get_physical_device_surface_capabilities_KHR_status);
+                        break;
+                }
+                return get_physical_device_surface_capabilities_KHR_status;
+            }
+
+            VkResult API::get_physical_device_surface_formats_KHR(VkPhysicalDevice device, VkSurfaceKHR surface, std::vector<VkSurfaceFormatKHR> & formats) {
+                unsigned int format_count = 0;
+                VkResult count_physical_device_surface_formats_KHR_status = vkGetPhysicalDeviceSurfaceFormatsKHR(device, surface, & format_count, nullptr);
+                ANDROMEDA_CORE_ASSERT(count_physical_device_surface_formats_KHR_status == VK_SUCCESS, "Failed to count physical device surface formats.");
+                formats.resize(format_count);
+                VkResult get_physical_device_surface_formats_KHR_status = vkGetPhysicalDeviceSurfaceFormatsKHR(device, surface, & format_count, formats.data());
+                ANDROMEDA_CORE_ASSERT(get_physical_device_surface_formats_KHR_status == VK_SUCCESS, "Failed to get physical device surface formats.");
+                switch (get_physical_device_surface_formats_KHR_status) {
+                    case VK_SUCCESS:
+                        ANDROMEDA_CORE_INFO("Successfully determined physical device surface formats.");
+                        break;
+                    case VK_INCOMPLETE:
+                        ANDROMEDA_CORE_ERROR("Failed to get physical device surface formats. Invalid format_count {0}.", format_count);
+                        break;
+                    case VK_ERROR_OUT_OF_HOST_MEMORY:
+                        ANDROMEDA_CORE_ERROR("Failed to get physical device surface formats. Host out of memory.");
+                        break;
+                    case VK_ERROR_OUT_OF_DEVICE_MEMORY:
+                        ANDROMEDA_CORE_ERROR("Failed to get physical device surface formats. Device out of memory.");
+                        break;
+                    case VK_ERROR_SURFACE_LOST_KHR:
+                        ANDROMEDA_CORE_ERROR("Failed to get physical device surface formats. Surface lost.");
+                        break;
+                    default:
+                        ANDROMEDA_CORE_CRITICAL("Unhandled get physical device surface format result: {0}.", get_physical_device_surface_formats_KHR_status);
+                        break;
+                }
+                return get_physical_device_surface_formats_KHR_status;
+            }
+
+            VkResult API::get_physical_device_surface_present_modes_KHR(VkPhysicalDevice device, VkSurfaceKHR surface, std::vector<VkPresentModeKHR> & present_modes) {
+                unsigned int present_mode_count = 0;
+                VkResult count_physical_device_surface_present_modes_KHR_status = vkGetPhysicalDeviceSurfacePresentModesKHR(device, surface, & present_mode_count, nullptr);
+                ANDROMEDA_CORE_ASSERT(count_physical_device_surface_present_modes_KHR_status == VK_SUCCESS, "Failed to count physical device surface present modes.");
+                present_modes.resize(present_mode_count);
+                VkResult get_physical_device_surface_present_modes_KHR_status = vkGetPhysicalDeviceSurfacePresentModesKHR(device, surface, & present_mode_count, present_modes.data());
+                ANDROMEDA_CORE_ASSERT(get_physical_device_surface_present_modes_KHR_status == VK_SUCCESS, "Failed to get physical device surface present modes.");
+                switch (get_physical_device_surface_present_modes_KHR_status) {
+                    case VK_SUCCESS:
+                        ANDROMEDA_CORE_INFO("Successfully determined physical device surface present modes.");
+                        break;
+                    case VK_INCOMPLETE:
+                        ANDROMEDA_CORE_ERROR("Failed to get physical device surface present modes. Invalid format_count {0}.", present_mode_count);
+                        break;
+                    case VK_ERROR_OUT_OF_HOST_MEMORY:
+                        ANDROMEDA_CORE_ERROR("Failed to get physical device surface present modes. Host out of memory.");
+                        break;
+                    case VK_ERROR_OUT_OF_DEVICE_MEMORY:
+                        ANDROMEDA_CORE_ERROR("Failed to get physical device surface present modes. Device out of memory.");
+                        break;
+                    case VK_ERROR_SURFACE_LOST_KHR:
+                        ANDROMEDA_CORE_ERROR("Failed to get physical device surface present modes. Surface lost.");
+                        break;
+                    default:
+                        ANDROMEDA_CORE_CRITICAL("Unhandled get physical device surface present modes result: {0}.", get_physical_device_surface_present_modes_KHR_status);
+                        break;
+                }
+                return get_physical_device_surface_present_modes_KHR_status;
             }
 
             void API::get_queue_family_properties(std::vector<VkQueueFamilyProperties> & queue_family_properties) {
@@ -320,6 +435,18 @@ namespace Andromeda {
                 m_API_Instance.graphics_queue_index = std::distance(result, m_API_Instance.queue_family_properties.begin());
             }
 
+            Surface_Capabilities API::get_physical_device_capabilities(VkPhysicalDevice & device) {
+                Surface_Capabilities capabilities;
+                VkSurfaceKHR surface = std::any_cast<VkSurfaceKHR> (m_Context->get_native_context());
+                auto get_physical_device_surface_capabilities_KHR_status = get_physical_device_surface_capabilities_KHR(device, surface, capabilities.capabilities);
+                ANDROMEDA_CORE_ASSERT(get_physical_device_surface_capabilities_KHR_status == VK_SUCCESS, "Failed to find device surface capabilities.");
+                auto get_physical_device_surface_formats_KHR_status = get_physical_device_surface_formats_KHR(device, surface, capabilities.formats);
+                ANDROMEDA_CORE_ASSERT(get_physical_device_surface_formats_KHR_status == VK_SUCCESS, "Failed to get device surface formats.");
+                auto get_physical_device_surface_present_modes_KHR_status = get_physical_device_surface_present_modes_KHR(device, surface, capabilities.present_modes);
+                ANDROMEDA_CORE_ASSERT(get_physical_device_surface_present_modes_KHR_status == VK_SUCCESS, "Failed to get device surface present modes.");
+                return capabilities;
+            }
+
             void API::create_device_queue_create_info(float & queue_priorities) {
                 std::set<unsigned int> queues = {m_API_Instance.graphics_queue_index.value(), m_API_Instance.present_queue_index.value()};
                 for (auto index : queues) {
@@ -342,13 +469,36 @@ namespace Andromeda {
                 m_API_Instance.device_create_info.pQueueCreateInfos = m_API_Instance.device_queue_create_infos.data();
                 m_API_Instance.device_create_info.enabledLayerCount = 0;
                 m_API_Instance.device_create_info.ppEnabledLayerNames = nullptr;
-                m_API_Instance.device_create_info.enabledExtensionCount = 0;
-                m_API_Instance.device_create_info.ppEnabledExtensionNames = nullptr;
+                m_API_Instance.device_create_info.enabledExtensionCount = desired_device_extensions.size();
+                m_API_Instance.device_create_info.ppEnabledExtensionNames = desired_device_extensions.data();
                 m_API_Instance.device_create_info.pEnabledFeatures = nullptr;
 #ifdef DEBUG
                 m_API_Instance.device_create_info.enabledLayerCount = m_API_Instance.instance_create_info.enabledLayerCount;
                 m_API_Instance.device_create_info.ppEnabledLayerNames = m_API_Instance.instance_create_info.ppEnabledLayerNames;
 #endif
+            }
+            bool API::verify_device_is_suitable() {
+                bool extensions_supported = verify_desired_extension_support(desired_device_extensions);
+                auto capabilities = get_physical_device_capabilities(m_API_Instance.physical_device);
+                return m_API_Instance.present_queue_index.has_value() && m_API_Instance.graphics_queue_index.has_value() && extensions_supported && !capabilities.formats.empty() && !capabilities.present_modes.empty();
+            }
+
+            bool API::verify_desired_extension_support(const std::vector<const char *> & desired_device_extensions) {
+                std::vector<VkExtensionProperties> available_extensions;
+                auto enumerate_instance_extension_properties_status = enumerate_physical_device_extension_properties(available_extensions);
+                ANDROMEDA_CORE_ASSERT(enumerate_instance_extension_properties_status == VK_SUCCESS, "Failed to enumerate instance extension properties.");
+                for (auto & available_extension : available_extensions) ANDROMEDA_CORE_TRACE("{0}", available_extension.extensionName);
+                auto result = std::all_of(desired_device_extensions.begin(), desired_device_extensions.end(), [available_extensions](const char * desired_extension) {
+                    auto result = std::find_if(available_extensions.begin(), available_extensions.end(), [desired_extension](const VkExtensionProperties & vkExtension) {
+                        return strcmp(desired_extension, vkExtension.extensionName) == 0;
+                    });
+                    if (result == available_extensions.end()) {
+                        ANDROMEDA_CORE_ERROR("The {0} extension is not available.", desired_extension);
+                        return false;
+                    }
+                    return true;
+                });
+                return result;
             }
 
             bool API::verify_desired_validation_layer_support(const std::vector<const char *> & desired_validation_layers) {

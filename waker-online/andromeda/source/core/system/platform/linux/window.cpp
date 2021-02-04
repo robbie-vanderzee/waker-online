@@ -127,13 +127,5 @@ namespace Andromeda {
             glfwPollEvents();
         }
 
-        void Window::set_v_sync(bool vsync_on) {
-            m_Data.vsync_on = vsync_on;
-        }
-
-        bool Window::is_v_synced() const {
-            return m_Data.vsync_on;
-        }
-
     } /* Linux */
 } /* Andromeda */
