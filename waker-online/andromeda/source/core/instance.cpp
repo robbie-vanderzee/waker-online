@@ -52,20 +52,20 @@ namespace Andromeda {
         m_Running = false;
     }
 
-    void Instance::on_event(Event::Event & e) {
+    void Instance::on_event(Event::Event & event) {
 #ifdef DEBUG
-        ANDROMEDA_CORE_INFO(e);
+        ANDROMEDA_CORE_INFO(event);
 #endif
-        Event::Dispatcher dispatcher(e);
-        dispatcher.dispatch<Event::Window_Close> (ANDROMEDA_BIND_FN(Instance::on_window_close));
+        Event::Dispatcher dispatcher(event);
+        dispatcher.dispatch<Event::Window::Close> (ANDROMEDA_BIND_FN(Instance::on_window_close));
 
-        std::ranges::find_if(std::rbegin(m_Layer_Stack), std::rend(m_Layer_Stack), [&e](const auto layer) {
-            layer->on_event(e);
-            return e.consumed;
+        std::ranges::find_if(std::rbegin(m_Layer_Stack), std::rend(m_Layer_Stack), [& event](const auto layer) {
+            layer->on_event(event);
+            return event.consumed;
         });
     }
 
-    bool Instance::on_window_close(Event::Window_Close &) {
+    bool Instance::on_window_close(Event::Window::Close &) {
         terminate();
         return true;
     }

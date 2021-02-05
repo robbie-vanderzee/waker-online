@@ -1,7 +1,7 @@
 #pragma once
 
 #include "core/core.hpp"
-#include "core/system/events/event.hpp"
+#include "core/system/event/event.hpp"
 
 namespace Andromeda {
     class Layer {

@@ -1,17 +1,16 @@
 #pragma once
 
-#include "codes/input_codes.hpp"
+#include "code/input.hpp"
 
 namespace Andromeda {
-    struct Mouse_Position {
-        double x, y;
-    };
-    class Input {
-      public:
-        static bool is_key_pressed(Key_Code key);
-        static bool is_mouse_button_pressed(Mouse_Code mouse_button);
-        static Mouse_Position get_mouse_position();
-        static double get_mouse_x();
-        static double get_mouse_y();
-    };
+    namespace Input {
+        struct Mouse_Position {
+            double x, y;
+        };
+        bool is_key_pressed(Code::Key key);
+        bool is_mouse_button_pressed(Code::Mouse button);
+        Mouse_Position get_mouse_position();
+        double get_mouse_x();
+        double get_mouse_y();
+    } /* Input */
 } /* Andromeda */

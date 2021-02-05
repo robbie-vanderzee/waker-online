@@ -1,10 +1,10 @@
 #include "window.hpp"
 
 #include "core/graphics/renderer.hpp"
-#include "core/system/events/event.hpp"
-#include "core/system/events/instance.hpp"
-#include "core/system/events/keyboard.hpp"
-#include "core/system/events/mouse.hpp"
+#include "core/system/event/event.hpp"
+#include "core/system/event/instance.hpp"
+#include "core/system/event/keyboard.hpp"
+#include "core/system/event/mouse.hpp"
 
 namespace Andromeda {
     namespace Linux {
@@ -51,7 +51,7 @@ namespace Andromeda {
                 Window_Data & data = * (Window_Data *) glfwGetWindowUserPointer(window);
                 data.position.x = x;
                 data.position.y = y;
-                Event::Window_Move event(x, y);
+                Event::Window::Move event(x, y);
                 data.Event_Callback(event);
             });
 
@@ -59,13 +59,13 @@ namespace Andromeda {
                 Window_Data & data = * (Window_Data *) glfwGetWindowUserPointer(window);
                 data.viewport.width = width;
                 data.viewport.height = height;
-                Event::Window_Resize event(width, height);
+                Event::Window::Resize event(width, height);
                 data.Event_Callback(event);
             });
 
             glfwSetWindowCloseCallback(m_Window, [](GLFWwindow * window) {
                 Window_Data & data = * (Window_Data *) glfwGetWindowUserPointer(window);
-                Event::Window_Close event;
+                Event::Window::Close event;
                 data.Event_Callback(event);
             });
 
@@ -73,17 +73,17 @@ namespace Andromeda {
                 Window_Data & data = * (Window_Data *) glfwGetWindowUserPointer(window);
                 switch (action) {
                     case GLFW_PRESS: {
-                        Event::Key_Press event(static_cast<Key_Code>(key), 0);
+                        Event::Keyboard::Key::Press event(static_cast<Input::Code::Key>(key), 0);
                         data.Event_Callback(event);
                         break;
                     }
                     case GLFW_RELEASE: {
-                        Event::Key_Release event(static_cast<Key_Code>(key));
+                        Event::Keyboard::Key::Release event(static_cast<Input::Code::Key>(key));
                         data.Event_Callback(event);
                         break;
                     }
                     case GLFW_REPEAT: {
-                        Event::Key_Press event(static_cast<Key_Code>(key), 1);
+                        Event::Keyboard::Key::Press event(static_cast<Input::Code::Key>(key), 1);
                         data.Event_Callback(event);
                         break;
                     }
@@ -92,7 +92,7 @@ namespace Andromeda {
 
             glfwSetCharCallback(m_Window, [](GLFWwindow * window, unsigned int key) {
                 Window_Data & data = * (Window_Data *) glfwGetWindowUserPointer(window);
-                Event::Key_Type event(static_cast<Key_Code>(key));
+                Event::Keyboard::Key::Type event(static_cast<Input::Code::Key>(key));
                 data.Event_Callback(event);
             });
 
@@ -100,12 +100,12 @@ namespace Andromeda {
                 Window_Data & data = * (Window_Data *) glfwGetWindowUserPointer(window);
                 switch (action) {
                     case GLFW_PRESS: {
-                        Event::Mouse_Button_Press event((Mouse_Code) button);
+                        Event::Mouse::Button::Press event((Input::Code::Mouse) button);
                         data.Event_Callback(event);
                         break;
                     }
                     case GLFW_RELEASE: {
-                        Event::Mouse_Button_Release event((Mouse_Code) button);
+                        Event::Mouse::Button::Release event((Input::Code::Mouse) button);
                         data.Event_Callback(event);
                         break;
                     }
@@ -114,13 +114,13 @@ namespace Andromeda {
 
             glfwSetScrollCallback(m_Window, [](GLFWwindow * window, double x_Offset,  double y_Offset) {
                 Window_Data & data = * (Window_Data *) glfwGetWindowUserPointer(window);
-                Event::Mouse_Scroll event(x_Offset, y_Offset);
+                Event::Mouse::Scroll event(x_Offset, y_Offset);
                 data.Event_Callback(event);
             });
 
             glfwSetCursorPosCallback(m_Window, [](GLFWwindow * window, double x_Position, double y_Position) {
                 Window_Data & data = * (Window_Data *) glfwGetWindowUserPointer(window);
-                Event::Mouse_Move event(x_Position, y_Position);
+                Event::Mouse::Move event(x_Position, y_Position);
                 data.Event_Callback(event);
             });
         }

@@ -2,8 +2,8 @@
 
 #include "core.hpp"
 
-#include "core/system/events/event.hpp"
-#include "core/system/events/instance.hpp"
+#include "core/system/event/event.hpp"
+#include "core/system/event/instance.hpp"
 
 #include "core/system/interface/layer/layer_stack.hpp"
 #include "core/system/interface/window/window.hpp"
@@ -47,7 +47,7 @@ namespace Andromeda {
         void set_v_sync(bool v_sync);
 
       private:
-        bool on_window_close(Event::Window_Close & e);
+        bool on_window_close(Event::Window::Close & event);
 
       private:
         bool m_Running = true;

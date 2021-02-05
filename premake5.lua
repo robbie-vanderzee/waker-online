@@ -1,4 +1,5 @@
 workspace "waker-online"
+  toolset "clang"
   flags {
     "MultiProcessorCompile"
   }
@@ -26,7 +27,6 @@ workspace "waker-online"
   }
 
   filter "options:sanitize=address"
-    toolset "clang"
     buildoptions "-fsanitize=address -fno-omit-frame-pointer -fsanitize-address-use-after-scope"
     links {
       "asan"

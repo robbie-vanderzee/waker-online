@@ -6,7 +6,7 @@ namespace Andromeda {
     namespace Event {
         enum class EVENT_TYPE {
             None = 0,
-            Window_Close, Window_Resize, Window_Focus, Window_Unfocused, Window_Move,
+            Window_Close, Window_Resize, Window_Focus, Window_Defocus, Window_Move,
             Instance_Tick, Instance_Update, Instance_Render,
             Key_Press, Key_Release, Key_Type,
             Mouse_Button_Press, Mouse_Button_Release, Mouse_Move, Mouse_Scroll
