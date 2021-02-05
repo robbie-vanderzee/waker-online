@@ -57,9 +57,9 @@ namespace Andromeda {
         Event::Dispatcher dispatcher(e);
         dispatcher.dispatch<Event::Window_Close> (ANDROMEDA_BIND_FN(Instance::on_window_close));
 
-        for (auto & layer : m_Layer_Stack) {
+        for (auto iterator = m_Layer_Stack.rbegin(); iterator != m_Layer_Stack.rend(); ++iterator) {
             if (e.consumed) break;
-            layer->on_event(e);
+            (*iterator)->on_event(e);
         }
     }
 
