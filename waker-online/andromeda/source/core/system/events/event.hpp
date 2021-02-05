@@ -41,7 +41,7 @@ namespace Andromeda {
                 return get_category_flags() & category;
             }
           public:
-            bool active = false;
+            bool consumed = false;
         };
 
         class Dispatcher {
@@ -51,7 +51,7 @@ namespace Andromeda {
             template<typename T, typename F>
             bool dispatch(const F & function) {
                 if (m_Event.get_event_type() == T::get_static_type()) {
-                    m_Event.active = function(static_cast<T &>(m_Event));
+                    m_Event.consumed = function(static_cast<T &>(m_Event));
                     return true;
                 }
                 return false;

@@ -1,11 +1,12 @@
 #pragma once
 
-#include "core/link.hpp"
 #include "core/core.hpp"
+#include "core/instance.hpp"
 
 #include "core/system/events/event.hpp"
 #include "core/system/input/input.hpp"
 
+#include "core/system/interface/layer/layer.hpp"
 #include "core/system/interface/window/window.hpp"
 
 #include "core/graphics/command.hpp"

@@ -22,11 +22,32 @@ namespace Andromeda {
         Graphics::Renderer::shutdown();
     }
 
+    void Instance::push_layer(Layer * layer) {
+        m_Layer_Stack.push_layer(layer);
+    }
+
+    void Instance::pop_layer(Layer * layer) {
+        m_Layer_Stack.pop_layer(layer);
+    }
+
+    void Instance::push_overlay(Layer * overlay) {
+        m_Layer_Stack.push_overlay(overlay);
+    }
+
+    void Instance::pop_overlay(Layer * overlay) {
+        m_Layer_Stack.pop_overlay(overlay);
+    }
+
     int Instance::run() {
         while (m_Running) {
+            for (auto & layer : m_Layer_Stack) layer->on_update();
             m_Window->on_update();
         }
         return EXIT_SUCCESS;
+    }
+
+    void Instance::terminate() {
+        m_Running = false;
     }
 
     void Instance::on_event(Event::Event & e) {
@@ -35,10 +56,15 @@ namespace Andromeda {
 #endif
         Event::Dispatcher dispatcher(e);
         dispatcher.dispatch<Event::Window_Close> (ANDROMEDA_BIND_FN(Instance::on_window_close));
+
+        for (auto & layer : m_Layer_Stack) {
+            if (e.consumed) break;
+            layer->on_event(e);
+        }
     }
 
     bool Instance::on_window_close(Event::Window_Close &) {
-        m_Running = false;
+        terminate();
         return true;
     }
 } /* Andromeda */
