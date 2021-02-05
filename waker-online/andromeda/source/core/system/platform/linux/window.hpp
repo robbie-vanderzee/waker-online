@@ -15,11 +15,16 @@ namespace Andromeda {
 
             void on_update() override;
 
-            inline unsigned int get_width() const override {
-                return m_Data.width;
+            inline Window_Viewport get_viewport() const override {
+                return m_Data.viewport;
             }
-            inline unsigned int get_height() const override {
-                return m_Data.height;
+
+            inline unsigned int get_width() const {
+                return m_Data.viewport.width;
+            }
+
+            inline unsigned int get_height() const {
+                return m_Data.viewport.height;
             }
 
             inline void set_event_callback(const Event_Callback_Function & callback) override {
@@ -38,7 +43,8 @@ namespace Andromeda {
 
             struct Window_Data {
                 std::string title;
-                unsigned int width, height;
+                Window_Viewport viewport;
+                Window_Position position;
 
                 Event_Callback_Function Event_Callback;
             };

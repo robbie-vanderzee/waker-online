@@ -4,16 +4,23 @@
 #include "core/system/events/event.hpp"
 
 namespace Andromeda {
+    struct Window_Viewport {
+        unsigned int width, height;
+    };
+    struct Window_Position {
+        int x, y;
+    };
     struct Window_Properties {
         std::string title;
-        unsigned int width, height, x, y;
+        Window_Viewport viewport;
+        Window_Position position;
 
         Window_Properties(const std::string & title = "Andromeda::Window",
                           unsigned int width = 1920,
                           unsigned int height = 1080,
-                          unsigned int x = 0,
-                          unsigned int y = 0
-                         ) : title(title), width(width), height(height), x(x), y(y) {}
+                          int x = 0,
+                          int y = 0
+                         ) : title(title), viewport({width, height}), position({x, y}) {}
     };
     class Window {
       public:
@@ -23,6 +30,7 @@ namespace Andromeda {
 
         virtual void on_update() = 0;
 
+        virtual Window_Viewport get_viewport() const = 0;
         virtual unsigned int get_width() const = 0;
         virtual unsigned int get_height() const = 0;
 

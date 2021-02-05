@@ -24,10 +24,10 @@ namespace Andromeda {
 
         void Window::initialize(const Window_Properties & properties) {
             m_Data.title = properties.title;
-            m_Data.width = properties.width;
-            m_Data.height = properties.height;
+            m_Data.viewport = properties.viewport;
+            m_Data.position = properties.position;
 
-            ANDROMEDA_CORE_INFO("Initializing window {0} ({1}, {2}).", m_Data.title, m_Data.width, m_Data.height);
+            ANDROMEDA_CORE_INFO("Initializing window {0} ({1}, {2}).", m_Data.title, m_Data.viewport.width, m_Data.viewport.height);
             if (s_GLFW_Windows == 0) {
                 int response = glfwInit();
                 ANDROMEDA_CORE_ASSERT(response, "Failed to initialize GLFW.");
@@ -43,14 +43,22 @@ namespace Andromeda {
                     break;
             }
 
-            m_Window = glfwCreateWindow(m_Data.width, m_Data.height, m_Data.title.c_str(), nullptr, nullptr);
+            m_Window = glfwCreateWindow(m_Data.viewport.width, m_Data.viewport.height, m_Data.title.c_str(), nullptr, nullptr);
             glfwSetWindowUserPointer(m_Window, & m_Data);
             s_GLFW_Windows++;
 
+            glfwSetWindowPosCallback(m_Window, [](GLFWwindow * window, int x, int y) {
+                Window_Data & data = * (Window_Data *) glfwGetWindowUserPointer(window);
+                data.position.x = x;
+                data.position.y = y;
+                Event::Window_Move event(x, y);
+                data.Event_Callback(event);
+            });
+
             glfwSetWindowSizeCallback(m_Window, [](GLFWwindow * window, int width, int height) {
                 Window_Data & data = * (Window_Data *) glfwGetWindowUserPointer(window);
-                data.width = width;
-                data.height = height;
+                data.viewport.width = width;
+                data.viewport.height = height;
                 Event::Window_Resize event(width, height);
                 data.Event_Callback(event);
             });

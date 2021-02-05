@@ -17,12 +17,12 @@ namespace Andromeda {
                 virtual void initialize(std::any instance) override;
                 virtual void shutdown() override;
 
-                std::any get_native_context() const override {
+                inline std::any get_native_context() const override {
                     return m_Surface;
                 }
 
-                std::pair<unsigned int, unsigned int> get_context_extent() const override {
-                    return { m_Window->get_width(), m_Window->get_height() };
+                inline Context_Extent get_context_extent() const override {
+                    return m_Window->get_viewport();
                 }
 
               private:

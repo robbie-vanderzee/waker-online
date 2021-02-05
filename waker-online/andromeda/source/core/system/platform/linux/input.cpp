@@ -16,20 +16,18 @@ namespace Andromeda {
         return state == GLFW_PRESS;
     }
 
-    std::pair<double, double> Input::get_mouse_position() {
+    Input::Mouse_Position Input::get_mouse_position() {
         auto window = std::any_cast<GLFWwindow *> (Instance::get_instance()->get_window()->get_native_window());
-        double x_Position, y_Position;
-        glfwGetCursorPos(window, & x_Position, & y_Position);
-        return { x_Position, y_Position };
+        Mouse_Position position;
+        glfwGetCursorPos(window, & position.x, & position.y);
+        return position;
     }
 
     double Input::get_mouse_x() {
-        auto [x, y] = get_mouse_position();
-        return x;
+        return get_mouse_position().x;
     }
 
     double Input::get_mouse_y() {
-        auto [x, y] = get_mouse_position();
-        return y;
+        return get_mouse_position().y;
     }
 } /* Andromeda */

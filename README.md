@@ -85,7 +85,7 @@ Build is currently only local; simply delete the repository.
 
 [(Back to top)](#table-of-contents)
 
-No Guidelines are currently set. They will be specified in [contribution guidelines](CONTRIBUTING.md)
+No Guidelines are currently set. They will be specified in [contribution guidelines](CONTRIBUTING.md).
 
 # License
 
