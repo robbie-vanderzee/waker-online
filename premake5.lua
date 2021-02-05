@@ -17,6 +17,22 @@ workspace "waker-online"
   include_directories["shaderc"] = "%{wks.location}/waker-online/includes/shaderc/libshaderc/include"
 
   newoption {
+    trigger = "sanitize",
+    value= "modules",
+    description = "Enable sanitization runtimes.",
+    allowed = {
+      { "address", "AddressSantiizer" }
+    }
+  }
+
+  filter "options:sanitize=address"
+    toolset "clang"
+    buildoptions "-fsanitize=address -fno-omit-frame-pointer -fsanitize-address-use-after-scope"
+    links {
+      "asan"
+    }
+
+  newoption {
     trigger = "logging",
     description = "Enable console logging."
   }

@@ -3,10 +3,10 @@
 #include "codes/input_codes.hpp"
 
 namespace Andromeda {
+    struct Mouse_Position {
+        double x, y;
+    };
     class Input {
-        struct Mouse_Position {
-            double x, y;
-        };
       public:
         static bool is_key_pressed(Key_Code key);
         static bool is_mouse_button_pressed(Mouse_Code mouse_button);

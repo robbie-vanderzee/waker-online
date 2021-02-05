@@ -1,8 +1,8 @@
 project "andromeda"
   kind "StaticLib"
   language "C++"
+  cppdialect "C++20"
   staticruntime "on"
-  cppdialect "C++17"
 
   targetdir ( "binary/" ..binary_directory.. "/%{prj.name}" )
   objdir ("binary/objects/" ..binary_directory.. "/%{prj.name}" )

@@ -19,11 +19,11 @@ namespace Andromeda {
                 return m_Data.viewport;
             }
 
-            inline unsigned int get_width() const {
+            inline unsigned int get_width() const override {
                 return m_Data.viewport.width;
             }
 
-            inline unsigned int get_height() const {
+            inline unsigned int get_height() const override {
                 return m_Data.viewport.height;
             }
 

@@ -32,7 +32,7 @@ namespace Andromeda {
         std::vector<Layer*>::const_iterator begin() const {
             return m_Layers.begin();
         }
-        std::vector<Layer*>::const_iterator end()   const {
+        std::vector<Layer*>::const_iterator end() const {
             return m_Layers.end();
         }
         std::vector<Layer*>::const_reverse_iterator rbegin() const {

@@ -8,7 +8,7 @@ namespace Andromeda {
     Instance * Instance::s_Instance = nullptr;
 
     Instance::Instance(const std::string & name) {
-        s_Instance = std::move(this);
+        s_Instance = this;
         m_Instance_Name = name;
         ANDROMEDA_CORE_INFO(m_Instance_Name);
         m_Window = Window::create_window(Window_Properties(m_Instance_Name));
@@ -40,7 +40,9 @@ namespace Andromeda {
 
     int Instance::run() {
         while (m_Running) {
-            for (auto & layer : m_Layer_Stack) layer->on_update();
+            std::ranges::for_each(std::begin(m_Layer_Stack), std::end(m_Layer_Stack), [](const auto layer) {
+                layer->on_update();
+            });
             m_Window->on_update();
         }
         return EXIT_SUCCESS;
@@ -57,10 +59,10 @@ namespace Andromeda {
         Event::Dispatcher dispatcher(e);
         dispatcher.dispatch<Event::Window_Close> (ANDROMEDA_BIND_FN(Instance::on_window_close));
 
-        for (auto iterator = m_Layer_Stack.rbegin(); iterator != m_Layer_Stack.rend(); ++iterator) {
-            if (e.consumed) break;
-            (*iterator)->on_event(e);
-        }
+        std::ranges::find_if(std::rbegin(m_Layer_Stack), std::rend(m_Layer_Stack), [&e](const auto layer) {
+            layer->on_event(e);
+            return e.consumed;
+        });
     }
 
     bool Instance::on_window_close(Event::Window_Close &) {
