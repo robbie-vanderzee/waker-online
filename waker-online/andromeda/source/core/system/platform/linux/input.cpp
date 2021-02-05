@@ -24,12 +24,12 @@ namespace Andromeda {
     }
 
     double Input::get_mouse_x() {
-        auto[x, y] = get_mouse_position();
+        auto [x, y] = get_mouse_position();
         return x;
     }
 
     double Input::get_mouse_y() {
-        auto[x, y] = get_mouse_position();
+        auto [x, y] = get_mouse_position();
         return y;
     }
 } /* Andromeda */

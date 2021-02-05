@@ -21,6 +21,10 @@ namespace Andromeda {
                     return m_Surface;
                 }
 
+                std::pair<unsigned int, unsigned int> get_context_extent() const override {
+                    return { m_Window->get_width(), m_Window->get_height() };
+                }
+
               private:
                 std::shared_ptr<Window> m_Window;
                 VkInstance m_Instance;

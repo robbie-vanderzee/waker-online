@@ -12,10 +12,12 @@ namespace Andromeda {
             void API::process() {
                 select_physical_device();
                 create_logical_device();
+                create_swap_chain();
             }
 
             void API::shutdown() {
                 ANDROMEDA_CORE_INFO("Terminating Vulkan API.");
+                vkDestroySwapchainKHR(m_API_Instance.logical_device, m_API_Instance.swap_chain, nullptr);
                 if (m_Context) m_Context->shutdown();
                 vkDestroyDevice(m_API_Instance.logical_device, nullptr);
                 vkDestroyInstance(m_API_Instance.instance, nullptr);
@@ -90,6 +92,48 @@ namespace Andromeda {
                 ANDROMEDA_CORE_ASSERT(m_API_Instance.logical_device_status == VK_SUCCESS, "Failed to create Vulkan logical device.");
                 vkGetDeviceQueue(m_API_Instance.logical_device, m_API_Instance.graphics_queue_index.value(), 0, & m_API_Instance.graphics_queue);
                 vkGetDeviceQueue(m_API_Instance.logical_device, m_API_Instance.present_queue_index.value(), 0, & m_API_Instance.present_queue);
+            }
+
+            void API::create_swap_chain() {
+                Surface_Capabilities swap_chain_support = get_physical_device_capabilities(m_API_Instance.physical_device);
+                VkSurfaceFormatKHR surface_format = select_swap_surface_format(swap_chain_support.formats);
+                VkPresentModeKHR present_mode = select_swap_present_mode(swap_chain_support.present_modes);
+                VkExtent2D extent = select_swap_extent(swap_chain_support.capabilities);
+                unsigned int image_count = swap_chain_support.capabilities.minImageCount + 1;
+                image_count = std::min(image_count, swap_chain_support.capabilities.maxImageCount);
+
+                VkSwapchainCreateInfoKHR create_swap_chain_create_info{};
+                create_swap_chain_create_info.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
+                create_swap_chain_create_info.surface = std::any_cast<VkSurfaceKHR>(m_Context->get_native_context());
+                create_swap_chain_create_info.minImageCount = image_count;
+                create_swap_chain_create_info.imageFormat = surface_format.format;
+                create_swap_chain_create_info.imageColorSpace = surface_format.colorSpace;
+                create_swap_chain_create_info.imageExtent = extent;
+                create_swap_chain_create_info.imageArrayLayers = 1;
+                create_swap_chain_create_info.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+
+                create_swap_chain_create_info.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
+                create_swap_chain_create_info.queueFamilyIndexCount = 1;
+                create_swap_chain_create_info.pQueueFamilyIndices = nullptr;
+                unsigned int queue_family_indices[] = {m_API_Instance.graphics_queue_index.value(), m_API_Instance.present_queue_index.value()};
+                if (m_API_Instance.graphics_queue_index.value() != m_API_Instance.present_queue_index.value()) {
+                    create_swap_chain_create_info.imageSharingMode = VK_SHARING_MODE_CONCURRENT;
+                    create_swap_chain_create_info.queueFamilyIndexCount = 2;
+                    create_swap_chain_create_info.pQueueFamilyIndices = queue_family_indices;
+                }
+                create_swap_chain_create_info.preTransform = swap_chain_support.capabilities.currentTransform;
+                create_swap_chain_create_info.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
+                create_swap_chain_create_info.presentMode = present_mode;
+                create_swap_chain_create_info.clipped = VK_TRUE;
+                create_swap_chain_create_info.oldSwapchain = VK_NULL_HANDLE;
+
+                m_API_Instance.create_swap_chain_create_info = create_swap_chain_create_info;
+                VkResult create_swap_chain_status = create_vk_swap_chain();
+                ANDROMEDA_CORE_ASSERT(create_swap_chain_status == VK_SUCCESS, "Failed to create swap chain.");
+                VkResult get_swap_chain_images_status = get_swap_chain_images_KHR(m_API_Instance.swap_chain_images);
+                ANDROMEDA_CORE_ASSERT(get_swap_chain_images_status == VK_SUCCESS, "Failed to get swap chain images.");
+                m_API_Instance.swap_chain_extent = extent;
+                m_API_Instance.swap_chain_image_format = surface_format.format;
             }
 
             void API::create_application_info() {
@@ -188,6 +232,36 @@ namespace Andromeda {
                 return create_device_status;
             }
 
+            VkResult API::create_vk_swap_chain() {
+                VkResult create_swap_chain_status = vkCreateSwapchainKHR(m_API_Instance.logical_device, &m_API_Instance.create_swap_chain_create_info, nullptr, &m_API_Instance.swap_chain);
+                switch (create_swap_chain_status) {
+                    case VK_SUCCESS:
+                        ANDROMEDA_CORE_INFO("Successfully created Vulkan swap chain.");
+                        break;
+                    case VK_ERROR_OUT_OF_HOST_MEMORY:
+                        ANDROMEDA_CORE_ERROR("Failed to create Vulkan swap chain. Host out of memory.");
+                        break;
+                    case VK_ERROR_OUT_OF_DEVICE_MEMORY:
+                        ANDROMEDA_CORE_ERROR("Failed to create Vulkan swap chain. Device out of memory.");
+                        break;
+                    case VK_ERROR_DEVICE_LOST:
+                        ANDROMEDA_CORE_ERROR("Failed to create Vulkan swap chain. Device lost.");
+                        break;
+                    case VK_ERROR_SURFACE_LOST_KHR:
+                        ANDROMEDA_CORE_ERROR("Failed to create Vulkan swap chain. Surface lost.");
+                        break;
+                    case VK_ERROR_NATIVE_WINDOW_IN_USE_KHR:
+                        ANDROMEDA_CORE_ERROR("Failed to create Vulkan swap chain. Native window in use.");
+                        break;
+                    case VK_ERROR_INITIALIZATION_FAILED:
+                        ANDROMEDA_CORE_ERROR("Failed to create Vulkan swap chain. Initialization failed.");
+                        break;
+                    default:
+                        ANDROMEDA_CORE_CRITICAL("Unhandled Vulkan create device result: {0}.", create_swap_chain_status);
+                        break;
+                }
+                return create_swap_chain_status;
+            }
 
             VkResult API::enumerate_instance_extension_properties(std::vector<VkExtensionProperties> & instance_extension_properties) {
                 unsigned int instance_extension_properties_count;
@@ -408,6 +482,32 @@ namespace Andromeda {
                 return get_physical_device_surface_present_modes_KHR_status;
             }
 
+            VkResult API::get_swap_chain_images_KHR(std::vector<VkImage> & images) {
+                unsigned int image_count = 0;
+                VkResult count_swap_chain_images_status = vkGetSwapchainImagesKHR(m_API_Instance.logical_device, m_API_Instance.swap_chain, &image_count, nullptr);
+                ANDROMEDA_CORE_ASSERT(count_swap_chain_images_status == VK_SUCCESS, "Failed to count swap chain images.");
+                images.resize(image_count);
+                VkResult get_swap_chain_images_status = vkGetSwapchainImagesKHR(m_API_Instance.logical_device, m_API_Instance.swap_chain, &image_count, images.data());
+                switch (get_swap_chain_images_status) {
+                    case VK_SUCCESS:
+                        ANDROMEDA_CORE_INFO("Successfully obtained swap chain images.");
+                        break;
+                    case VK_INCOMPLETE:
+                        ANDROMEDA_CORE_ERROR("Failed to get swap chain images. Invalid image_count {0}.", image_count);
+                        break;
+                    case VK_ERROR_OUT_OF_HOST_MEMORY:
+                        ANDROMEDA_CORE_ERROR("Failed to get swap chain images. Host out of memory.");
+                        break;
+                    case VK_ERROR_OUT_OF_DEVICE_MEMORY:
+                        ANDROMEDA_CORE_ERROR("Failed to get swap chain images. Device out of memory.");
+                        break;
+                    default:
+                        ANDROMEDA_CORE_CRITICAL("Unhandled get swap chain images result: {0}.", get_swap_chain_images_status);
+                        break;
+                }
+                return get_swap_chain_images_status;
+            }
+
             void API::get_queue_family_properties(std::vector<VkQueueFamilyProperties> & queue_family_properties) {
                 unsigned int queue_family_properties_count = 0;
                 vkGetPhysicalDeviceQueueFamilyProperties(m_API_Instance.physical_device, & queue_family_properties_count, nullptr);
@@ -445,6 +545,28 @@ namespace Andromeda {
                 auto get_physical_device_surface_present_modes_KHR_status = get_physical_device_surface_present_modes_KHR(device, surface, capabilities.present_modes);
                 ANDROMEDA_CORE_ASSERT(get_physical_device_surface_present_modes_KHR_status == VK_SUCCESS, "Failed to get device surface present modes.");
                 return capabilities;
+            }
+
+            VkSurfaceFormatKHR API::select_swap_surface_format(const std::vector<VkSurfaceFormatKHR> & available_formats) {
+                auto result = std::find_if(available_formats.begin(), available_formats.end(), [](const auto & available_format) {
+                    return available_format.format == VK_FORMAT_B8G8R8A8_SRGB && available_format.colorSpace == VK_COLOR_SPACE_SRGB_NONLINEAR_KHR;
+                });
+                return *result;
+            }
+
+            VkPresentModeKHR API::select_swap_present_mode(const std::vector<VkPresentModeKHR> & available_present_modes) {
+                auto result = std::find_if(available_present_modes.begin(), available_present_modes.end(), [](const auto & available_present_mode) {
+                    return available_present_mode == VK_PRESENT_MODE_MAILBOX_KHR;
+                });
+                return result != available_present_modes.end() ? *result : VK_PRESENT_MODE_FIFO_KHR;
+            }
+
+            VkExtent2D API::select_swap_extent(const VkSurfaceCapabilitiesKHR & capabilities) {
+                auto [width, height] = m_Context->get_context_extent();
+                VkExtent2D extent = { width, height };
+                extent.width = std::max(capabilities.minImageExtent.width, std::min(capabilities.maxImageExtent.width, extent.width));
+                extent.height = std::max(capabilities.minImageExtent.height, std::min(capabilities.maxImageExtent.height, extent.height));
+                return extent;
             }
 
             void API::create_device_queue_create_info(float & queue_priorities) {

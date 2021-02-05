@@ -36,6 +36,11 @@ namespace Andromeda {
                 /* Pipeline */
                 VkQueue graphics_queue;
                 VkQueue present_queue;
+                VkSwapchainCreateInfoKHR create_swap_chain_create_info;
+                VkSwapchainKHR swap_chain;
+                std::vector<VkImage> swap_chain_images;
+                VkExtent2D swap_chain_extent;
+                VkFormat swap_chain_image_format;
 
             };
             class API : public Andromeda::Graphics::API {
@@ -50,6 +55,7 @@ namespace Andromeda {
                 void generate_vulkan_instance();
                 void select_physical_device();
                 void create_logical_device();
+                void create_swap_chain();
 
               private:
                 void create_application_info();
@@ -69,17 +75,23 @@ namespace Andromeda {
                 VkResult get_physical_device_surface_capabilities_KHR(VkPhysicalDevice device, VkSurfaceKHR surface, VkSurfaceCapabilitiesKHR & capabilities);
                 VkResult get_physical_device_surface_formats_KHR(VkPhysicalDevice device, VkSurfaceKHR surface, std::vector<VkSurfaceFormatKHR> & formats);
                 VkResult get_physical_device_surface_present_modes_KHR(VkPhysicalDevice device, VkSurfaceKHR surface, std::vector<VkPresentModeKHR> & present_modes);
+                VkResult get_swap_chain_images_KHR(std::vector<VkImage> & images);
 
                 unsigned int evaluate_physical_device(const VkPhysicalDevice & physical_device);
                 void verify_queue_family_properties();
 
                 Surface_Capabilities get_physical_device_capabilities(VkPhysicalDevice & device);
 
+                VkSurfaceFormatKHR select_swap_surface_format(const std::vector<VkSurfaceFormatKHR> & available_formats);
+                VkPresentModeKHR select_swap_present_mode(const std::vector<VkPresentModeKHR> & availabe_present_modes);
+                VkExtent2D select_swap_extent(const VkSurfaceCapabilitiesKHR & capabilities);
+
               private:
                 void create_device_queue_create_info(float & queue_priorities);
 
                 void create_device_create_info();
                 VkResult create_device();
+                VkResult create_vk_swap_chain();
                 bool verify_device_is_suitable();
 
               private:
