@@ -5,7 +5,7 @@
 #endif
 
 namespace Andromeda {
-    std::shared_ptr<Window> Window::create_window(const Window_Properties & properties) {
+    std::shared_ptr<Window> Window::create_window(const Properties & properties) {
 #ifdef LINUX
         return std::make_shared<Linux::Window> (properties);
 #else

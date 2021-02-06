@@ -21,7 +21,7 @@ namespace Andromeda {
                     return m_Surface;
                 }
 
-                inline Context_Extent get_context_extent() const override {
+                inline Extent get_context_extent() const override {
                     return m_Window->get_viewport();
                 }
 

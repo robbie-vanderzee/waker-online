@@ -16,7 +16,7 @@ namespace Andromeda {
                     return m_Key_Code;
                 }
 
-                EVENT_CLASS_CATEGORY(Event_Category_Input | Event_Category_Keyboard)
+                EVENT_CLASS_CATEGORY(Category::Input | Category::Keyboard)
               protected:
                 Key(Input::Code::Key key_code) : m_Key_Code(key_code) {}
 
@@ -35,7 +35,7 @@ namespace Andromeda {
                     return fmt::format("Key Press: {0} ({1} repeats)", m_Key_Code, m_Repeat_Count);
                 }
 
-                EVENT_CLASS_TYPE(Key_Press)
+                EVENT_CLASS_TYPE(Andromeda::Event::Type::Key_Press)
 
               private:
                 unsigned int m_Repeat_Count;
@@ -49,7 +49,7 @@ namespace Andromeda {
                     return fmt::format("Key Release: {0}", m_Key_Code);
                 }
 
-                EVENT_CLASS_TYPE(Key_Release)
+                EVENT_CLASS_TYPE(Andromeda::Event::Type::Key_Release)
             };
 
             class Key::Type : public Key {
@@ -60,7 +60,7 @@ namespace Andromeda {
                     return fmt::format("Key Type: {0}", m_Key_Code);
                 }
 
-                EVENT_CLASS_TYPE(Key_Type)
+                EVENT_CLASS_TYPE(Andromeda::Event::Type::Key_Type)
             };
 
         } /* Keyboard */

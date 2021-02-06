@@ -17,9 +17,9 @@ namespace Andromeda {
             return state == GLFW_PRESS;
         }
 
-        Mouse_Position get_mouse_position() {
+        Mouse::Position get_mouse_position() {
             auto window = std::any_cast<GLFWwindow *> (Instance::get_instance()->get_window()->get_native_window());
-            Mouse_Position position;
+            Mouse::Position position;
             glfwGetCursorPos(window, & position.x, & position.y);
             return position;
         }

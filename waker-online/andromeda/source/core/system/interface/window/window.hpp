@@ -4,25 +4,26 @@
 #include "core/system/event/event.hpp"
 
 namespace Andromeda {
-    struct Window_Viewport {
-        unsigned int width, height;
-    };
-    struct Window_Position {
-        int x, y;
-    };
-    struct Window_Properties {
-        std::string title;
-        Window_Viewport viewport;
-        Window_Position position;
-
-        Window_Properties(const std::string & title = "Andromeda::Window",
-                          unsigned int width = 1920,
-                          unsigned int height = 1080,
-                          int x = 0,
-                          int y = 0
-                         ) : title(title), viewport({width, height}), position({x, y}) {}
-    };
     class Window {
+      public:
+        struct Viewport {
+            unsigned int width, height;
+        };
+        struct Position {
+            int x, y;
+        };
+        struct Properties {
+            std::string title;
+            Viewport viewport;
+            Position position;
+
+            Properties(const std::string & title = "Andromeda::Window",
+                       unsigned int width = 1920,
+                       unsigned int height = 1080,
+                       int x = 0,
+                       int y = 0
+                      ) : title(title), viewport({width, height}), position({x, y}) {}
+        };
       public:
         using Event_Callback_Function = std::function<void (Event::Event &) >;
 
@@ -30,7 +31,7 @@ namespace Andromeda {
 
         virtual void on_update() = 0;
 
-        virtual Window_Viewport get_viewport() const = 0;
+        virtual Window::Viewport get_viewport() const = 0;
         virtual unsigned int get_width() const = 0;
         virtual unsigned int get_height() const = 0;
 
@@ -40,6 +41,6 @@ namespace Andromeda {
 
         virtual std::any get_native_window() const = 0;
 
-        static std::shared_ptr<Window> create_window(const Window_Properties & properties = Window_Properties());
+        static std::shared_ptr<Window> create_window(const Window::Properties & properties = Window::Properties());
     };
 } /* Andromeda */

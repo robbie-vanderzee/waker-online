@@ -5,8 +5,9 @@
 
 namespace Andromeda {
     namespace Graphics {
-        using Context_Extent = Window_Viewport;
         class Context {
+          public:
+            using Extent = Window::Viewport;
           public:
             virtual ~Context() = default;
 
@@ -14,7 +15,7 @@ namespace Andromeda {
             virtual void shutdown() = 0;
 
             virtual std::any get_native_context() const = 0;
-            virtual Context_Extent get_context_extent() const = 0;
+            virtual Extent get_context_extent() const = 0;
 
             static std::unique_ptr<Context> create_context(std::shared_ptr<Window> window);
         };

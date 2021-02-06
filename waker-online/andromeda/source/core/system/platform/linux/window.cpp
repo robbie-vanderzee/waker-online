@@ -14,7 +14,7 @@ namespace Andromeda {
             ANDROMEDA_CORE_ERROR("GLFW Error ({0}): {1}", error, message);
         }
 
-        Window::Window(const Window_Properties & properties) {
+        Window::Window(const Window::Properties & properties) {
             initialize(properties);
         }
 
@@ -22,7 +22,7 @@ namespace Andromeda {
             shutdown();
         }
 
-        void Window::initialize(const Window_Properties & properties) {
+        void Window::initialize(const Window::Properties & properties) {
             m_Data.title = properties.title;
             m_Data.viewport = properties.viewport;
             m_Data.position = properties.position;

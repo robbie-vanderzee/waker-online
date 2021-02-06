@@ -4,7 +4,7 @@
 
 namespace Andromeda {
     namespace Event {
-        enum class EVENT_TYPE {
+        enum class Type {
             None = 0,
             Window_Close, Window_Resize, Window_Focus, Window_Defocus, Window_Move,
             Instance_Tick, Instance_Update, Instance_Render,
@@ -12,33 +12,54 @@ namespace Andromeda {
             Mouse_Button_Press, Mouse_Button_Release, Mouse_Move, Mouse_Scroll
         };
 
-        enum EVENT_CATEGORY {
-            None                        = 0,
-            Event_Category_Instance     = BIT(0),
-            Event_Category_Input        = BIT(1),
-            Event_Category_Keyboard     = BIT(2),
-            Event_Category_Mouse        = BIT(3),
-            Event_Category_Controller   = BIT(4)
+        enum class Category : unsigned int {
+            None        = 0,
+            Instance    = BIT(0),
+            Input       = BIT(1),
+            Keyboard    = BIT(2),
+            Mouse       = BIT(3),
+            Controller  = BIT(4)
         };
 
+        inline constexpr Category operator | (Category lhs, Category rhs) {
+            using T = std::underlying_type_t <Category>;
+            return static_cast<Category>(static_cast<T>(lhs) | static_cast<T>(rhs));
+        }
+
+        inline constexpr Category & operator |= (Category & lhs, Category rhs) {
+            lhs = lhs | rhs;
+            return lhs;
+        }
+
+        inline constexpr Category operator & (Category lhs, Category rhs) {
+            using T = std::underlying_type_t <Category>;
+            return static_cast<Category>(static_cast<T>(lhs) & static_cast<T>(rhs));
+        }
+
+        inline constexpr Category & operator &= (Category & lhs, Category rhs) {
+            lhs = lhs & rhs;
+            return lhs;
+        }
+
 // Event type instantiation macro
-#define EVENT_CLASS_TYPE(type) static EVENT_TYPE get_static_type() { return EVENT_TYPE::type; }\
-    virtual EVENT_TYPE get_event_type() const override { return get_static_type(); }\
+#define EVENT_CLASS_TYPE(type) static Andromeda::Event::Type get_static_type() { return type; }\
+    virtual Andromeda::Event::Type get_event_type() const override { return get_static_type(); }\
     virtual const char * get_event_name() const override { return #type; }
 // Event category instantiation macro
-#define EVENT_CLASS_CATEGORY(category) virtual unsigned int get_category_flags() const override { return category; }
+#define EVENT_CLASS_CATEGORY(category) virtual Andromeda::Event::Category get_category() const override { return category; }
 
         class Event {
             friend class Dispatcher;
           public:
-            virtual EVENT_TYPE get_event_type() const = 0;
+            virtual Andromeda::Event::Type get_event_type() const = 0;
             virtual const char * get_event_name() const = 0;
-            virtual unsigned int get_category_flags() const = 0;
+            virtual Andromeda::Event::Category get_category() const = 0;
             virtual std::string to_string() const {
                 return get_event_name();
             }
-            inline bool is_in_category(EVENT_CATEGORY category) {
-                return get_category_flags() & category;
+            inline constexpr bool is_in_category(Andromeda::Event::Category category) {
+                using T = std::underlying_type_t <Andromeda::Event::Category>;
+                return static_cast<T>(get_category() & category);
             }
           public:
             bool consumed = false;

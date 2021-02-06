@@ -9,13 +9,13 @@ namespace Andromeda {
     namespace Linux {
         class Window : public Andromeda::Window {
           public:
-            Window(const Window_Properties & properties);
+            Window(const Window::Properties & properties);
 
             virtual ~Window();
 
             void on_update() override;
 
-            inline Window_Viewport get_viewport() const override {
+            inline Window::Viewport get_viewport() const override {
                 return m_Data.viewport;
             }
 
@@ -36,15 +36,15 @@ namespace Andromeda {
             }
 
           private:
-            virtual void initialize(const Window_Properties & properties);
+            virtual void initialize(const Window::Properties & properties);
             virtual void shutdown();
           private:
             GLFWwindow * m_Window;
 
             struct Window_Data {
                 std::string title;
-                Window_Viewport viewport;
-                Window_Position position;
+                Window::Viewport viewport;
+                Window::Position position;
 
                 Event_Callback_Function Event_Callback;
             };
