@@ -149,9 +149,9 @@ namespace Andromeda {
             void API::create_application_info() {
                 m_API_Instance.application_info.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
                 m_API_Instance.application_info.pNext = nullptr;
-                m_API_Instance.application_info.pApplicationName = nullptr;
+                m_API_Instance.application_info.pApplicationName = m_Info.application.c_str();
                 m_API_Instance.application_info.applicationVersion = VK_MAKE_VERSION(1, 0, 0);
-                m_API_Instance.application_info.pEngineName = ANDROMEDA;
+                m_API_Instance.application_info.pEngineName = m_Info.engine.c_str();
                 m_API_Instance.application_info.engineVersion = VK_MAKE_VERSION(1, 0, 0);
                 m_API_Instance.application_info.apiVersion = VK_MAKE_VERSION(1, 2, 0);
             }

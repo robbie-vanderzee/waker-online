@@ -2,24 +2,19 @@
 
 namespace Andromeda {
     namespace Graphics {
-        Renderer::Renderer(Graphics::Info info, API::Type type) : m_Info(info) {
-            m_API = API::create_API(info, type);
-        }
+        std::unique_ptr<Graphics::API> Renderer::s_API = nullptr;
 
-        Renderer::~Renderer() {
-
-        }
-
-        void Renderer::initialize() {
-            m_API->initialize();
+        void Renderer::initialize(Graphics::Info info, API::Type type) {
+            s_API = Graphics::API::create_API(info, type);
+            s_API->initialize();
         }
 
         void Renderer::process() {
-            m_API->process();
+            s_API->process();
         }
 
         void Renderer::shutdown() {
-            m_API->shutdown();
+            s_API->shutdown();
         }
     } /* Graphics */
 } /* Andromeda */

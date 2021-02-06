@@ -36,7 +36,6 @@ namespace Andromeda {
       private:
         std::shared_ptr<Window> m_Window;
         Layer::Stack m_Layer_Stack;
-        std::unique_ptr<Graphics::Renderer> m_Renderer;
 
         struct Info {
             std::string application;

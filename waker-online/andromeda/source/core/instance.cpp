@@ -6,14 +6,13 @@ namespace Andromeda {
         ANDROMEDA_CORE_INFO(m_Info.application);
         m_Window = Window::create_window(Window::Properties(m_Info.application));
         m_Window->set_event_callback(ANDROMEDA_BIND_FN(Instance::on_event));
-        m_Renderer = std::make_unique<Graphics::Renderer>(Graphics::Info{m_Info.application, m_Info.engine}, Graphics::API::Type::Vulkan);
-        m_Renderer->initialize();
-        m_Renderer->set_window_context(m_Window);
-        m_Renderer->process();
+        Graphics::Renderer::initialize(Graphics::Info{m_Info.application, m_Info.engine}, Graphics::API::Type::Vulkan);
+        Graphics::Renderer::set_window_context(m_Window);
+        Graphics::Renderer::process();
     }
 
     Instance::~Instance() {
-        m_Renderer->shutdown();
+        Graphics::Renderer::shutdown();
     }
 
     void Instance::push_layer(Layer * layer) {

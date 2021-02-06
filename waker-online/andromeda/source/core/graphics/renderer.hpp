@@ -8,22 +8,20 @@ namespace Andromeda {
     namespace Graphics {
         class Renderer {
           public:
-            Renderer(Graphics::Info info, API::Type type);
-            ~Renderer();
-            void initialize();
-            void process();
-            void shutdown();
+            static void initialize(Graphics::Info info, API::Type type);
+            static void process();
+            static void shutdown();
 
-            inline API::Type get_API_Type() {
-                return m_API->get_API_Type();
+            static inline API::Type get_API_Type() {
+                return s_API->get_API_Type();
             }
 
-            void set_window_context(std::weak_ptr<Window> window) {
-                m_API->set_window_context(window);
+            static void set_window_context(std::weak_ptr<Window> window) {
+                s_API->set_window_context(window);
             }
           private:
-            std::unique_ptr<API> m_API;
-            Info m_Info;
+            static std::unique_ptr<API> s_API;
+            static Info m_Info;
         };
     } /* Graphics */
 } /* Andromeda */
