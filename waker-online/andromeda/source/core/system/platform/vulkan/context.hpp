@@ -11,7 +11,7 @@ namespace Andromeda {
         namespace Vulkan {
             class Context : public Andromeda::Graphics::Context {
               public:
-                Context(std::shared_ptr<Window> window);
+                Context(std::weak_ptr<Window> window);
                 virtual ~Context() override;
 
                 virtual void initialize(std::any instance) override;
@@ -21,12 +21,14 @@ namespace Andromeda {
                     return m_Surface;
                 }
 
-                inline Extent get_context_extent() const override {
-                    return m_Window->get_viewport();
+                virtual Extent get_context_extent() const override {
+                    auto window = m_Window.lock();
+                    if (!window) return Extent{};
+                    return window->get_viewport();
                 }
 
               private:
-                std::shared_ptr<Window> m_Window;
+                std::weak_ptr<Window> m_Window;
                 VkInstance m_Instance;
                 VkSurfaceKHR m_Surface;
             };

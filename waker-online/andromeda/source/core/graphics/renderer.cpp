@@ -2,18 +2,24 @@
 
 namespace Andromeda {
     namespace Graphics {
-        namespace Renderer {
-            void initialize() {
-                Command::initialize();
-            }
+        Renderer::Renderer(Graphics::Info info, API::Type type) : m_Info(info) {
+            m_API = API::create_API(info, type);
+        }
 
-            void process() {
-                Command::process();
-            }
+        Renderer::~Renderer() {
 
-            void shutdown() {
-                Command::shutdown();
-            }
-        } /* Renderer */
+        }
+
+        void Renderer::initialize() {
+            m_API->initialize();
+        }
+
+        void Renderer::process() {
+            m_API->process();
+        }
+
+        void Renderer::shutdown() {
+            m_API->shutdown();
+        }
     } /* Graphics */
 } /* Andromeda */

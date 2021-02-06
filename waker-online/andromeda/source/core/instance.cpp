@@ -1,25 +1,19 @@
 #include "instance.hpp"
 
-#include "core/graphics/command.hpp"
-#include "core/graphics/renderer.hpp"
-
 namespace Andromeda {
 
-    Instance * Instance::s_Instance = nullptr;
-
-    Instance::Instance(const std::string & name) {
-        s_Instance = this;
-        m_Instance_Name = name;
-        ANDROMEDA_CORE_INFO(m_Instance_Name);
-        m_Window = Window::create_window(Window::Properties(m_Instance_Name));
+    Instance::Instance(const std::string & application) : m_Info({application, ANDROMEDA, true}) {
+        ANDROMEDA_CORE_INFO(m_Info.application);
+        m_Window = Window::create_window(Window::Properties(m_Info.application));
         m_Window->set_event_callback(ANDROMEDA_BIND_FN(Instance::on_event));
-        Graphics::Renderer::initialize();
-        Graphics::Renderer::Command::set_window_context(m_Window);
-        Graphics::Renderer::process();
+        m_Renderer = std::make_unique<Graphics::Renderer>(Graphics::Info{m_Info.application, m_Info.engine}, Graphics::API::Type::Vulkan);
+        m_Renderer->initialize();
+        m_Renderer->set_window_context(m_Window);
+        m_Renderer->process();
     }
 
     Instance::~Instance() {
-        Graphics::Renderer::shutdown();
+        m_Renderer->shutdown();
     }
 
     void Instance::push_layer(Layer * layer) {
@@ -39,7 +33,7 @@ namespace Andromeda {
     }
 
     int Instance::run() {
-        while (m_Active) {
+        while (m_Info.active) {
             std::ranges::for_each(m_Layer_Stack, [](const auto layer) {
                 layer->on_update();
             });
@@ -49,7 +43,7 @@ namespace Andromeda {
     }
 
     void Instance::terminate() {
-        m_Active = false;
+        m_Info.active = false;
     }
 
     void Instance::on_event(Event::Event & event) {

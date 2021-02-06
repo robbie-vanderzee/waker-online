@@ -5,6 +5,10 @@
 
 namespace Andromeda {
     namespace Graphics {
+        struct Info {
+            const std::string application;
+            const std::string engine;
+        };
         class API {
           public:
             enum class Type {
@@ -18,15 +22,11 @@ namespace Andromeda {
             virtual void process() = 0;
             virtual void shutdown() = 0;
 
-            virtual void set_window_context(std::shared_ptr<Window> window) = 0;
+            virtual void set_window_context(std::weak_ptr<Window> window) = 0;
 
-            static Type get_API_Type() {
-                return s_API;
-            }
-            static std::unique_ptr<API> create_API();
+            virtual Type get_API_Type() const = 0;
 
-          private:
-            static Type s_API;
+            static std::unique_ptr<API> create_API(Graphics::Info info, API::Type type);
         };
     } /* Graphics */
 } /* Andromeda */

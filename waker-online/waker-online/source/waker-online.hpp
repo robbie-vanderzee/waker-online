@@ -12,6 +12,6 @@ namespace Waker {
     };
 } /* Waker */
 
-Andromeda::Instance * Andromeda::create_instance() {
-    return new Waker::Instance("Waker [ ~ ] Online");
+std::unique_ptr<Andromeda::Instance> Andromeda::create_instance() {
+    return std::make_unique<Waker::Instance>("Waker [ ~ ] Online");
 }

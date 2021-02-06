@@ -3,7 +3,6 @@
 #include "core/core.hpp"
 #include "core/instance.hpp"
 
-#include "core/graphics/command.hpp"
 #include "core/graphics/renderer.hpp"
 
 #include "core/system/event/event.hpp"

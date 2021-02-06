@@ -45,11 +45,17 @@ namespace Andromeda {
             };
             class API : public Andromeda::Graphics::API {
               public:
+                API(Graphics::Info info);
+
                 virtual void initialize() override;
                 virtual void process() override;
                 virtual void shutdown() override;
 
-                virtual void set_window_context(std::shared_ptr<Window> window) override;
+                virtual void set_window_context(std::weak_ptr<Window> window) override;
+
+                inline constexpr virtual Graphics::API::Type get_API_Type() const override {
+                    return API::Type::Vulkan;
+                }
 
               private:
                 void generate_vulkan_instance();
@@ -106,6 +112,7 @@ namespace Andromeda {
 
               private:
                 API_Instance m_API_Instance;
+                Graphics::Info m_Info;
                 std::unique_ptr<Graphics::Context> m_Context;
             };
         } /* Vulkan */

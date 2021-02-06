@@ -4,6 +4,11 @@
 namespace Andromeda {
     namespace Graphics {
         namespace Vulkan {
+
+            API::API(Graphics::Info info) : m_Info(info) {
+
+            }
+
             void API::initialize() {
                 ANDROMEDA_CORE_INFO("Initializing Vulkan API.");
                 generate_vulkan_instance();
@@ -23,9 +28,14 @@ namespace Andromeda {
                 vkDestroyInstance(m_API_Instance.instance, nullptr);
             }
 
-            void API::set_window_context(std::shared_ptr<Window> window) {
-                m_Context = Graphics::Context::create_context(window);
-                m_Context->initialize(m_API_Instance.instance);
+            void API::set_window_context(std::weak_ptr<Window> window) {
+                auto s_window = window.lock();
+                if (s_window) {
+                    m_Context = Graphics::Context::create_context(API::Type::Vulkan, s_window);
+                    m_Context->initialize(m_API_Instance.instance);
+                } else {
+                    ANDROMEDA_CORE_ERROR("Failed to set window context, window expired.");
+                }
             }
 
             void API::generate_vulkan_instance() {
@@ -139,7 +149,7 @@ namespace Andromeda {
             void API::create_application_info() {
                 m_API_Instance.application_info.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
                 m_API_Instance.application_info.pNext = nullptr;
-                m_API_Instance.application_info.pApplicationName = Instance::get_instance()->get_instance_name().c_str();
+                m_API_Instance.application_info.pApplicationName = nullptr;
                 m_API_Instance.application_info.applicationVersion = VK_MAKE_VERSION(1, 0, 0);
                 m_API_Instance.application_info.pEngineName = ANDROMEDA;
                 m_API_Instance.application_info.engineVersion = VK_MAKE_VERSION(1, 0, 0);

@@ -3,7 +3,7 @@
 #include "core.hpp"
 #include "instance.hpp"
 
-extern Andromeda::Instance * Andromeda::create_instance();
+extern std::unique_ptr<Andromeda::Instance> Andromeda::create_instance();
 
 int main(int argc, char const * argv[]) {
 #ifdef LOGGING
@@ -17,6 +17,5 @@ int main(int argc, char const * argv[]) {
     int status = instance->run();
     ANDROMEDA_CORE_TRACE("terminating Andromeda / instance...");
     ANDROMEDA_CORE_INFO("");
-    delete instance;
     return status;
 }

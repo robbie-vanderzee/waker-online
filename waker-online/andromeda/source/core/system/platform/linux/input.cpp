@@ -5,31 +5,31 @@
 
 namespace Andromeda {
     namespace Input {
-        bool is_key_pressed(Code::Key key) {
-            auto window = std::any_cast<GLFWwindow *> (Instance::get_instance()->get_window()->get_native_window());
-            auto state = glfwGetKey(window, static_cast<int>(key));
+        bool is_key_pressed(const std::unique_ptr<Window> & window, Code::Key key) {
+            auto glfw_window = std::any_cast<GLFWwindow *> (window->get_native_window());
+            auto state = glfwGetKey(glfw_window, static_cast<int>(key));
             return state == GLFW_PRESS || state == GLFW_REPEAT;
         }
 
-        bool is_mouse_button_pressed(Code::Mouse button) {
-            auto window = std::any_cast<GLFWwindow *> (Instance::get_instance()->get_window()->get_native_window());
-            auto state = glfwGetMouseButton(window, static_cast<int>(button));
+        bool is_mouse_button_pressed(const std::unique_ptr<Window> & window, Code::Mouse button) {
+            auto glfw_window = std::any_cast<GLFWwindow *> (window->get_native_window());
+            auto state = glfwGetMouseButton(glfw_window, static_cast<int>(button));
             return state == GLFW_PRESS;
         }
 
-        Mouse::Position get_mouse_position() {
-            auto window = std::any_cast<GLFWwindow *> (Instance::get_instance()->get_window()->get_native_window());
+        Mouse::Position get_mouse_position(const std::unique_ptr<Window> & window) {
+            auto glfw_window = std::any_cast<GLFWwindow *> (window->get_native_window());
             Mouse::Position position;
-            glfwGetCursorPos(window, & position.x, & position.y);
+            glfwGetCursorPos(glfw_window, & position.x, & position.y);
             return position;
         }
 
-        double get_mouse_x() {
-            return get_mouse_position().x;
+        double get_mouse_x(const std::unique_ptr<Window> & window) {
+            return get_mouse_position(window).x;
         }
 
-        double get_mouse_y() {
-            return get_mouse_position().y;
+        double get_mouse_y(const std::unique_ptr<Window> & window) {
+            return get_mouse_position(window).y;
         }
     } /* Input */
 } /* Andromeda */

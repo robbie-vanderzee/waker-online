@@ -2,11 +2,14 @@
 
 #include "core.hpp"
 
+#include "core/graphics/renderer.hpp"
+
 #include "core/system/event/event.hpp"
 #include "core/system/event/instance.hpp"
 
 #include "core/system/interface/layer/stack.hpp"
 #include "core/system/interface/window/window.hpp"
+
 
 int main(int argc, char const * argv[]);
 
@@ -27,32 +30,24 @@ namespace Andromeda {
         void terminate();
         void on_event(Event::Event & e);
 
-      public:
-
-        inline static Instance * get_instance() {
-            return s_Instance;
-        }
-
-        inline std::shared_ptr<Window> get_window() {
-            return m_Window;
-        }
-
-        inline std::string get_instance_name() {
-            return m_Instance_Name;
-        }
-
       private:
         bool on_window_close(Event::Window::Close & event);
 
       private:
-        bool m_Active = true;
-        std::string m_Instance_Name;
         std::shared_ptr<Window> m_Window;
         Layer::Stack m_Layer_Stack;
+        std::unique_ptr<Graphics::Renderer> m_Renderer;
+
+        struct Info {
+            std::string application;
+            std::string engine;
+            bool active;
+        };
+
+        Info m_Info;
       private:
-        static Instance * s_Instance;
         friend int ::main(int argc, char const * argv[]);
     };
 
-    Instance * create_instance();
+    std::unique_ptr<Instance> create_instance();
 } /* Andromeda */

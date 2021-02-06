@@ -34,14 +34,8 @@ namespace Andromeda {
                 glfwSetErrorCallback(glfw_error_callback);
             }
 
-            switch (Graphics::Renderer::get_API_Type()) {
-                case Graphics::API::Type::None:
-                    break;
-                case Graphics::API::Type::Vulkan:
-                    glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-                    glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
-                    break;
-            }
+            glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+            glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 
             m_Window = glfwCreateWindow(m_Data.viewport.width, m_Data.viewport.height, m_Data.title.c_str(), nullptr, nullptr);
             glfwSetWindowUserPointer(m_Window, & m_Data);
