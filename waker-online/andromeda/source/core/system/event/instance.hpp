@@ -5,35 +5,6 @@
 namespace Andromeda {
     namespace Event {
         namespace Window {
-            class Close : public Event {
-              public:
-                Close() = default;
-
-                EVENT_CLASS_TYPE(Type::Window_Close)
-                EVENT_CLASS_CATEGORY(Category::Instance)
-            };
-
-            class Resize : public Event {
-              public:
-                Resize(unsigned int width, unsigned int height) : m_Width(width), m_Height(height) {}
-
-                inline unsigned int get_window_width() const {
-                    return m_Width;
-                }
-                inline unsigned int get_window_height() const {
-                    return m_Height;
-                }
-
-                std::string to_string() const override {
-                    return fmt::format("Window Resize: {0}, {1}", m_Width, m_Height);
-                }
-
-                EVENT_CLASS_TYPE(Type::Window_Resize)
-                EVENT_CLASS_CATEGORY(Category::Instance)
-              private:
-                unsigned int m_Width, m_Height;
-            };
-
             class Move : public Event {
               public:
                 Move(int x, int y) : m_X(x), m_Y(y) {}
@@ -49,10 +20,107 @@ namespace Andromeda {
                     return fmt::format("Window Move: {0}, {1}", m_X, m_Y);
                 }
 
-                EVENT_CLASS_TYPE(Type::Window_Move)
-                EVENT_CLASS_CATEGORY(Category::Instance)
+                EVENT_CLASS_TYPE(Andromeda::Event::Type::Move)
+                EVENT_CLASS_CATEGORY(Andromeda::Event::Category::Instance | Andromeda::Event::Category::Window)
               private:
                 int m_X, m_Y;
+            };
+            class Resize : public Event {
+              public:
+                Resize(unsigned int width, unsigned int height) : m_Width(width), m_Height(height) {}
+
+                inline unsigned int get_window_width() const {
+                    return m_Width;
+                }
+                inline unsigned int get_window_height() const {
+                    return m_Height;
+                }
+
+                std::string to_string() const override {
+                    return fmt::format("Window Resize: {0}, {1}", m_Width, m_Height);
+                }
+
+                EVENT_CLASS_TYPE(Type::Resize)
+                EVENT_CLASS_CATEGORY(Category::Instance | Category::Window)
+              private:
+                unsigned int m_Width, m_Height;
+            };
+            class Close : public Event {
+              public:
+                Close() = default;
+
+                std::string to_string() const override {
+                    return fmt::format("Window Close");
+                }
+
+                EVENT_CLASS_TYPE(Andromeda::Event::Type::Close)
+                EVENT_CLASS_CATEGORY(Andromeda::Event::Category::Instance | Andromeda::Event::Category::Window)
+            };
+            class Refresh : public Event {
+              public:
+                Refresh() = default;
+
+                std::string to_string() const override {
+                    return fmt::format("Window Refresh");
+                }
+
+                EVENT_CLASS_TYPE(Andromeda::Event::Type::Refresh)
+                EVENT_CLASS_CATEGORY(Andromeda::Event::Category::Instance | Andromeda::Event::Category::Window)
+            };
+            class Focus : public Event {
+              public:
+                Focus() = default;
+
+                std::string to_string() const override {
+                    return fmt::format("Window Focus");
+                }
+
+                EVENT_CLASS_TYPE(Andromeda::Event::Type::Focus)
+                EVENT_CLASS_CATEGORY(Andromeda::Event::Category::Instance | Andromeda::Event::Category::Window)
+            };
+            class Defocus : public Event {
+              public:
+                Defocus() = default;
+
+                std::string to_string() const override {
+                    return fmt::format("Window Defocus");
+                }
+
+                EVENT_CLASS_TYPE(Andromeda::Event::Type::Defocus)
+                EVENT_CLASS_CATEGORY(Andromeda::Event::Category::Instance | Andromeda::Event::Category::Window)
+            };
+            class Maximize : public Event {
+              public:
+                Maximize() = default;
+
+                std::string to_string() const override {
+                    return fmt::format("Window Maximize");
+                }
+
+                EVENT_CLASS_TYPE(Andromeda::Event::Type::Maximize)
+                EVENT_CLASS_CATEGORY(Andromeda::Event::Category::Instance | Andromeda::Event::Category::Window)
+            };
+            class Minimize : public Event {
+              public:
+                Minimize() = default;
+
+                std::string to_string() const override {
+                    return fmt::format("Window Minimize");
+                }
+
+                EVENT_CLASS_TYPE(Andromeda::Event::Type::Minimize)
+                EVENT_CLASS_CATEGORY(Andromeda::Event::Category::Instance | Andromeda::Event::Category::Window)
+            };
+            class Restore : public Event {
+              public:
+                Restore() = default;
+
+                std::string to_string() const override {
+                    return fmt::format("Window Restore");
+                }
+
+                EVENT_CLASS_TYPE(Andromeda::Event::Type::Restore)
+                EVENT_CLASS_CATEGORY(Andromeda::Event::Category::Instance | Andromeda::Event::Category::Window)
             };
         } /* Window */
 
@@ -61,24 +129,36 @@ namespace Andromeda {
               public:
                 Tick() = default;
 
-                EVENT_CLASS_TYPE(Type::Instance_Tick)
-                EVENT_CLASS_CATEGORY(Category::Instance)
+                std::string to_string() const override {
+                    return fmt::format("Instance Tick");
+                }
+
+                EVENT_CLASS_TYPE(Andromeda::Event::Type::Tick)
+                EVENT_CLASS_CATEGORY(Andromeda::Event::Category::Instance)
             };
 
             class Update : public Event {
               public:
                 Update() = default;
 
-                EVENT_CLASS_TYPE(Type::Instance_Update)
-                EVENT_CLASS_CATEGORY(Category::Instance)
+                std::string to_string() const override {
+                    return fmt::format("Instance Update");
+                }
+
+                EVENT_CLASS_TYPE(Andromeda::Event::Type::Update)
+                EVENT_CLASS_CATEGORY(Andromeda::Event::Category::Instance)
             };
 
             class Render : public Event {
               public:
                 Render() = default;
 
-                EVENT_CLASS_TYPE(Type::Instance_Render)
-                EVENT_CLASS_CATEGORY(Category::Instance)
+                std::string to_string() const override {
+                    return fmt::format("Instance Render");
+                }
+
+                EVENT_CLASS_TYPE(Andromeda::Event::Type::Render)
+                EVENT_CLASS_CATEGORY(Andromeda::Event::Category::Instance)
             };
         } /* Instance */
     } /* Event */

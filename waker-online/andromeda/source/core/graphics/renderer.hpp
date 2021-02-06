@@ -9,8 +9,8 @@ namespace Andromeda {
             void process();
             void shutdown();
 
-            inline API_TYPE get_API() {
-                return API::get_API();
+            inline API::Type get_API_Type() {
+                return API::get_API_Type();
             }
         };
     } /* Graphics */

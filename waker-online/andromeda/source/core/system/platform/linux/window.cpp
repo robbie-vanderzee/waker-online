@@ -34,10 +34,10 @@ namespace Andromeda {
                 glfwSetErrorCallback(glfw_error_callback);
             }
 
-            switch (Graphics::Renderer::get_API()) {
-                case Graphics::API_TYPE::None:
+            switch (Graphics::Renderer::get_API_Type()) {
+                case Graphics::API::Type::None:
                     break;
-                case Graphics::API_TYPE::Vulkan:
+                case Graphics::API::Type::Vulkan:
                     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
                     glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
                     break;
@@ -67,6 +67,60 @@ namespace Andromeda {
                 Window_Data & data = * (Window_Data *) glfwGetWindowUserPointer(window);
                 Event::Window::Close event;
                 data.Event_Callback(event);
+            });
+
+            glfwSetWindowRefreshCallback(m_Window, [](GLFWwindow * window) {
+                Window_Data & data = * (Window_Data *) glfwGetWindowUserPointer(window);
+                Event::Window::Refresh event;
+                data.Event_Callback(event);
+            });
+
+            glfwSetWindowFocusCallback(m_Window, [](GLFWwindow * window, int focused) {
+                Window_Data & data = * (Window_Data *) glfwGetWindowUserPointer(window);
+                switch (focused) {
+                    case GLFW_TRUE: {
+                        Event::Window::Focus event;
+                        data.Event_Callback(event);
+                        break;
+                    }
+                    case GLFW_FALSE: {
+                        Event::Window::Defocus event;
+                        data.Event_Callback(event);
+                        break;
+                    }
+                }
+            });
+
+            glfwSetWindowMaximizeCallback(m_Window, [](GLFWwindow * window, int maximized) {
+                Window_Data & data = * (Window_Data *) glfwGetWindowUserPointer(window);
+                switch (maximized) {
+                    case GLFW_TRUE: {
+                        Event::Window::Maximize event;
+                        data.Event_Callback(event);
+                        break;
+                    }
+                    case GLFW_FALSE: {
+                        Event::Window::Restore event;
+                        data.Event_Callback(event);
+                        break;
+                    }
+                }
+            });
+
+            glfwSetWindowIconifyCallback(m_Window, [](GLFWwindow * window, int iconified) {
+                Window_Data & data = * (Window_Data *) glfwGetWindowUserPointer(window);
+                switch (iconified) {
+                    case GLFW_TRUE: {
+                        Event::Window::Minimize event;
+                        data.Event_Callback(event);
+                        break;
+                    }
+                    case GLFW_FALSE: {
+                        Event::Window::Restore event;
+                        data.Event_Callback(event);
+                        break;
+                    }
+                }
             });
 
             glfwSetKeyCallback(m_Window, [](GLFWwindow * window, int key, int /*scancode*/, int action, int /*mods*/) {

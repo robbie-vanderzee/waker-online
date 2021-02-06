@@ -5,11 +5,12 @@
 
 namespace Andromeda {
     namespace Graphics {
-        enum class API_TYPE {
-            None = 0,
-            Vulkan = 1
-        };
         class API {
+          public:
+            enum class Type {
+                None = 0,
+                Vulkan = 1
+            };
           public:
             virtual ~API() = default;
 
@@ -19,13 +20,13 @@ namespace Andromeda {
 
             virtual void set_window_context(std::shared_ptr<Window> window) = 0;
 
-            static API_TYPE get_API() {
+            static Type get_API_Type() {
                 return s_API;
             }
             static std::unique_ptr<API> create_API();
 
           private:
-            static API_TYPE s_API;
+            static Type s_API;
         };
     } /* Graphics */
 } /* Andromeda */

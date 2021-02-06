@@ -6,19 +6,21 @@ namespace Andromeda {
     namespace Event {
         enum class Type {
             None = 0,
-            Window_Close, Window_Resize, Window_Focus, Window_Defocus, Window_Move,
-            Instance_Tick, Instance_Update, Instance_Render,
-            Key_Press, Key_Release, Key_Type,
-            Mouse_Button_Press, Mouse_Button_Release, Mouse_Move, Mouse_Scroll
+            Tick, Update, Render,
+            Move, Close, Resize, Refresh, Focus, Defocus, Maximize, Minimize, Restore,
+            Press, Release, Type,
+            Scroll
         };
 
         enum class Category : unsigned int {
             None        = 0,
             Instance    = BIT(0),
-            Input       = BIT(1),
-            Keyboard    = BIT(2),
-            Mouse       = BIT(3),
-            Controller  = BIT(4)
+            Window      = BIT(1),
+            Input       = BIT(2),
+            Keyboard    = BIT(3),
+            Mouse       = BIT(4),
+            Controller  = BIT(5),
+            Button      = BIT(6)
         };
 
         inline constexpr Category operator | (Category lhs, Category rhs) {
@@ -41,11 +43,10 @@ namespace Andromeda {
             return lhs;
         }
 
-// Event type instantiation macro
 #define EVENT_CLASS_TYPE(type) static Andromeda::Event::Type get_static_type() { return type; }\
     virtual Andromeda::Event::Type get_event_type() const override { return get_static_type(); }\
     virtual const char * get_event_name() const override { return #type; }
-// Event category instantiation macro
+
 #define EVENT_CLASS_CATEGORY(category) virtual Andromeda::Event::Category get_category() const override { return category; }
 
         class Event {
@@ -60,6 +61,9 @@ namespace Andromeda {
             inline constexpr bool is_in_category(Andromeda::Event::Category category) {
                 using T = std::underlying_type_t <Andromeda::Event::Category>;
                 return static_cast<T>(get_category() & category);
+            }
+            inline constexpr bool is_category(Andromeda::Event::Category category) {
+                return get_category() == category;
             }
           public:
             bool consumed = false;

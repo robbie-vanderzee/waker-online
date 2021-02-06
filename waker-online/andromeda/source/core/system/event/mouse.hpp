@@ -22,8 +22,8 @@ namespace Andromeda {
                     return fmt::format("Mouse Move: {0}, {1}", m_Mouse_X, m_Mouse_Y);
                 }
 
-                EVENT_CLASS_TYPE(Type::Mouse_Move)
-                EVENT_CLASS_CATEGORY(Category::Input | Category::Mouse)
+                EVENT_CLASS_TYPE(Andromeda::Event::Type::Move)
+                EVENT_CLASS_CATEGORY(Andromeda::Event::Category::Input | Andromeda::Event::Category::Mouse)
               private:
                 int m_Mouse_X, m_Mouse_Y;
             };
@@ -44,8 +44,8 @@ namespace Andromeda {
                     return fmt::format("Mouse Scroll: {0}, {1}", m_X_Offset, m_Y_Offset);
                 }
 
-                EVENT_CLASS_TYPE(Type::Mouse_Scroll)
-                EVENT_CLASS_CATEGORY(Category::Input | Category::Mouse)
+                EVENT_CLASS_TYPE(Andromeda::Event::Type::Scroll)
+                EVENT_CLASS_CATEGORY(Andromeda::Event::Category::Input | Andromeda::Event::Category::Mouse)
               private:
                 double m_X_Offset, m_Y_Offset;
             };
@@ -59,7 +59,7 @@ namespace Andromeda {
                     return m_Button;
                 }
 
-                EVENT_CLASS_CATEGORY(Category::Input | Category::Mouse)
+                EVENT_CLASS_CATEGORY(Andromeda::Event::Category::Input | Andromeda::Event::Category::Mouse | Andromeda::Event::Category::Button)
               protected:
                 Button(Input::Code::Mouse button)
                     : m_Button(button) {}
@@ -74,7 +74,7 @@ namespace Andromeda {
                     return fmt::format("Mouse Button Press: {0}", m_Button);
                 }
 
-                EVENT_CLASS_TYPE(Type::Mouse_Button_Press)
+                EVENT_CLASS_TYPE(Andromeda::Event::Type::Press)
             };
 
             class Button::Release : public Button {
@@ -86,7 +86,7 @@ namespace Andromeda {
                     return fmt::format("Mouse Button Release: {0}", m_Button);
                 }
 
-                EVENT_CLASS_TYPE(Type::Mouse_Button_Release)
+                EVENT_CLASS_TYPE(Andromeda::Event::Type::Release)
             };
 
         } /* Mouse */

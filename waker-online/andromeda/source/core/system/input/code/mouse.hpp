@@ -4,7 +4,6 @@ namespace Andromeda {
     namespace Input {
         namespace Code {
             typedef enum class Mouse : unsigned int {
-                // From glfw3.h
                 Button0                = 0,
                 Button1                = 1,
                 Button2                = 2,

@@ -5,14 +5,14 @@
 namespace Andromeda {
     namespace Graphics {
 #ifdef VULKAN
-        API_TYPE API::s_API = API_TYPE::Vulkan;
+        API::Type API::s_API = API::Type::Vulkan;
 #endif
         std::unique_ptr<API> API::create_API() {
             switch (s_API) {
-                case API_TYPE::None:
-                    ANDROMEDA_CORE_ASSERT(false, "Graphics API <NONE> is unsupported.");
+                case API::Type::None:
+                    ANDROMEDA_CORE_ASSERT(false, "Graphics API <None> [Software] is unsupported.");
                     return nullptr;
-                case API_TYPE::Vulkan:
+                case API::Type::Vulkan:
                     return std::make_unique<Vulkan::API>();
             }
             ANDROMEDA_CORE_ASSERT(false, "Graphics API is undefined.");

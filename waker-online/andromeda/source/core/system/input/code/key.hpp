@@ -4,7 +4,6 @@ namespace Andromeda {
     namespace Input {
         namespace Code {
             typedef enum class Key : unsigned int {
-                // From glfw3.h
                 Space               = 32,
                 Apostrophe          = 39, /* ' */
                 Comma               = 44, /* , */

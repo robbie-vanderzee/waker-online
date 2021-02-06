@@ -41,13 +41,11 @@ namespace Andromeda {
             return m_Instance_Name;
         }
 
-        void set_v_sync(bool v_sync);
-
       private:
         bool on_window_close(Event::Window::Close & event);
 
       private:
-        bool m_Running = true;
+        bool m_Active = true;
         std::string m_Instance_Name;
         std::shared_ptr<Window> m_Window;
         Layer::Stack m_Layer_Stack;

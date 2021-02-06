@@ -39,8 +39,8 @@ namespace Andromeda {
     }
 
     int Instance::run() {
-        while (m_Running) {
-            std::ranges::for_each(std::begin(m_Layer_Stack), std::end(m_Layer_Stack), [](const auto layer) {
+        while (m_Active) {
+            std::ranges::for_each(m_Layer_Stack, [](const auto layer) {
                 layer->on_update();
             });
             m_Window->on_update();
@@ -49,7 +49,7 @@ namespace Andromeda {
     }
 
     void Instance::terminate() {
-        m_Running = false;
+        m_Active = false;
     }
 
     void Instance::on_event(Event::Event & event) {
