@@ -51,7 +51,9 @@ namespace Andromeda {
             };
 
             class Button : public Event {
-                class Press, Release;
+              public:
+                class Press;
+                class Release;
               public:
                 inline Input::Code::Mouse get_mouse_button() const {
                     return m_Button;
@@ -81,7 +83,7 @@ namespace Andromeda {
                     : Button(button) {}
 
                 std::string to_string() const override {
-                    return fmt::format("Mouse Button Release: ", m_Button);
+                    return fmt::format("Mouse Button Release: {0}", m_Button);
                 }
 
                 EVENT_CLASS_TYPE(Mouse_Button_Release)

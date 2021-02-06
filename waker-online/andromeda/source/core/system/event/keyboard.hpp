@@ -6,8 +6,11 @@
 namespace Andromeda {
     namespace Event {
         namespace Keyboard {
-            class Press, Release, Type;
             class Key : public Event {
+              public:
+                class Press;
+                class Release;
+                class Type;
               public:
                 inline Input::Code::Key get_key_code() const {
                     return m_Key_Code;

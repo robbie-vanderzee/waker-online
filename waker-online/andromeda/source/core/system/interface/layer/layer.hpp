@@ -6,6 +6,8 @@
 namespace Andromeda {
     class Layer {
       public:
+        class Stack;
+      public:
         Layer(const std::string & name = "Layer");
         virtual ~Layer() = default;
 

@@ -5,7 +5,7 @@
 #include "core/system/event/event.hpp"
 #include "core/system/event/instance.hpp"
 
-#include "core/system/interface/layer/layer_stack.hpp"
+#include "core/system/interface/layer/stack.hpp"
 #include "core/system/interface/window/window.hpp"
 
 int main(int argc, char const * argv[]);
@@ -15,9 +15,6 @@ namespace Andromeda {
       public:
         Instance(const std::string & name = "Andromeda /instance");
         virtual ~Instance();
-
-        Instance(const Instance &) = delete;
-        Instance & operator= (const Instance &) = delete;
 
         void push_layer(Layer * layer);
         void pop_layer(Layer * layer);
@@ -53,7 +50,7 @@ namespace Andromeda {
         bool m_Running = true;
         std::string m_Instance_Name;
         std::shared_ptr<Window> m_Window;
-        Layer_Stack m_Layer_Stack;
+        Layer::Stack m_Layer_Stack;
       private:
         static Instance * s_Instance;
         friend int ::main(int argc, char const * argv[]);
