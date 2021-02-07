@@ -1,10 +1,12 @@
 #pragma once
 
 #include "core/core.hpp"
+
 #include "core/system/event/event.hpp"
+#include "core/system/input/input.hpp"
 
 namespace Andromeda {
-    class Window {
+    class Window : Input::Manager {
       public:
         struct Viewport {
             unsigned int width, height;
@@ -34,6 +36,12 @@ namespace Andromeda {
         virtual Window::Viewport get_viewport() const = 0;
         virtual unsigned int get_width() const = 0;
         virtual unsigned int get_height() const = 0;
+
+        // Input State
+
+        virtual bool is_key_pressed(Andromeda::Input::Code::Key key) = 0;
+        virtual bool is_mouse_button_pressed(Andromeda::Input::Code::Mouse button) = 0;
+        virtual Andromeda::Input::Mouse::Position get_mouse_position() = 0;
 
         // Attributes
 

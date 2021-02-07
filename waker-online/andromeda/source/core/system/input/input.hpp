@@ -1,8 +1,8 @@
 #pragma once
 
-#include "code/input.hpp"
+#include "core/core.hpp"
 
-#include "core/system/interface/window/window.hpp"
+#include "code/input.hpp"
 
 namespace Andromeda {
     namespace Input {
@@ -11,10 +11,13 @@ namespace Andromeda {
                 double x, y;
             };
         }
-        bool is_key_pressed(const std::unique_ptr<Window> & window, Code::Key key);
-        bool is_mouse_button_pressed(const std::unique_ptr<Window> & window, Code::Mouse button);
-        Mouse::Position get_mouse_position(const std::unique_ptr<Window> & window);
-        double get_mouse_x(const std::unique_ptr<Window> & window);
-        double get_mouse_y(const std::unique_ptr<Window> & window);
+        class Manager {
+          public:
+            virtual ~Manager() = default;
+
+            virtual bool is_key_pressed(Code::Key key) = 0;
+            virtual bool is_mouse_button_pressed(Code::Mouse button) = 0;
+            virtual Mouse::Position get_mouse_position() = 0;
+        };
     } /* Input */
 } /* Andromeda */

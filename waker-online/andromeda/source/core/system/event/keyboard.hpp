@@ -1,6 +1,7 @@
 #pragma once
 
 #include "event.hpp"
+
 #include "core/system/input/code/key.hpp"
 
 namespace Andromeda {

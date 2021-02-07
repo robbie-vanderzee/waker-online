@@ -1,6 +1,7 @@
 #pragma once
 
 #include "core/core.hpp"
+
 #include "core/system/interface/window/window.hpp"
 
 namespace Andromeda {

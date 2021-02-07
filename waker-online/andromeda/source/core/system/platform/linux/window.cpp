@@ -1,6 +1,5 @@
 #include "window.hpp"
 
-#include "core/graphics/renderer.hpp"
 #include "core/system/event/event.hpp"
 #include "core/system/event/instance.hpp"
 #include "core/system/event/keyboard.hpp"
@@ -20,6 +19,26 @@ namespace Andromeda {
 
         Window::~Window() {
             shutdown();
+        }
+
+        void Window::on_update() {
+            glfwPollEvents();
+        }
+
+        bool Window::is_key_pressed(Andromeda::Input::Code::Key key) {
+            auto state = glfwGetKey(m_Window, static_cast<int>(key));
+            return state == GLFW_PRESS || state == GLFW_REPEAT;
+        }
+
+        bool Window::is_mouse_button_pressed(Andromeda::Input::Code::Mouse button) {
+            auto state = glfwGetMouseButton(m_Window, static_cast<int>(button));
+            return state == GLFW_PRESS;
+        }
+
+        Andromeda::Input::Mouse::Position Window::get_mouse_position() {
+            Andromeda::Input::Mouse::Position position;
+            glfwGetCursorPos(m_Window, & position.x, & position.y);
+            return position;
         }
 
         void Window::initialize(const Window::Properties & properties) {
@@ -121,17 +140,17 @@ namespace Andromeda {
                 Window_Data & data = * (Window_Data *) glfwGetWindowUserPointer(window);
                 switch (action) {
                     case GLFW_PRESS: {
-                        Event::Keyboard::Key::Press event(static_cast<Input::Code::Key>(key), 0);
+                        Event::Keyboard::Key::Press event(static_cast<Andromeda::Input::Code::Key>(key), 0);
                         data.Event_Callback(event);
                         break;
                     }
                     case GLFW_RELEASE: {
-                        Event::Keyboard::Key::Release event(static_cast<Input::Code::Key>(key));
+                        Event::Keyboard::Key::Release event(static_cast<Andromeda::Input::Code::Key>(key));
                         data.Event_Callback(event);
                         break;
                     }
                     case GLFW_REPEAT: {
-                        Event::Keyboard::Key::Press event(static_cast<Input::Code::Key>(key), 1);
+                        Event::Keyboard::Key::Press event(static_cast<Andromeda::Input::Code::Key>(key), 1);
                         data.Event_Callback(event);
                         break;
                     }
@@ -140,7 +159,7 @@ namespace Andromeda {
 
             glfwSetCharCallback(m_Window, [](GLFWwindow * window, unsigned int key) {
                 Window_Data & data = * (Window_Data *) glfwGetWindowUserPointer(window);
-                Event::Keyboard::Key::Type event(static_cast<Input::Code::Key>(key));
+                Event::Keyboard::Key::Type event(static_cast<Andromeda::Input::Code::Key>(key));
                 data.Event_Callback(event);
             });
 
@@ -148,12 +167,12 @@ namespace Andromeda {
                 Window_Data & data = * (Window_Data *) glfwGetWindowUserPointer(window);
                 switch (action) {
                     case GLFW_PRESS: {
-                        Event::Mouse::Button::Press event((Input::Code::Mouse) button);
+                        Event::Mouse::Button::Press event((Andromeda::Input::Code::Mouse) button);
                         data.Event_Callback(event);
                         break;
                     }
                     case GLFW_RELEASE: {
-                        Event::Mouse::Button::Release event((Input::Code::Mouse) button);
+                        Event::Mouse::Button::Release event((Andromeda::Input::Code::Mouse) button);
                         data.Event_Callback(event);
                         break;
                     }
@@ -177,10 +196,6 @@ namespace Andromeda {
             glfwDestroyWindow(m_Window);
             s_GLFW_Windows--;
             if (s_GLFW_Windows == 0) glfwTerminate();
-        }
-
-        void Window::on_update() {
-            glfwPollEvents();
         }
 
     } /* Linux */

@@ -1,6 +1,5 @@
 #include "context.hpp"
 
-#include "renderer.hpp"
 #include "core/system/platform/vulkan/context.hpp"
 
 namespace Andromeda {

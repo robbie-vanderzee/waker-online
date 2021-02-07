@@ -1,5 +1,7 @@
 #pragma once
 
+#include "core/core.hpp"
+
 #include "api.hpp"
 
 #include "core/system/interface/window/window.hpp"

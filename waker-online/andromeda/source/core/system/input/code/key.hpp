@@ -1,5 +1,7 @@
 #pragma once
 
+#include "core/core.hpp"
+
 namespace Andromeda {
     namespace Input {
         namespace Code {

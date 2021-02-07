@@ -1,6 +1,5 @@
 #pragma once
 
-#include "core/graphics/context.hpp"
 #include "core/system/interface/window/window.hpp"
 
 #include <GLFW/glfw3.h>
@@ -26,6 +25,14 @@ namespace Andromeda {
             inline unsigned int get_height() const override {
                 return m_Data.viewport.height;
             }
+
+            // Input State
+
+            virtual bool is_key_pressed(Andromeda::Input::Code::Key key) override;
+            virtual bool is_mouse_button_pressed(Andromeda::Input::Code::Mouse button) override;
+            virtual Andromeda::Input::Mouse::Position get_mouse_position() override;
+
+            // Attributes
 
             inline void set_event_callback(const Event_Callback_Function & callback) override {
                 m_Data.Event_Callback = callback;
