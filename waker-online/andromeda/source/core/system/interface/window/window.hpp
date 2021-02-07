@@ -22,16 +22,43 @@ namespace Andromeda {
             Floating   = BIT(3)
         };
 
+        friend inline constexpr Window::Option operator | (Window::Option lhs, Window::Option rhs) {
+            using T = std::underlying_type_t <Window::Option>;
+            return static_cast<Window::Option>(static_cast<T>(lhs) | static_cast<T>(rhs));
+        }
+
+        friend inline constexpr Window::Option & operator |= (Window::Option & lhs, Window::Option rhs) {
+            lhs = lhs | rhs;
+            return lhs;
+        }
+
+        friend inline constexpr Window::Option operator & (Window::Option lhs, Window::Option rhs) {
+            using T = std::underlying_type_t <Window::Option>;
+            return static_cast<Window::Option>(static_cast<T>(lhs) & static_cast<T>(rhs));
+        }
+
+        friend inline constexpr Window::Option & operator &= (Window::Option & lhs, Window::Option rhs) {
+            lhs = lhs & rhs;
+            return lhs;
+        }
+
+        friend inline constexpr bool operator == (Window::Option lhs, Window::Option rhs) {
+            using T = std::underlying_type_t <Window::Option>;
+            return static_cast<T>(lhs) & static_cast<T>(rhs);
+        }
+
         struct Properties {
             std::string title;
             Viewport viewport;
             Position position;
             Option options;
+
             Properties(const std::string & title,
                        Viewport viewport,
                        Position position,
-                       Option options
-                      ) : title(title), viewport(viewport), position(position), options(options) {}
+                       Option options = Option::Decorated | Option::Visible
+                      ) : title(title), viewport(viewport), position(position), options(options) {
+            }
         };
       public:
         using Event_Callback_Function = std::function<void (Event::Event &) >;
@@ -57,28 +84,4 @@ namespace Andromeda {
         static std::shared_ptr<Window> create_window(const Window::Properties & properties);
     };
 
-    inline constexpr Window::Option operator | (Window::Option lhs, Window::Option rhs) {
-        using T = std::underlying_type_t <Window::Option>;
-        return static_cast<Window::Option>(static_cast<T>(lhs) | static_cast<T>(rhs));
-    }
-
-    inline constexpr Window::Option & operator |= (Window::Option & lhs, Window::Option rhs) {
-        lhs = lhs | rhs;
-        return lhs;
-    }
-
-    inline constexpr Window::Option operator & (Window::Option lhs, Window::Option rhs) {
-        using T = std::underlying_type_t <Window::Option>;
-        return static_cast<Window::Option>(static_cast<T>(lhs) & static_cast<T>(rhs));
-    }
-
-    inline constexpr Window::Option & operator &= (Window::Option & lhs, Window::Option rhs) {
-        lhs = lhs & rhs;
-        return lhs;
-    }
-
-    inline constexpr bool operator == (Window::Option lhs, Window::Option rhs) {
-        using T = std::underlying_type_t <Window::Option>;
-        return static_cast<T>(lhs) & static_cast<T>(rhs);
-    }
 } /* Andromeda */
