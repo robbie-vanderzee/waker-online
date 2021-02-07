@@ -14,17 +14,24 @@ namespace Andromeda {
         struct Position {
             int x, y;
         };
+        enum class Option : unsigned int {
+            None       = 0,
+            Decorated  = BIT(0),
+            Resizable  = BIT(1),
+            Visible    = BIT(2),
+            Floating   = BIT(3)
+        };
+
         struct Properties {
             std::string title;
             Viewport viewport;
             Position position;
-
-            Properties(const std::string & title = "Andromeda::Window",
-                       unsigned int width = 1920,
-                       unsigned int height = 1080,
-                       int x = 0,
-                       int y = 0
-                      ) : title(title), viewport({width, height}), position({x, y}) {}
+            Option options;
+            Properties(const std::string & title,
+                       Viewport viewport,
+                       Position position,
+                       Option options
+                      ) : title(title), viewport(viewport), position(position), options(options) {}
         };
       public:
         using Event_Callback_Function = std::function<void (Event::Event &) >;
@@ -38,17 +45,40 @@ namespace Andromeda {
         virtual unsigned int get_height() const = 0;
 
         // Input State
-
         virtual bool is_key_pressed(Andromeda::Input::Code::Key key) = 0;
         virtual bool is_mouse_button_pressed(Andromeda::Input::Code::Mouse button) = 0;
         virtual Andromeda::Input::Mouse::Position get_mouse_position() = 0;
 
         // Attributes
-
+        virtual void set_attributes(Window::Option options) = 0;
         virtual void set_event_callback(const Event_Callback_Function & callback) = 0;
-
         virtual std::any get_native_window() const = 0;
 
-        static std::shared_ptr<Window> create_window(const Window::Properties & properties = Window::Properties());
+        static std::shared_ptr<Window> create_window(const Window::Properties & properties);
     };
+
+    inline constexpr Window::Option operator | (Window::Option lhs, Window::Option rhs) {
+        using T = std::underlying_type_t <Window::Option>;
+        return static_cast<Window::Option>(static_cast<T>(lhs) | static_cast<T>(rhs));
+    }
+
+    inline constexpr Window::Option & operator |= (Window::Option & lhs, Window::Option rhs) {
+        lhs = lhs | rhs;
+        return lhs;
+    }
+
+    inline constexpr Window::Option operator & (Window::Option lhs, Window::Option rhs) {
+        using T = std::underlying_type_t <Window::Option>;
+        return static_cast<Window::Option>(static_cast<T>(lhs) & static_cast<T>(rhs));
+    }
+
+    inline constexpr Window::Option & operator &= (Window::Option & lhs, Window::Option rhs) {
+        lhs = lhs & rhs;
+        return lhs;
+    }
+
+    inline constexpr bool operator == (Window::Option lhs, Window::Option rhs) {
+        using T = std::underlying_type_t <Window::Option>;
+        return static_cast<T>(lhs) & static_cast<T>(rhs);
+    }
 } /* Andromeda */

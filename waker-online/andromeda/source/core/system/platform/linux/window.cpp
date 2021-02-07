@@ -41,20 +41,32 @@ namespace Andromeda {
             return position;
         }
 
+        void Window::set_attributes(Window::Option options) {
+            m_Data.options = options;
+            glfwSetWindowAttrib(m_Window, GLFW_RESIZABLE, m_Data.options == Option::Resizable);
+            glfwSetWindowAttrib(m_Window, GLFW_DECORATED, m_Data.options == Option::Decorated);
+            glfwSetWindowAttrib(m_Window, GLFW_VISIBLE, m_Data.options == Option::Visible);
+            glfwSetWindowAttrib(m_Window, GLFW_FLOATING, m_Data.options == Option::Floating);
+        }
+
         void Window::initialize(const Window::Properties & properties) {
             m_Data.title = properties.title;
             m_Data.viewport = properties.viewport;
             m_Data.position = properties.position;
+            m_Data.options = properties.options;
 
             ANDROMEDA_CORE_INFO("Initializing window {0} ({1}, {2}).", m_Data.title, m_Data.viewport.width, m_Data.viewport.height);
             if (s_GLFW_Windows == 0) {
-                int response = glfwInit();
+                unsigned int response = glfwInit();
                 ANDROMEDA_CORE_ASSERT(response, "Failed to initialize GLFW.");
                 glfwSetErrorCallback(glfw_error_callback);
             }
 
             glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-            glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+            glfwWindowHint(GLFW_RESIZABLE, m_Data.options == Option::Resizable);
+            glfwWindowHint(GLFW_DECORATED, m_Data.options == Option::Decorated);
+            glfwWindowHint(GLFW_VISIBLE, m_Data.options == Option::Visible);
+            glfwWindowHint(GLFW_FLOATING, m_Data.options == Option::Floating);
 
             m_Window = glfwCreateWindow(m_Data.viewport.width, m_Data.viewport.height, m_Data.title.c_str(), nullptr, nullptr);
             glfwSetWindowUserPointer(m_Window, & m_Data);

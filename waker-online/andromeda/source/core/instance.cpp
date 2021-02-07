@@ -4,7 +4,7 @@ namespace Andromeda {
 
     Instance::Instance(const std::string & application) : m_Info({application, ANDROMEDA, true}) {
         ANDROMEDA_CORE_INFO(m_Info.application);
-        m_Window = Window::create_window(Window::Properties(m_Info.application));
+        m_Window = Window::create_window(Window::Properties(m_Info.application, {1920, 1080}, {0, 0}, Window::Option::Decorated | Window::Option::Visible));
         m_Window->set_event_callback(ANDROMEDA_BIND_FN(Instance::on_event));
         Graphics::Renderer::initialize(Graphics::Info{m_Info.application, m_Info.engine}, Graphics::API::Type::Vulkan);
         Graphics::Renderer::set_window_context(m_Window);

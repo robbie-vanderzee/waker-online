@@ -26,14 +26,15 @@ namespace Andromeda {
                 return m_Data.viewport.height;
             }
 
-            // Input State
 
+            // Input State
             virtual bool is_key_pressed(Andromeda::Input::Code::Key key) override;
             virtual bool is_mouse_button_pressed(Andromeda::Input::Code::Mouse button) override;
             virtual Andromeda::Input::Mouse::Position get_mouse_position() override;
 
-            // Attributes
 
+            // Attributes
+            virtual void set_attributes(Window::Option options) override;
             inline void set_event_callback(const Event_Callback_Function & callback) override {
                 m_Data.Event_Callback = callback;
             }
@@ -52,6 +53,7 @@ namespace Andromeda {
                 std::string title;
                 Window::Viewport viewport;
                 Window::Position position;
+                Window::Option options;
 
                 Event_Callback_Function Event_Callback;
             };
