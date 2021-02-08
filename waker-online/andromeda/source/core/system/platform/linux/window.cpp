@@ -7,8 +7,6 @@
 
 namespace Andromeda {
     namespace Linux {
-        static unsigned int s_GLFW_Windows = 0;
-
         static void glfw_error_callback(int error, const char * message) {
             ANDROMEDA_CORE_ERROR("GLFW Error ({0}): {1}", error, message);
         }
@@ -19,6 +17,7 @@ namespace Andromeda {
 
         Window::~Window() {
             shutdown();
+            if (s_GLFW_Windows == 0) glfwTerminate();
         }
 
         void Window::on_update() {
@@ -41,6 +40,13 @@ namespace Andromeda {
             return position;
         }
 
+        void Window::set_fullscreen() {
+            auto position = s_Monitors[0].get_position();
+            auto mode = s_Monitors[0].get_video_mode();
+            auto monitor = std::any_cast<GLFWmonitor *>(s_Monitors[0].get_native_monitor());
+            glfwSetWindowMonitor(m_Window, monitor, position.x, position.y, mode.width, mode.height, mode.refresh_rate);
+        }
+
         void Window::set_attributes(Window::Option options) {
             m_Data.options = options;
             glfwSetWindowAttrib(m_Window, GLFW_RESIZABLE, m_Data.options == Option::Resizable);
@@ -60,6 +66,10 @@ namespace Andromeda {
                 unsigned int response = glfwInit();
                 ANDROMEDA_CORE_ASSERT(response, "Failed to initialize GLFW.");
                 glfwSetErrorCallback(glfw_error_callback);
+                int count = 0;
+                GLFWmonitor ** monitors = glfwGetMonitors(& count);
+                Andromeda::Linux::Monitor::s_GLFW_Monitors = count;
+                for (std::size_t i = 0; i < Andromeda::Linux::Monitor::s_GLFW_Monitors; i++) s_Monitors.emplace_back(monitors[i], i == 0);
             }
 
             glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
@@ -72,6 +82,10 @@ namespace Andromeda {
             glfwSetWindowUserPointer(m_Window, & m_Data);
             s_GLFW_Windows++;
 
+            set_callbacks();
+        }
+
+        void Window::set_callbacks() {
             glfwSetWindowPosCallback(m_Window, [](GLFWwindow * window, int x, int y) {
                 Window::Data & data = * (Window::Data *) glfwGetWindowUserPointer(window);
                 data.position.x = x;
@@ -207,7 +221,6 @@ namespace Andromeda {
         void Window::shutdown() {
             glfwDestroyWindow(m_Window);
             s_GLFW_Windows--;
-            if (s_GLFW_Windows == 0) glfwTerminate();
         }
 
     } /* Linux */

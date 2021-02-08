@@ -19,7 +19,8 @@ namespace Andromeda {
             Decorated  = BIT(0),
             Resizable  = BIT(1),
             Visible    = BIT(2),
-            Floating   = BIT(3)
+            Floating   = BIT(3),
+            Fullscreen = BIT(4)
         };
 
         friend inline constexpr Window::Option operator | (Window::Option lhs, Window::Option rhs) {
@@ -74,6 +75,7 @@ namespace Andromeda {
         virtual Andromeda::Input::Mouse::Position get_mouse_position() = 0;
 
         // Attributes
+        virtual void set_fullscreen() = 0;
         virtual void set_attributes(Window::Option options) = 0;
         virtual void set_event_callback(const Event::Callback & callback) = 0;
         virtual std::any get_native_window() const = 0;

@@ -7,6 +7,7 @@ namespace Andromeda {
         enum class Type {
             None = 0,
             Tick, Update, Render,
+            Connected, Disconnected,
             Move, Close, Resize, Refresh, Focus, Defocus, Maximize, Minimize, Restore,
             Press, Release, Type,
             Scroll
@@ -15,12 +16,13 @@ namespace Andromeda {
         enum class Category : unsigned int {
             None        = 0,
             Instance    = BIT(0),
-            Window      = BIT(1),
-            Input       = BIT(2),
-            Keyboard    = BIT(3),
-            Mouse       = BIT(4),
-            Controller  = BIT(5),
-            Button      = BIT(6)
+            Monitor     = BIT(1),
+            Window      = BIT(2),
+            Input       = BIT(3),
+            Keyboard    = BIT(4),
+            Mouse       = BIT(5),
+            Controller  = BIT(6),
+            Button      = BIT(7)
         };
 
         inline constexpr Category operator | (Category lhs, Category rhs) {

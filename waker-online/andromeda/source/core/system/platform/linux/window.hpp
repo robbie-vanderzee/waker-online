@@ -2,6 +2,8 @@
 
 #include "core/system/interface/display/window.hpp"
 
+#include "monitor.hpp"
+
 #include <GLFW/glfw3.h>
 
 namespace Andromeda {
@@ -28,6 +30,7 @@ namespace Andromeda {
             virtual Andromeda::Input::Mouse::Position get_mouse_position() override;
 
             // Attributes
+            virtual void set_fullscreen() override;
             virtual void set_attributes(Window::Option options) override;
             inline void set_event_callback(const Event::Callback & callback) override {
                 m_Data.callback = callback;
@@ -38,9 +41,14 @@ namespace Andromeda {
             }
 
           private:
-            virtual void initialize(const Window::Properties & properties);
-            virtual void shutdown();
+            void initialize(const Window::Properties & properties);
+            void set_callbacks();
+            void shutdown();
+
           private:
+            inline static std::vector<Monitor> s_Monitors;
+            inline static std::size_t s_GLFW_Windows = 0;
+
             GLFWwindow * m_Window;
 
             struct Data {

@@ -4,6 +4,31 @@
 
 namespace Andromeda {
     namespace Event {
+        namespace Monitor {
+            class Connected : public Event {
+              public:
+                Connected() = default;
+
+                std::string to_string() const override {
+                    return fmt::format("Monitor Connected");
+                }
+
+                EVENT_CLASS_TYPE(Andromeda::Event::Type::Connected)
+                EVENT_CLASS_CATEGORY(Andromeda::Event::Category::Instance | Andromeda::Event::Category::Monitor)
+            };
+            class Disconnected : public Event {
+              public:
+                Disconnected() = default;
+
+                std::string to_string() const override {
+                    return fmt::format("Monitor Disconnected");
+                }
+
+                EVENT_CLASS_TYPE(Andromeda::Event::Type::Disconnected)
+                EVENT_CLASS_CATEGORY(Andromeda::Event::Category::Instance | Andromeda::Event::Category::Monitor)
+            };
+        } /* Monitor */
+
         namespace Window {
             class Move : public Event {
               public:
