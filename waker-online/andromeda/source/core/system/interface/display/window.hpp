@@ -57,7 +57,7 @@ namespace Andromeda {
             Properties(const std::string & title,
                        Viewport viewport,
                        Position position,
-                       Option options = Option::Decorated | Option::Visible
+                       Option options
                       ) : title(title), viewport(viewport), position(position), options(options) {
             }
         };

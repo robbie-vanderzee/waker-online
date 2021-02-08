@@ -59,7 +59,6 @@ namespace Andromeda {
             m_Data.position = properties.position;
             m_Data.options = properties.options;
 
-            ANDROMEDA_CORE_INFO("Initializing window {0} [{1}, {2}].", m_Data.title, m_Data.viewport.width, m_Data.viewport.height);
             if (s_GLFW_Windows == 0) {
                 unsigned int response = glfwInit();
                 ANDROMEDA_CORE_ASSERT(response, "Failed to initialize GLFW.");
@@ -90,10 +89,12 @@ namespace Andromeda {
         void Window::create_fullscreen_window(Andromeda::Linux::Monitor & monitor) {
             auto native = std::any_cast<GLFWmonitor *>(monitor.get_native_monitor());
             Monitor::Data & data = * (Monitor::Data *) glfwGetMonitorUserPointer(native);
+            ANDROMEDA_CORE_INFO("Initializing fullscreen window {0} [{1} x {2}]", m_Data.title, data.mode.width, data.mode.height);
             m_Window = glfwCreateWindow(data.mode.width, data.mode.height, m_Data.title.c_str(), native, nullptr);
         }
 
         void Window::create_windowed_window() {
+            ANDROMEDA_CORE_INFO("Initializing window {0} [{1} x {2}]", m_Data.title, m_Data.viewport.width, m_Data.viewport.height);
             m_Window = glfwCreateWindow(m_Data.viewport.width, m_Data.viewport.height, m_Data.title.c_str(), nullptr, nullptr);
         }
 
