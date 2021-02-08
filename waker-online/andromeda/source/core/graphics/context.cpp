@@ -4,7 +4,7 @@
 
 namespace Andromeda {
     namespace Graphics {
-        std::unique_ptr<Graphics::Context> Graphics::Context::create_context(API::Type type, std::weak_ptr<Window> window) {
+        std::unique_ptr<Graphics::Context> Graphics::Context::create_context(API::Type type, std::shared_ptr<Window> window) {
             switch (type) {
                 case API::Type::None:
                     ANDROMEDA_CORE_ASSERT(false, "Renderer API <None> is unsupported.");

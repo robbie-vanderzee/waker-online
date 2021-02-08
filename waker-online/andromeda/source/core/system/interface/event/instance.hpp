@@ -40,8 +40,8 @@ namespace Andromeda {
                     return fmt::format("Window Resize: {0}, {1}", m_Width, m_Height);
                 }
 
-                EVENT_CLASS_TYPE(Type::Resize)
-                EVENT_CLASS_CATEGORY(Category::Instance | Category::Window)
+                EVENT_CLASS_TYPE(Andromeda::Event::Type::Resize)
+                EVENT_CLASS_CATEGORY(Andromeda::Event::Category::Instance | Andromeda::Event::Category::Window)
               private:
                 unsigned int m_Width, m_Height;
             };

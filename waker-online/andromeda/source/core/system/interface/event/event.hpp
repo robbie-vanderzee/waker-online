@@ -89,5 +89,7 @@ namespace Andromeda {
             return os << e.to_string();
         }
 
+        using Callback = std::function<void (Event &)>;
+
     } /* Event */
 } /* Andromeda */

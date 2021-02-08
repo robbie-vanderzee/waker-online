@@ -2,7 +2,7 @@
 
 #include "event.hpp"
 
-#include "core/system/input/code/key.hpp"
+#include "core/system/interface/input/code/key.hpp"
 
 namespace Andromeda {
     namespace Event {

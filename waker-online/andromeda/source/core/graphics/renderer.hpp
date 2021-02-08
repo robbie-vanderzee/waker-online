@@ -4,7 +4,7 @@
 
 #include "api.hpp"
 
-#include "core/system/interface/window/window.hpp"
+#include "core/system/interface/display/window.hpp"
 
 namespace Andromeda {
     namespace Graphics {
@@ -18,7 +18,7 @@ namespace Andromeda {
                 return s_API->get_API_Type();
             }
 
-            static void set_window_context(std::weak_ptr<Window> window) {
+            static void set_window_context(std::shared_ptr<Window> window) {
                 s_API->set_window_context(window);
             }
           private:

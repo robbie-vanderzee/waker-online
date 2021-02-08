@@ -1,6 +1,6 @@
 #pragma once
 
-#include "core/system/interface/window/window.hpp"
+#include "core/system/interface/display/window.hpp"
 
 #include <GLFW/glfw3.h>
 
@@ -18,25 +18,19 @@ namespace Andromeda {
                 return m_Data.viewport;
             }
 
-            inline unsigned int get_width() const override {
-                return m_Data.viewport.width;
+            inline Window::Position get_position() const override {
+                return m_Data.position;
             }
-
-            inline unsigned int get_height() const override {
-                return m_Data.viewport.height;
-            }
-
 
             // Input State
             virtual bool is_key_pressed(Andromeda::Input::Code::Key key) override;
             virtual bool is_mouse_button_pressed(Andromeda::Input::Code::Mouse button) override;
             virtual Andromeda::Input::Mouse::Position get_mouse_position() override;
 
-
             // Attributes
             virtual void set_attributes(Window::Option options) override;
-            inline void set_event_callback(const Event_Callback_Function & callback) override {
-                m_Data.Event_Callback = callback;
+            inline void set_event_callback(const Event::Callback & callback) override {
+                m_Data.callback = callback;
             }
 
             inline virtual std::any get_native_window() const override {
@@ -49,16 +43,15 @@ namespace Andromeda {
           private:
             GLFWwindow * m_Window;
 
-            struct Window_Data {
+            struct Data {
                 std::string title;
                 Window::Viewport viewport;
                 Window::Position position;
                 Window::Option options;
-
-                Event_Callback_Function Event_Callback;
+                Event::Callback callback;
             };
 
-            Window_Data m_Data;
+            Window::Data m_Data;
         };
     } /* Linux */
 } /* Andromeda */

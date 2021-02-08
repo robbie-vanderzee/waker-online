@@ -2,7 +2,7 @@
 
 #include "core/core.hpp"
 
-#include "core/system/interface/window/window.hpp"
+#include "core/system/interface/display/window.hpp"
 
 namespace Andromeda {
     namespace Graphics {
@@ -23,7 +23,7 @@ namespace Andromeda {
             virtual void process() = 0;
             virtual void shutdown() = 0;
 
-            virtual void set_window_context(std::weak_ptr<Window> window) = 0;
+            virtual void set_window_context(std::shared_ptr<Window> window) = 0;
 
             virtual Type get_API_Type() const = 0;
 

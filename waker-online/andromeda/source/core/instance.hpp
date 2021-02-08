@@ -4,12 +4,13 @@
 
 #include "core/graphics/renderer.hpp"
 
-#include "core/system/event/event.hpp"
-#include "core/system/event/instance.hpp"
+#include "core/system/interface/event/event.hpp"
+#include "core/system/interface/event/instance.hpp"
+#include "core/system/interface/display/window.hpp"
 
-#include "core/system/interface/layer/stack.hpp"
-#include "core/system/interface/window/window.hpp"
 
+
+#include "core/system/layer/stack.hpp"
 
 int main(int argc, char const * argv[]);
 

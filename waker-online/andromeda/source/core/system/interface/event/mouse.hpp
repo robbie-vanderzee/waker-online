@@ -2,7 +2,7 @@
 
 #include "event.hpp"
 
-#include "core/system/input/code/mouse.hpp"
+#include "core/system/interface/input/code/mouse.hpp"
 
 namespace Andromeda {
     namespace Event {

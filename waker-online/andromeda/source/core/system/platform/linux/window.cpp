@@ -1,9 +1,9 @@
 #include "window.hpp"
 
-#include "core/system/event/event.hpp"
-#include "core/system/event/instance.hpp"
-#include "core/system/event/keyboard.hpp"
-#include "core/system/event/mouse.hpp"
+#include "core/system/interface/event/event.hpp"
+#include "core/system/interface/event/instance.hpp"
+#include "core/system/interface/event/keyboard.hpp"
+#include "core/system/interface/event/mouse.hpp"
 
 namespace Andromeda {
     namespace Linux {
@@ -73,134 +73,134 @@ namespace Andromeda {
             s_GLFW_Windows++;
 
             glfwSetWindowPosCallback(m_Window, [](GLFWwindow * window, int x, int y) {
-                Window_Data & data = * (Window_Data *) glfwGetWindowUserPointer(window);
+                Window::Data & data = * (Window::Data *) glfwGetWindowUserPointer(window);
                 data.position.x = x;
                 data.position.y = y;
                 Event::Window::Move event(x, y);
-                data.Event_Callback(event);
+                data.callback(event);
             });
 
             glfwSetWindowSizeCallback(m_Window, [](GLFWwindow * window, int width, int height) {
-                Window_Data & data = * (Window_Data *) glfwGetWindowUserPointer(window);
+                Window::Data & data = * (Window::Data *) glfwGetWindowUserPointer(window);
                 data.viewport.width = width;
                 data.viewport.height = height;
                 Event::Window::Resize event(width, height);
-                data.Event_Callback(event);
+                data.callback(event);
             });
 
             glfwSetWindowCloseCallback(m_Window, [](GLFWwindow * window) {
-                Window_Data & data = * (Window_Data *) glfwGetWindowUserPointer(window);
+                Window::Data & data = * (Window::Data *) glfwGetWindowUserPointer(window);
                 Event::Window::Close event;
-                data.Event_Callback(event);
+                data.callback(event);
             });
 
             glfwSetWindowRefreshCallback(m_Window, [](GLFWwindow * window) {
-                Window_Data & data = * (Window_Data *) glfwGetWindowUserPointer(window);
+                Window::Data & data = * (Window::Data *) glfwGetWindowUserPointer(window);
                 Event::Window::Refresh event;
-                data.Event_Callback(event);
+                data.callback(event);
             });
 
             glfwSetWindowFocusCallback(m_Window, [](GLFWwindow * window, int focused) {
-                Window_Data & data = * (Window_Data *) glfwGetWindowUserPointer(window);
+                Window::Data & data = * (Window::Data *) glfwGetWindowUserPointer(window);
                 switch (focused) {
                     case GLFW_TRUE: {
                         Event::Window::Focus event;
-                        data.Event_Callback(event);
+                        data.callback(event);
                         break;
                     }
                     case GLFW_FALSE: {
                         Event::Window::Defocus event;
-                        data.Event_Callback(event);
+                        data.callback(event);
                         break;
                     }
                 }
             });
 
             glfwSetWindowMaximizeCallback(m_Window, [](GLFWwindow * window, int maximized) {
-                Window_Data & data = * (Window_Data *) glfwGetWindowUserPointer(window);
+                Window::Data & data = * (Window::Data *) glfwGetWindowUserPointer(window);
                 switch (maximized) {
                     case GLFW_TRUE: {
                         Event::Window::Maximize event;
-                        data.Event_Callback(event);
+                        data.callback(event);
                         break;
                     }
                     case GLFW_FALSE: {
                         Event::Window::Restore event;
-                        data.Event_Callback(event);
+                        data.callback(event);
                         break;
                     }
                 }
             });
 
             glfwSetWindowIconifyCallback(m_Window, [](GLFWwindow * window, int iconified) {
-                Window_Data & data = * (Window_Data *) glfwGetWindowUserPointer(window);
+                Window::Data & data = * (Window::Data *) glfwGetWindowUserPointer(window);
                 switch (iconified) {
                     case GLFW_TRUE: {
                         Event::Window::Minimize event;
-                        data.Event_Callback(event);
+                        data.callback(event);
                         break;
                     }
                     case GLFW_FALSE: {
                         Event::Window::Restore event;
-                        data.Event_Callback(event);
+                        data.callback(event);
                         break;
                     }
                 }
             });
 
             glfwSetKeyCallback(m_Window, [](GLFWwindow * window, int key, int /*scancode*/, int action, int /*mods*/) {
-                Window_Data & data = * (Window_Data *) glfwGetWindowUserPointer(window);
+                Window::Data & data = * (Window::Data *) glfwGetWindowUserPointer(window);
                 switch (action) {
                     case GLFW_PRESS: {
                         Event::Keyboard::Key::Press event(static_cast<Andromeda::Input::Code::Key>(key), 0);
-                        data.Event_Callback(event);
+                        data.callback(event);
                         break;
                     }
                     case GLFW_RELEASE: {
                         Event::Keyboard::Key::Release event(static_cast<Andromeda::Input::Code::Key>(key));
-                        data.Event_Callback(event);
+                        data.callback(event);
                         break;
                     }
                     case GLFW_REPEAT: {
                         Event::Keyboard::Key::Press event(static_cast<Andromeda::Input::Code::Key>(key), 1);
-                        data.Event_Callback(event);
+                        data.callback(event);
                         break;
                     }
                 }
             });
 
             glfwSetCharCallback(m_Window, [](GLFWwindow * window, unsigned int key) {
-                Window_Data & data = * (Window_Data *) glfwGetWindowUserPointer(window);
+                Window::Data & data = * (Window::Data *) glfwGetWindowUserPointer(window);
                 Event::Keyboard::Key::Type event(static_cast<Andromeda::Input::Code::Key>(key));
-                data.Event_Callback(event);
+                data.callback(event);
             });
 
             glfwSetMouseButtonCallback(m_Window, [](GLFWwindow * window, int button, int action, int /*mods*/) {
-                Window_Data & data = * (Window_Data *) glfwGetWindowUserPointer(window);
+                Window::Data & data = * (Window::Data *) glfwGetWindowUserPointer(window);
                 switch (action) {
                     case GLFW_PRESS: {
                         Event::Mouse::Button::Press event((Andromeda::Input::Code::Mouse) button);
-                        data.Event_Callback(event);
+                        data.callback(event);
                         break;
                     }
                     case GLFW_RELEASE: {
                         Event::Mouse::Button::Release event((Andromeda::Input::Code::Mouse) button);
-                        data.Event_Callback(event);
+                        data.callback(event);
                         break;
                     }
                 }
             });
 
             glfwSetScrollCallback(m_Window, [](GLFWwindow * window, double x_Offset,  double y_Offset) {
-                Window_Data & data = * (Window_Data *) glfwGetWindowUserPointer(window);
+                Window::Data & data = * (Window::Data *) glfwGetWindowUserPointer(window);
                 Event::Mouse::Scroll event(x_Offset, y_Offset);
-                data.Event_Callback(event);
+                data.callback(event);
             });
 
             glfwSetCursorPosCallback(m_Window, [](GLFWwindow * window, double x_Position, double y_Position) {
-                Window_Data & data = * (Window_Data *) glfwGetWindowUserPointer(window);
+                Window::Data & data = * (Window::Data *) glfwGetWindowUserPointer(window);
                 Event::Mouse::Move event(x_Position, y_Position);
-                data.Event_Callback(event);
+                data.callback(event);
             });
         }
 

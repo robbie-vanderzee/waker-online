@@ -2,7 +2,7 @@
 
 #include "core/graphics/api.hpp"
 #include "core/graphics/context.hpp"
-#include "core/system/interface/window/window.hpp"
+#include "core/system/interface/display/window.hpp"
 
 #include <vulkan/vulkan.h>
 #include <GLFW/glfw3.h>
@@ -51,7 +51,7 @@ namespace Andromeda {
                 virtual void process() override;
                 virtual void shutdown() override;
 
-                virtual void set_window_context(std::weak_ptr<Window> window) override;
+                virtual void set_window_context(std::shared_ptr<Window> window) override;
 
                 inline constexpr virtual Graphics::API::Type get_API_Type() const override {
                     return API::Type::Vulkan;

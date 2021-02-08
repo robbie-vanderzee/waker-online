@@ -5,8 +5,8 @@
 
 #include "core/graphics/renderer.hpp"
 
-#include "core/system/event/event.hpp"
-#include "core/system/input/input.hpp"
+#include "core/system/interface/event/event.hpp"
+#include "core/system/interface/input/input.hpp"
+#include "core/system/interface/display/window.hpp"
 
-#include "core/system/interface/layer/layer.hpp"
-#include "core/system/interface/window/window.hpp"
+#include "core/system/layer/layer.hpp"

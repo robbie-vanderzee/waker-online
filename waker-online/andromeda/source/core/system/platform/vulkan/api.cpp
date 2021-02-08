@@ -28,14 +28,9 @@ namespace Andromeda {
                 vkDestroyInstance(m_API_Instance.instance, nullptr);
             }
 
-            void API::set_window_context(std::weak_ptr<Window> window) {
-                auto s_window = window.lock();
-                if (s_window) {
-                    m_Context = Graphics::Context::create_context(API::Type::Vulkan, s_window);
-                    m_Context->initialize(m_API_Instance.instance);
-                } else {
-                    ANDROMEDA_CORE_ERROR("Failed to set window context, window expired.");
-                }
+            void API::set_window_context(std::shared_ptr<Window> window) {
+                m_Context = Graphics::Context::create_context(API::Type::Vulkan, window);
+                m_Context->initialize(m_API_Instance.instance);
             }
 
             void API::generate_vulkan_instance() {
