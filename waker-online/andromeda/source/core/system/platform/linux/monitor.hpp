@@ -10,8 +10,6 @@ namespace Andromeda {
           public:
             Monitor(GLFWmonitor * monitor, bool primary);
 
-            virtual ~Monitor();
-
             virtual void update() override;
             // Attributes
             inline virtual void set_event_callback(const Event::Callback & callback) override {

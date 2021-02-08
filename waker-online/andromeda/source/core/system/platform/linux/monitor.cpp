@@ -26,10 +26,6 @@ namespace Andromeda {
             });
         }
 
-        Monitor::~Monitor() {
-
-        }
-
         void Monitor::update() {
             m_Data.model = std::string(glfwGetMonitorName(m_Monitor));
             glfwGetMonitorPos(m_Monitor,  & m_Data.position.x, & m_Data.position.y);
