@@ -41,10 +41,9 @@ namespace Andromeda {
         }
 
         void Window::set_fullscreen() {
-            auto position = s_Monitors[0].get_position();
-            auto mode = s_Monitors[0].get_video_mode();
-            auto monitor = std::any_cast<GLFWmonitor *>(s_Monitors[0].get_native_monitor());
-            glfwSetWindowMonitor(m_Window, monitor, position.x, position.y, mode.width, mode.height, mode.refresh_rate);
+            auto monitor = std::any_cast<GLFWmonitor *>(Monitor::s_Monitors[0].get_native_monitor());
+            Monitor::Data & data = * (Monitor::Data *) glfwGetMonitorUserPointer(monitor);
+            glfwSetWindowMonitor(m_Window, monitor, data.position.x, data.position.y, data.mode.width, data.mode.height, data.mode.refresh_rate);
         }
 
         void Window::set_attributes(Window::Option options) {
@@ -61,7 +60,7 @@ namespace Andromeda {
             m_Data.position = properties.position;
             m_Data.options = properties.options;
 
-            ANDROMEDA_CORE_INFO("Initializing window {0} ({1}, {2}).", m_Data.title, m_Data.viewport.width, m_Data.viewport.height);
+            ANDROMEDA_CORE_INFO("Initializing window {0} [{1}, {2}].", m_Data.title, m_Data.viewport.width, m_Data.viewport.height);
             if (s_GLFW_Windows == 0) {
                 unsigned int response = glfwInit();
                 ANDROMEDA_CORE_ASSERT(response, "Failed to initialize GLFW.");
@@ -69,7 +68,7 @@ namespace Andromeda {
                 int count = 0;
                 GLFWmonitor ** monitors = glfwGetMonitors(& count);
                 Andromeda::Linux::Monitor::s_GLFW_Monitors = count;
-                for (std::size_t i = 0; i < Andromeda::Linux::Monitor::s_GLFW_Monitors; i++) s_Monitors.emplace_back(monitors[i], i == 0);
+                for (std::size_t i = 0; i < Andromeda::Linux::Monitor::s_GLFW_Monitors; i++) Monitor::s_Monitors.emplace_back(monitors[i], i == 0);
             }
 
             glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
@@ -78,11 +77,23 @@ namespace Andromeda {
             glfwWindowHint(GLFW_VISIBLE, m_Data.options == Option::Visible);
             glfwWindowHint(GLFW_FLOATING, m_Data.options == Option::Floating);
 
-            m_Window = glfwCreateWindow(m_Data.viewport.width, m_Data.viewport.height, m_Data.title.c_str(), nullptr, nullptr);
+            if (m_Data.options == Option::Fullscreen) create_fullscreen_window(Monitor::s_Monitors[0]);
+            else create_windowed_window();
+
             glfwSetWindowUserPointer(m_Window, & m_Data);
             s_GLFW_Windows++;
 
             set_callbacks();
+        }
+
+        void Window::create_fullscreen_window(Andromeda::Linux::Monitor & monitor) {
+            auto native = std::any_cast<GLFWmonitor *>(monitor.get_native_monitor());
+            Monitor::Data & data = * (Monitor::Data *) glfwGetMonitorUserPointer(native);
+            m_Window = glfwCreateWindow(data.mode.width, data.mode.height, m_Data.title.c_str(), native, nullptr);
+        }
+
+        void Window::create_windowed_window() {
+            m_Window = glfwCreateWindow(m_Data.viewport.width, m_Data.viewport.height, m_Data.title.c_str(), nullptr, nullptr);
         }
 
         void Window::set_callbacks() {

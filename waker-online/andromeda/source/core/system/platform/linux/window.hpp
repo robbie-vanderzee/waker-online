@@ -42,11 +42,12 @@ namespace Andromeda {
 
           private:
             void initialize(const Window::Properties & properties);
+            void create_fullscreen_window(Andromeda::Linux::Monitor & monitor);
+            void create_windowed_window();
             void set_callbacks();
             void shutdown();
 
           private:
-            inline static std::vector<Monitor> s_Monitors;
             inline static std::size_t s_GLFW_Windows = 0;
 
             GLFWwindow * m_Window;

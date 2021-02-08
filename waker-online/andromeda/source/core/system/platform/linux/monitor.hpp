@@ -8,29 +8,11 @@ namespace Andromeda {
     namespace Linux {
         class Monitor : public Andromeda::Monitor {
           public:
-            inline static std::size_t s_GLFW_Monitors = 0;
-          public:
             Monitor(GLFWmonitor * monitor, bool primary);
 
             virtual ~Monitor();
 
             virtual void update() override;
-
-            inline virtual Monitor::Position get_position() const override {
-                return m_Data.position;
-            }
-
-            inline virtual Monitor::Area get_area() const override {
-                return m_Data.area;
-            }
-
-            inline virtual Monitor::Mode get_video_mode() const override {
-                return m_Data.mode;
-            }
-
-            inline virtual bool is_primary() const override {
-                return m_Data.primary;
-            }
             // Attributes
             inline virtual void set_event_callback(const Event::Callback & callback) override {
                 m_Data.callback = callback;
@@ -39,6 +21,8 @@ namespace Andromeda {
                 return m_Monitor;
             }
           private:
+            inline static std::size_t s_GLFW_Monitors = 0;
+            inline static std::vector<Monitor> s_Monitors;
             GLFWmonitor * m_Monitor;
 
             struct Data {
@@ -51,6 +35,8 @@ namespace Andromeda {
             };
 
             Monitor::Data m_Data;
+
+            friend class Window;
         };
     } /* Linux */
 } /* Andromeda */
