@@ -18,7 +18,7 @@ namespace Waker {
         bool on_instance_terminate(Andromeda::Event::Instance::Terminate & terminate);
       private:
         std::shared_ptr<Andromeda::Window> m_Window;
-        std::unique_ptr<Andromeda::Layer::Stack> m_Layers;
+        Andromeda::Layer::Stack m_Layers;
         Andromeda::Instance::Info m_Info;
     };
 } /* Waker */

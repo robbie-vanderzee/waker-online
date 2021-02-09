@@ -11,7 +11,3 @@
 #include <set>
 #include <string>
 #include <vector>
-
-#ifdef LOGGING
-#include "logging/logging.hpp"
-#endif

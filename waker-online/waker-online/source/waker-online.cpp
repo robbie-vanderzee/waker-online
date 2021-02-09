@@ -12,8 +12,7 @@ namespace Waker {
         Andromeda::Graphics::Renderer::initialize({m_Info.application, m_Info.engine}, Andromeda::Graphics::API::Type::Vulkan);
         Andromeda::Graphics::Renderer::set_window_context(m_Window);
         Andromeda::Graphics::Renderer::process();
-        m_Layers = std::make_unique<Andromeda::Layer::Stack>();
-        m_Layers->push_layer(std::make_unique<Test_Layer>());
+        m_Layers.push_layer(std::make_unique<Test_Layer>());
         Instance::run();
     }
 
@@ -23,7 +22,7 @@ namespace Waker {
 
     void Instance::run() {
         while (m_Info.active) {
-            std::ranges::for_each(*m_Layers, [](const auto & layer) {
+            std::ranges::for_each(m_Layers, [](const auto & layer) {
                 layer->on_update();
             });
             if (m_Window) m_Window->on_update();
@@ -42,7 +41,7 @@ namespace Waker {
         dispatcher.dispatch<Andromeda::Event::Window::Close> (ANDROMEDA_BIND_FN(Instance::on_window_close));
         dispatcher.dispatch<Andromeda::Event::Instance::Terminate> (ANDROMEDA_BIND_FN(Instance::on_instance_terminate));
 
-        std::ranges::find_if(std::rbegin(*m_Layers), std::rend(*m_Layers), [& event](const auto & layer) {
+        std::ranges::find_if(std::rbegin(m_Layers), std::rend(m_Layers), [& event](const auto & layer) {
             layer->on_event(event);
             return event.consumed;
         });
