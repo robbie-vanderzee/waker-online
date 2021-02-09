@@ -44,10 +44,15 @@ done
 
 build(){
   if [ "$style" = true ] ; then
+    mapfile -t files < <(find . -path ./waker-online/includes -prune -false -o -type f -iname \*\.cpp -o -iname \*\.hpp -o -iname \*\.c -o -iname \*\.h)
     if [ "$logging" = true ] ; then
-      astyle --style=google --suffix=none --recursive -N -L -w -U -W2 -c -S -p -H --indent=spaces -p ./*.cpp ./*.hpp ./*.h ./*.c | tee logging/build/style.log
+      for file in "${files[@]}" ; do
+        astyle --style=google --suffix=none -N -L -w -U -W2 -c -S -p -H --indent=spaces -p "$file" | tee logging/build/style.log
+      done
     else
-      astyle --style=google --suffix=none --recursive -N -L -w -U -W2 -c -S -p -H --indent=spaces -p ./*.cpp ./*.hpp ./*.h ./*.c
+      for file in "${files[@]}" ; do
+        astyle --style=google --suffix=none -N -L -w -U -W2 -c -S -p -H --indent=spaces -p "$file" | tee logging/build/style.log
+      done
     fi
   fi
   if [ "$logging" = true ] ; then
