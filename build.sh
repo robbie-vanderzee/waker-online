@@ -4,11 +4,11 @@ usage(){
   echo ""
   echo "Usage: $0 -premake flags -debug -release -clean -style -log"
   echo -e "\t-premake flags = flag1,flag2,flag3 is a list of flags to build premake with."
-  echo -e "\t-debug builds debug configuration"
-  echo -e "\t-release builds release configuration"
+  echo -e "\t-debug builds debug configuration."
+  echo -e "\t-release builds release configuration."
   echo -e "\t-clean purges the current build."
   echo -e "\t-style applies styling to the project source."
-  echo -e "\t-log logs the build output and error to file"
+  echo -e "\t-log logs the build output and error to file."
   echo ""
 }
 
@@ -27,7 +27,7 @@ clean=false
 style=false
 logging=false
 
-while getopts "p:drcsl" opt; do
+while getopts "p:drcslh" opt; do
    case $opt in
    p) set -f
       IFS=,
@@ -37,6 +37,8 @@ while getopts "p:drcsl" opt; do
    c) clean=true;;
    s) style=true;;
    l) logging=true;;
+   h) usage
+      exit 0;;
    * ) usage
        exit 1;;
    esac
