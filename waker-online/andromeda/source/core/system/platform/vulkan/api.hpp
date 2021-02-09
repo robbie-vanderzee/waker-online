@@ -47,13 +47,13 @@ namespace Andromeda {
               public:
                 API(Graphics::Info info);
 
-                virtual void initialize() override;
-                virtual void process() override;
-                virtual void shutdown() override;
+                void initialize() override;
+                void process() override;
+                void shutdown() override;
 
-                virtual void set_window_context(std::shared_ptr<Window> window) override;
+                void set_window_context(std::shared_ptr<Window> window) override;
 
-                inline constexpr virtual Graphics::API::Type get_API_Type() const override {
+                inline constexpr Graphics::API::Type get_API_Type() const override {
                     return API::Type::Vulkan;
                 }
 

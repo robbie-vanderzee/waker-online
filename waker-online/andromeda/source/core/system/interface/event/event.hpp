@@ -46,8 +46,8 @@ namespace Andromeda {
         }
 
 #define EVENT_CLASS_TYPE(type) static Andromeda::Event::Type get_static_type() { return type; }\
-    virtual Andromeda::Event::Type get_event_type() const override { return get_static_type(); }\
-    virtual const char * get_event_name() const override { return #type; }
+    Andromeda::Event::Type get_event_type() const override { return get_static_type(); }\
+    const char * get_event_name() const override { return #type; }
 
 #define EVENT_CLASS_CATEGORY(category) virtual Andromeda::Event::Category get_category() const override { return category; }
 

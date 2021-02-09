@@ -4,6 +4,10 @@ Test_Layer::Test_Layer() {
 
 }
 
+Test_Layer::~Test_Layer() {
+
+}
+
 void Test_Layer::on_attach() {
     ANDROMEDA_INFO("Attaching test layer");
 }

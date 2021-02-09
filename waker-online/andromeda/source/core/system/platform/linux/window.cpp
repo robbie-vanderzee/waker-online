@@ -82,13 +82,13 @@ namespace Andromeda {
 
             glfwSetWindowUserPointer(m_Window, & m_Data);
             s_GLFW_Windows++;
-
             set_callbacks();
         }
 
         void Window::create_fullscreen_window(Andromeda::Linux::Monitor & monitor) {
             auto native = std::any_cast<GLFWmonitor *>(monitor.get_native_monitor());
             Monitor::Data & data = * (Monitor::Data *) glfwGetMonitorUserPointer(native);
+            glfwWindowHint(GLFW_REFRESH_RATE, data.mode.refresh_rate);
             ANDROMEDA_CORE_INFO("Initializing fullscreen window {0} [{1} x {2}]", m_Data.title, data.mode.width, data.mode.height);
             m_Window = glfwCreateWindow(data.mode.width, data.mode.height, m_Data.title.c_str(), native, nullptr);
         }

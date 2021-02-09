@@ -3,7 +3,7 @@
 #include "core/core.hpp"
 
 #include "core/system/interface/event/event.hpp"
-#include "core/system/interface/input/input.hpp"
+#include "core/system/interface/input/manager.hpp"
 
 namespace Andromeda {
     class Window : Input::Manager {

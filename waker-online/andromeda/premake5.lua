@@ -2,7 +2,6 @@ project "andromeda"
   kind "StaticLib"
   language "C++"
   cppdialect "C++20"
-  staticruntime "on"
 
   targetdir ( "binary/" ..binary_directory.. "/%{prj.name}" )
   objdir ("binary/objects/" ..binary_directory.. "/%{prj.name}" )

@@ -12,7 +12,7 @@ namespace Andromeda {
           public:
             Window(const Window::Properties & properties);
 
-            virtual ~Window();
+            ~Window() override;
 
             void on_update() override;
 
@@ -25,18 +25,18 @@ namespace Andromeda {
             }
 
             // Input State
-            virtual bool is_key_pressed(Andromeda::Input::Code::Key key) override;
-            virtual bool is_mouse_button_pressed(Andromeda::Input::Code::Mouse button) override;
-            virtual Andromeda::Input::Mouse::Position get_mouse_position() override;
+            bool is_key_pressed(Andromeda::Input::Code::Key key) override;
+            bool is_mouse_button_pressed(Andromeda::Input::Code::Mouse button) override;
+            Andromeda::Input::Mouse::Position get_mouse_position() override;
 
             // Attributes
-            virtual void set_fullscreen() override;
-            virtual void set_attributes(Window::Option options) override;
+            void set_fullscreen() override;
+            void set_attributes(Window::Option options) override;
             inline void set_event_callback(const Event::Callback & callback) override {
                 m_Data.callback = callback;
             }
 
-            inline virtual std::any get_native_window() const override {
+            inline std::any get_native_window() const override {
                 return m_Window;
             }
 

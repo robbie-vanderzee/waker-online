@@ -1,7 +1,7 @@
 workspace "waker-online"
   toolset "clang"
   flags {
-    "MultiProcessorCompile"
+    "LinkTimeOptimization"
   }
 
   configurations {
@@ -19,7 +19,7 @@ workspace "waker-online"
 
   newoption {
     trigger = "sanitize",
-    value= "modules",
+    value = "sanitizer",
     description = "Enable sanitization runtimes.",
     allowed = {
       { "address", "AddressSantiizer" }
@@ -27,6 +27,7 @@ workspace "waker-online"
   }
 
   filter "options:sanitize=address"
+    toolset "gcc"
     buildoptions "-fsanitize=address -fno-omit-frame-pointer -fsanitize-address-use-after-scope"
     links {
       "asan"

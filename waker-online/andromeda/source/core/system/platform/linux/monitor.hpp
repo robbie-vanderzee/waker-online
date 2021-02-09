@@ -10,14 +10,15 @@ namespace Andromeda {
           public:
             Monitor(GLFWmonitor * monitor, bool primary);
 
-            virtual void update() override;
+            void update() override;
             // Attributes
-            inline virtual void set_event_callback(const Event::Callback & callback) override {
+            inline void set_event_callback(const Event::Callback & callback) override {
                 m_Data.callback = callback;
             };
-            inline virtual std::any get_native_monitor() const override {
+            inline std::any get_native_monitor() const override {
                 return m_Monitor;
             }
+
           private:
             inline static std::size_t s_GLFW_Monitors = 0;
             inline static std::vector<Monitor> s_Monitors;

@@ -8,18 +8,11 @@ namespace Andromeda {
       public:
         class Stack;
       public:
-        Layer(const std::string & name = "Layer");
         virtual ~Layer() = default;
 
-        virtual void on_attach() {}
-        virtual void on_detach() {}
-        virtual void on_update() {}
-        virtual void on_event(Event::Event &) {}
-
-        const std::string & get_name() const {
-            return m_Name;
-        }
-      private:
-        std::string m_Name;
+        virtual void on_attach() = 0;
+        virtual void on_detach() = 0;
+        virtual void on_update() = 0;
+        virtual void on_event(Event::Event &) = 0;
     };
 } /* Andromeda */

@@ -569,6 +569,7 @@ namespace Andromeda {
             VkExtent2D API::select_swap_extent(const VkSurfaceCapabilitiesKHR & capabilities) {
                 auto [width, height] = m_Context->get_context_extent();
                 VkExtent2D extent = { width, height };
+                ANDROMEDA_CORE_INFO("Created VkExtend2D [{0} x {1}]", width, height);
                 extent.width = std::max(capabilities.minImageExtent.width, std::min(capabilities.maxImageExtent.width, extent.width));
                 extent.height = std::max(capabilities.minImageExtent.height, std::min(capabilities.maxImageExtent.height, extent.height));
                 return extent;

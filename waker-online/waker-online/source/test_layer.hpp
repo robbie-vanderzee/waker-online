@@ -5,10 +5,10 @@
 class Test_Layer : public Andromeda::Layer {
   public:
     Test_Layer();
-    virtual ~Test_Layer() = default;
+    ~Test_Layer() override;
 
-    virtual void on_attach() override;
-    virtual void on_detach() override;
-    virtual void on_update() override;
-    virtual void on_event(Andromeda::Event::Event & event) override;
+    void on_attach() override;
+    void on_detach() override;
+    void on_update() override;
+    void on_event(Andromeda::Event::Event & event) override;
 };
