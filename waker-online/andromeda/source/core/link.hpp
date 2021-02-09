@@ -10,12 +10,12 @@ int main(int argc, char const * argv[]) {
     Andromeda::Logging::Log::initialize();
     for (int i = 0; i < argc; i++) ANDROMEDA_CORE_TRACE("{0}", argv[i]);
 #endif
-    auto instance = Andromeda::create_instance();
     ANDROMEDA_CORE_INFO("");
     ANDROMEDA_CORE_TRACE("starting Andromeda /");
     ANDROMEDA_CORE_INFO("");
-    int status = instance->initialize();
+    auto instance = Andromeda::create_instance();
+    ANDROMEDA_CORE_INFO("");
     ANDROMEDA_CORE_TRACE("terminating Andromeda /");
     ANDROMEDA_CORE_INFO("");
-    return status;
+    return EXIT_SUCCESS;
 }

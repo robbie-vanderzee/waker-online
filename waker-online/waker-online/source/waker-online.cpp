@@ -5,14 +5,6 @@
 
 namespace Waker {
     Instance::Instance(Instance::Info info) : m_Info(info) {
-        
-    }
-
-    Instance::~Instance() {
-        Andromeda::Graphics::Renderer::shutdown();
-    }
-
-    int Instance::initialize() {
         ANDROMEDA_INFO("Initializing {0} | built with {1} /", m_Info.application, m_Info.engine);
         m_Window = Andromeda::Window::create_window(Andromeda::Window::Properties(
                        m_Info.application, {1920, 1080}, {0, 0}, Andromeda::Window::Option::Decorated | Andromeda::Window::Option::Visible));
@@ -22,21 +14,20 @@ namespace Waker {
         Andromeda::Graphics::Renderer::process();
         m_Layers = std::make_unique<Andromeda::Layer::Stack>();
         m_Layers->push_layer(std::make_unique<Test_Layer>());
-        int status = run();
-        return status;
+        Instance::run();
     }
 
-    int Instance::run() {
-        int count = 0;
+    Instance::~Instance() {
+        Andromeda::Graphics::Renderer::shutdown();
+    }
+
+    void Instance::run() {
         while (m_Info.active) {
             std::ranges::for_each(*m_Layers, [](const auto & layer) {
                 layer->on_update();
             });
-            if (m_Window->is_key_pressed(Andromeda::Input::Code::Key::W)) count++;
-            m_Window->on_update();
+            if (m_Window) m_Window->on_update();
         }
-        ANDROMEDA_INFO("W held for {0} ticks", count);
-        return EXIT_SUCCESS;
     }
 
     void Instance::terminate() {
@@ -49,6 +40,7 @@ namespace Waker {
 #endif
         Andromeda::Event::Dispatcher dispatcher(event);
         dispatcher.dispatch<Andromeda::Event::Window::Close> (ANDROMEDA_BIND_FN(Instance::on_window_close));
+        dispatcher.dispatch<Andromeda::Event::Instance::Terminate> (ANDROMEDA_BIND_FN(Instance::on_instance_terminate));
 
         std::ranges::find_if(std::rbegin(*m_Layers), std::rend(*m_Layers), [& event](const auto & layer) {
             layer->on_event(event);
@@ -57,6 +49,11 @@ namespace Waker {
     }
 
     bool Instance::on_window_close(Andromeda::Event::Window::Close &) {
+        terminate();
+        return true;
+    }
+
+    bool Instance::on_instance_terminate(Andromeda::Event::Instance::Terminate &) {
         terminate();
         return true;
     }

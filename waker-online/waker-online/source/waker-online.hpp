@@ -8,15 +8,14 @@ namespace Waker {
         Instance(Andromeda::Instance::Info info);
         ~Instance() override;
 
-        int initialize() override;
-
-        int run();
+        void run();
         void terminate();
 
         void on_event(Andromeda::Event::Event & event);
 
       private:
         bool on_window_close(Andromeda::Event::Window::Close & close);
+        bool on_instance_terminate(Andromeda::Event::Instance::Terminate & terminate);
       private:
         std::shared_ptr<Andromeda::Window> m_Window;
         std::unique_ptr<Andromeda::Layer::Stack> m_Layers;

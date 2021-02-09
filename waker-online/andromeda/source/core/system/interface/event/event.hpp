@@ -6,7 +6,7 @@ namespace Andromeda {
     namespace Event {
         enum class Type {
             None = 0,
-            Tick, Update, Render,
+            Tick, Update, Render, Terminate,
             Connected, Disconnected,
             Move, Close, Resize, Refresh, Focus, Defocus, Maximize, Minimize, Restore,
             Press, Release, Type,

@@ -185,6 +185,18 @@ namespace Andromeda {
                 EVENT_CLASS_TYPE(Andromeda::Event::Type::Render)
                 EVENT_CLASS_CATEGORY(Andromeda::Event::Category::Instance)
             };
+
+            class Terminate : public Event {
+              public:
+                Terminate() = default;
+
+                std::string to_string() const override {
+                    return fmt::format("Instance Terminate");
+                }
+
+                EVENT_CLASS_TYPE(Andromeda::Event::Type::Terminate)
+                EVENT_CLASS_CATEGORY(Andromeda::Event::Category::Instance)
+            };
         } /* Instance */
     } /* Event */
 } /* Andromeda */

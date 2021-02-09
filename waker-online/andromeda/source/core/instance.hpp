@@ -15,8 +15,6 @@ namespace Andromeda {
       public:
         virtual ~Instance() = default;
 
-        virtual int initialize() = 0;
-
       private:
         friend int ::main(int argc, char const * argv[]);
     };
