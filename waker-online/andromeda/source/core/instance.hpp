@@ -2,8 +2,6 @@
 
 #include "core.hpp"
 
-int main(int argc, char const * argv[]);
-
 namespace Andromeda {
     class Instance {
       public:
@@ -14,9 +12,6 @@ namespace Andromeda {
         };
       public:
         virtual ~Instance() = default;
-
-      private:
-        friend int ::main(int argc, char const * argv[]);
     };
 
     std::unique_ptr<Instance> create_instance();

@@ -16,5 +16,9 @@ namespace Andromeda {
         void Renderer::shutdown() {
             s_API->shutdown();
         }
+
+        void Renderer::set_window_context(std::shared_ptr<Window> window) {
+            s_API->set_window_context(window);
+        }
     } /* Graphics */
 } /* Andromeda */

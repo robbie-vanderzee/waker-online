@@ -57,16 +57,20 @@ namespace Andromeda {
             virtual Andromeda::Event::Type get_event_type() const = 0;
             virtual const char * get_event_name() const = 0;
             virtual Andromeda::Event::Category get_category() const = 0;
-            virtual std::string to_string() const {
+
+            inline virtual std::string to_string() const {
                 return get_event_name();
             }
+
             inline constexpr bool is_in_category(Andromeda::Event::Category category) {
                 using T = std::underlying_type_t <Andromeda::Event::Category>;
                 return static_cast<T>(get_category() & category);
             }
+
             inline constexpr bool is_category(Andromeda::Event::Category category) {
                 return get_category() == category;
             }
+
           public:
             bool consumed = false;
         };
