@@ -13,7 +13,7 @@ void Test_Layer::on_attach() {
 }
 
 void Test_Layer::on_detach() {
-
+    ANDROMEDA_INFO("Removing test layer");
 }
 
 void Test_Layer::on_update() {
