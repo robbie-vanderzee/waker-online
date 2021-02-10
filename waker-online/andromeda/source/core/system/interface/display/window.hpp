@@ -49,12 +49,12 @@ namespace Andromeda {
         }
 
         struct Properties {
-            const std::string title;
+            std::string title;
             Viewport viewport;
             Position position;
             Option options;
 
-            Properties(const std::string & title,
+            Properties(std::string title,
                        Viewport viewport,
                        Position position,
                        Option options

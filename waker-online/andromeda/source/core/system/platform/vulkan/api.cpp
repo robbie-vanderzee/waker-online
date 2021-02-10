@@ -77,7 +77,7 @@ namespace Andromeda {
                 verify_queue_family_properties();
                 if (m_Context) {
                     VkSurfaceKHR surface = std::any_cast<VkSurfaceKHR> (m_Context->get_native_context());
-                    auto result = std::find_if(m_API_Instance.queue_family_properties.begin(), m_API_Instance.queue_family_properties.end(), [this, surface](const auto &, int index = 0) {
+                    auto result = std::find_if(m_API_Instance.queue_family_properties.begin(), m_API_Instance.queue_family_properties.end(), [this, surface, index = 0](const auto &) mutable {
                         VkBool32 supported = VK_FALSE;
                         auto get_physical_device_surface_support_KHR_status = get_physical_device_surface_support_KHR(m_API_Instance.physical_device, index++, surface, & supported);
                         ANDROMEDA_CORE_ASSERT(get_physical_device_surface_support_KHR_status == VK_SUCCESS, "Failed to get physical device surface support KHR");
@@ -147,7 +147,7 @@ namespace Andromeda {
 
             void API::create_image_views() {
                 m_API_Instance.swap_chain_image_views.resize(m_API_Instance.swap_chain_images.size());
-                std::ranges::for_each(m_API_Instance.swap_chain_images, [this](const auto & swap_chain_image, int index = 0) {
+                std::ranges::for_each(m_API_Instance.swap_chain_images, [this, index = 0](const auto & swap_chain_image) mutable {
                     VkImageViewCreateInfo create_image_view_info{};
                     create_image_view_info.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
                     create_image_view_info.pNext = nullptr;
@@ -167,6 +167,7 @@ namespace Andromeda {
                     create_image_view_info.subresourceRange.baseArrayLayer = 0;
                     create_image_view_info.subresourceRange.layerCount = 1;
                     auto create_image_view_status = create_image_view(&m_API_Instance.swap_chain_image_views[index++], &create_image_view_info);
+                    ANDROMEDA_CORE_INFO("{0}", index);
                     ANDROMEDA_CORE_ASSERT(create_image_view_status == VK_SUCCESS, "Failed to create image view.");
                 });
 
@@ -301,7 +302,7 @@ namespace Andromeda {
 
 
             VkResult API::create_image_view(VkImageView * view, VkImageViewCreateInfo * info) {
-                VkResult create_image_view_status = vkCreateImageView(m_API_Instance.logical_device,  info, nullptr, view);
+                VkResult create_image_view_status = vkCreateImageView(m_API_Instance.logical_device, info, nullptr, view);
                 switch (create_image_view_status) {
                     case VK_SUCCESS:
                         ANDROMEDA_CORE_INFO("Successfully created image view.");
