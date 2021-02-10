@@ -18,6 +18,7 @@ project "waker-online"
   }
 
   includedirs {
+    "source",
     "%{wks.location}/waker-online/andromeda/source",
     "%{include_directories.spdlog}",
     "%{include_directories.glfw}"

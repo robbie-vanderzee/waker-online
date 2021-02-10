@@ -1,5 +1,5 @@
 #include "waker-online.hpp"
-#include "test_layer.hpp"
+#include "core/system/layer/test.hpp"
 
 #include <core/link.hpp>
 
@@ -12,7 +12,7 @@ namespace Waker {
         Andromeda::Graphics::Renderer::initialize({m_Info.application, m_Info.engine}, Andromeda::Graphics::API::Type::Vulkan);
         Andromeda::Graphics::Renderer::set_window_context(m_Window);
         Andromeda::Graphics::Renderer::process();
-        m_Layers.push_layer(std::make_unique<Test_Layer>());
+        m_Layers.push_layer(std::make_unique<Layer::Test>());
         Instance::run();
     }
 
