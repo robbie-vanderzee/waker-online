@@ -10,6 +10,3 @@
 [submodule "waker-online/includes/glm"]
 	path = waker-online/includes/glm
 	url = https://github.com/g-truc/glm.git
-[submodule "waker-online/includes/shaderc"]
-	path = waker-online/includes/shaderc
-	url = https://github.com/google/shaderc.git

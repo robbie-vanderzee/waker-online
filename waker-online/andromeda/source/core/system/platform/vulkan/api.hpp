@@ -65,6 +65,7 @@ namespace Andromeda {
                 void create_logical_device();
                 void create_swap_chain();
                 void create_image_views();
+                void create_graphics_pipeline();
 
               private:
                 void create_application_info();

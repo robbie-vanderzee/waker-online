@@ -19,6 +19,7 @@ namespace Andromeda {
                 create_logical_device();
                 create_swap_chain();
                 create_image_views();
+                create_graphics_pipeline();
             }
 
             void API::shutdown() {
@@ -167,9 +168,12 @@ namespace Andromeda {
                     create_image_view_info.subresourceRange.baseArrayLayer = 0;
                     create_image_view_info.subresourceRange.layerCount = 1;
                     auto create_image_view_status = create_image_view(&m_API_Instance.swap_chain_image_views[index++], &create_image_view_info);
-                    ANDROMEDA_CORE_INFO("{0}", index);
                     ANDROMEDA_CORE_ASSERT(create_image_view_status == VK_SUCCESS, "Failed to create image view.");
                 });
+
+            }
+
+            void API::create_graphics_pipeline() {
 
             }
 
