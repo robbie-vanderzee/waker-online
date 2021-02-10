@@ -18,10 +18,14 @@ namespace Andromeda {
                 select_physical_device();
                 create_logical_device();
                 create_swap_chain();
+                create_image_views();
             }
 
             void API::shutdown() {
                 ANDROMEDA_CORE_INFO("Terminating Vulkan API.");
+                std::ranges::for_each(m_API_Instance.swap_chain_image_views, [this](const auto & view) {
+                    vkDestroyImageView(m_API_Instance.logical_device, view, nullptr);
+                });
                 vkDestroySwapchainKHR(m_API_Instance.logical_device, m_API_Instance.swap_chain, nullptr);
                 if (m_Context) m_Context->shutdown();
                 vkDestroyDevice(m_API_Instance.logical_device, nullptr);
@@ -29,7 +33,7 @@ namespace Andromeda {
             }
 
             void API::set_window_context(std::shared_ptr<Window> window) {
-                m_Context = Graphics::Context::create_context(API::Type::Vulkan, window);
+                m_Context = Graphics::Renderer::Context::create_context(API::Type::Vulkan, window);
                 m_Context->initialize(m_API_Instance.instance);
             }
 
@@ -139,6 +143,33 @@ namespace Andromeda {
                 ANDROMEDA_CORE_ASSERT(get_swap_chain_images_status == VK_SUCCESS, "Failed to get swap chain images.");
                 m_API_Instance.swap_chain_extent = extent;
                 m_API_Instance.swap_chain_image_format = surface_format.format;
+            }
+
+            void API::create_image_views() {
+                m_API_Instance.swap_chain_image_views.resize(m_API_Instance.swap_chain_images.size());
+                std::ranges::for_each(m_API_Instance.swap_chain_images, [this](const auto & swap_chain_image, int index = 0) {
+                    VkImageViewCreateInfo create_image_view_info{};
+                    create_image_view_info.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+                    create_image_view_info.pNext = nullptr;
+                    create_image_view_info.flags = 0;
+                    create_image_view_info.image = swap_chain_image;
+                    create_image_view_info.viewType = VK_IMAGE_VIEW_TYPE_2D;
+                    create_image_view_info.format = m_API_Instance.swap_chain_image_format;
+
+                    create_image_view_info.components.r = VK_COMPONENT_SWIZZLE_IDENTITY;
+                    create_image_view_info.components.g = VK_COMPONENT_SWIZZLE_IDENTITY;
+                    create_image_view_info.components.b = VK_COMPONENT_SWIZZLE_IDENTITY;
+                    create_image_view_info.components.a = VK_COMPONENT_SWIZZLE_IDENTITY;
+
+                    create_image_view_info.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+                    create_image_view_info.subresourceRange.baseMipLevel = 0;
+                    create_image_view_info.subresourceRange.levelCount = 1;
+                    create_image_view_info.subresourceRange.baseArrayLayer = 0;
+                    create_image_view_info.subresourceRange.layerCount = 1;
+                    auto create_image_view_status = create_image_view(&m_API_Instance.swap_chain_image_views[index++], &create_image_view_info);
+                    ANDROMEDA_CORE_ASSERT(create_image_view_status == VK_SUCCESS, "Failed to create image view.");
+                });
+
             }
 
             void API::create_application_info() {
@@ -266,6 +297,26 @@ namespace Andromeda {
                         break;
                 }
                 return create_swap_chain_status;
+            }
+
+
+            VkResult API::create_image_view(VkImageView * view, VkImageViewCreateInfo * info) {
+                VkResult create_image_view_status = vkCreateImageView(m_API_Instance.logical_device,  info, nullptr, view);
+                switch (create_image_view_status) {
+                    case VK_SUCCESS:
+                        ANDROMEDA_CORE_INFO("Successfully created image view.");
+                        break;
+                    case VK_ERROR_OUT_OF_HOST_MEMORY:
+                        ANDROMEDA_CORE_ERROR("Failed to create image view. Host out of memory.");
+                        break;
+                    case VK_ERROR_OUT_OF_DEVICE_MEMORY:
+                        ANDROMEDA_CORE_ERROR("Failed to create image view. Device out of memory.");
+                        break;
+                    default:
+                        ANDROMEDA_CORE_CRITICAL("Unhandled Vulkan create device result: {0}.", create_image_view_status);
+                        break;
+                }
+                return create_image_view_status;
             }
 
             VkResult API::enumerate_instance_extension_properties(std::vector<VkExtensionProperties> & instance_extension_properties) {

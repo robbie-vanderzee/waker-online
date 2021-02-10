@@ -1,7 +1,7 @@
 #pragma once
 
-#include "core/graphics/api.hpp"
-#include "core/graphics/context.hpp"
+#include "core/graphics/renderer/api.hpp"
+#include "core/graphics/renderer/context.hpp"
 #include "core/system/interface/display/window.hpp"
 
 #include <vulkan/vulkan.h>
@@ -41,6 +41,8 @@ namespace Andromeda {
                 std::vector<VkImage> swap_chain_images;
                 VkExtent2D swap_chain_extent;
                 VkFormat swap_chain_image_format;
+                std::vector<VkImageView> swap_chain_image_views;
+
 
             };
             class API : public Andromeda::Graphics::API {
@@ -62,6 +64,7 @@ namespace Andromeda {
                 void select_physical_device();
                 void create_logical_device();
                 void create_swap_chain();
+                void create_image_views();
 
               private:
                 void create_application_info();
@@ -98,6 +101,7 @@ namespace Andromeda {
                 void create_device_create_info();
                 VkResult create_device();
                 VkResult create_vk_swap_chain();
+                VkResult create_image_view(VkImageView * view, VkImageViewCreateInfo * info);
                 bool verify_device_is_suitable();
 
               private:
@@ -113,7 +117,7 @@ namespace Andromeda {
               private:
                 API_Instance m_API_Instance;
                 Graphics::Info m_Info;
-                std::unique_ptr<Graphics::Context> m_Context;
+                std::unique_ptr<Graphics::Renderer::Context> m_Context;
             };
         } /* Vulkan */
     } /* Graphics */

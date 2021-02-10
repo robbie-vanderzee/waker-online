@@ -2,6 +2,8 @@
 
 #include "core/system/interface/display/window.hpp"
 
+#include "core/graphics/renderer/context.hpp"
+
 #include "monitor.hpp"
 
 #include <GLFW/glfw3.h>

@@ -3,7 +3,7 @@
 #include "core/core.hpp"
 #include "core/instance.hpp"
 
-#include "core/graphics/renderer.hpp"
+#include "core/graphics/renderer/renderer.hpp"
 
 #include "core/system/interface/display/monitor.hpp"
 #include "core/system/interface/display/window.hpp"

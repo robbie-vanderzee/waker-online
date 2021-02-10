@@ -3,12 +3,12 @@
 usage(){
   echo ""
   echo "Usage: $0 -premake flags -debug -release -clean -style -log"
-  echo -e "\t-premake flags = flag1,flag2,flag3 is a list of flags to build premake with."
-  echo -e "\t-debug builds debug configuration."
-  echo -e "\t-release builds release configuration."
-  echo -e "\t-clean purges the current build."
-  echo -e "\t-style applies styling to the project source."
-  echo -e "\t-log logs the build output and error to file."
+  echo -e "\t-[p]remake flags = flag1,flag2,flag3 is a list of flags to build premake with."
+  echo -e "\t-[d]ebug builds debug configuration."
+  echo -e "\t-[r]elease builds release configuration."
+  echo -e "\t-[c]lean purges the current build."
+  echo -e "\t-[s]tyle applies styling to the project source."
+  echo -e "\t-[l]og logs the build output and error to file."
   echo ""
 }
 

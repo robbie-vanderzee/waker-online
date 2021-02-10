@@ -7,6 +7,7 @@
 namespace Andromeda {
     namespace Linux {
         class Monitor : public Andromeda::Monitor {
+            friend class Window;
           public:
             Monitor(GLFWmonitor * monitor, bool primary);
 
@@ -34,8 +35,6 @@ namespace Andromeda {
             };
 
             Monitor::Data m_Data;
-
-            friend class Window;
         };
     } /* Linux */
 } /* Andromeda */

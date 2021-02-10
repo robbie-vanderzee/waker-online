@@ -1,7 +1,7 @@
 #pragma once
 
 #include "api.hpp"
-#include "core/graphics/context.hpp"
+#include "core/graphics/renderer/context.hpp"
 
 #include <vulkan/vulkan.h>
 #include <GLFW/glfw3.h>
@@ -9,7 +9,7 @@
 namespace Andromeda {
     namespace Graphics {
         namespace Vulkan {
-            class Context : public Andromeda::Graphics::Context {
+            class Context : public Andromeda::Graphics::Renderer::Context {
               public:
                 Context(std::shared_ptr<Window> window);
                 ~Context() override;

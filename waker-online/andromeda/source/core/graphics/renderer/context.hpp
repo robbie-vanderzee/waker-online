@@ -2,13 +2,14 @@
 
 #include "core/core.hpp"
 
-#include "api.hpp"
+#include "renderer.hpp"
 
 #include "core/system/interface/display/window.hpp"
 
 namespace Andromeda {
     namespace Graphics {
-        class Context {
+        class Renderer::Context {
+            friend class Window;
           public:
             using Extent = Window::Viewport;
           public:
