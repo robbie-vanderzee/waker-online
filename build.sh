@@ -26,11 +26,11 @@ run_style(){
     mapfile -t files < <(find . -path ./waker-online/includes -prune -false -o -type f -iname \*\.cpp -o -iname \*\.hpp -o -iname \*\.c -o -iname \*\.h)
     if [ "$logging" = true ] ; then
       for file in "${files[@]}" ; do
-        astyle --style=google --suffix=none -N -L -w -U -W2 -c -S -p -H --indent=spaces -p "$file" | tee logging/build/style.log
+        unbuffer astyle --style=google --suffix=none -N -L -w -U -W2 -c -S -p -H --indent=spaces -p "$file" | tee -a logging/build/style.log
       done
     else
       for file in "${files[@]}" ; do
-        astyle --style=google --suffix=none -N -L -w -U -W2 -c -S -p -H --indent=spaces -p "$file" | tee logging/build/style.log
+        unbuffer astyle --style=google --suffix=none -N -L -w -U -W2 -c -S -p -H --indent=spaces -p "$file" | tee -a logging/build/style.log
       done
     fi
   fi
@@ -38,19 +38,19 @@ run_style(){
 
 run_premake5(){
   if [ "$logging" = true ] ; then
-    premake5 gmake2 "${premake}" |& tee logging/build/debug.log logging/build/release.log
+    unbuffer premake5 gmake2 "${premake}" |& tee logging/build/debug.log logging/build/release.log
   else
-    premake5 gmake2 "${premake}"
+    unbuffer premake5 gmake2 "${premake}"
   fi
 }
 
 run_make_clean(){
   if [ "$clean" = true ] ; then
     if [ "$debug" = true ] ; then
-      make clean config=debug
+      unbuffer make clean config=debug
     fi
     if [ "$release" = true ]; then
-      make clean config=release
+      unbuffer make clean config=release
     fi
   fi
 }
@@ -58,17 +58,17 @@ run_make_clean(){
 run_make_build(){
   if [ "$logging" = true ] ; then
     if [ "$debug" = true ] ; then
-      make -j config=debug |& tee -a logging/build/debug.log
+      unbuffer make -j config=debug |& tee -a logging/build/debug.log
     fi
     if [ "$release" = true ] ; then
-      make -j config=release |& tee -a logging/build/release.log
+      unbuffer make -j config=release |& tee -a logging/build/release.log
     fi
   else
     if [ "$debug" = true ] ; then
-      make config=debug
+      unbuffer make config=debug
     fi
     if [ "$release" = true ] ; then
-      make config=release
+      unbuffer make config=release
     fi
   fi
 }
@@ -104,7 +104,6 @@ build(){
   run_make_build
   echo "Build complete."
 }
-
 
 
 build
