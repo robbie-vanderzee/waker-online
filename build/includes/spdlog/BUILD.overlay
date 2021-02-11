@@ -1,0 +1,12 @@
+package(default_visibility = ["//visibility:public"])
+
+# Exports all headers, including C function prototypes. Useful if statically
+# linking against spdlog.
+# Not all headers are hermetic, so they are just included as textual
+# headers to disable additional validation.
+
+cc_library(
+    name = "spdlog_headers",
+    includes = ["include"],
+    textual_hdrs = glob(["includes/spdlog/*.h"]),
+)

@@ -1,0 +1,35 @@
+# andromeda::core::interface::display::
+
+load("@rules_cc//cc:defs.bzl", "cc_library")
+
+package(
+    default_visibility = ["//visibility:public"],
+    licenses = ["notice"],
+)
+
+cc_library(
+    name = "andromeda_interface_display_monitor",
+    hdrs = [
+        "monitor.hpp",
+    ],
+    deps = [
+        ":andromeda_core",
+        ":andromeda_interface_event",
+    ],
+)
+
+cc_library(
+    name = "andromeda_interface_display_window",
+    srcs = [
+        "window.cpp",
+    ],
+    hdrs = [
+        "window.hpp",
+    ],
+    deps = [
+        ":andromeda_core",
+        ":andromeda_interface_event",
+        ":andromeda_interface_input_manager",
+        ":andromeda_linux_interface_display_window",
+    ],
+)

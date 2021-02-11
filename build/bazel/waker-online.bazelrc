@@ -1,0 +1,92 @@
+###############################################################################
+# Options for "generic_clang" builds: these options should generally apply to
+# either clang or gcc and are curated based on need.
+###############################################################################
+
+# C++20 standard version is required.
+build:generic_clang --cxxopt=-std=c++20 --host_cxxopt=-std=c++20
+
+# Default to adding back asserts in optimized builds.
+# This is a good compromise between runtime and debug ability.
+build:generic_clang --copt=-UNDEBUG
+
+# Treat warnings as errors...
+build:generic_clang --copt=-Werror
+
+# Set clang diagnostics.
+
+build:generic_clang --copt=-Wall
+
+# Explicitly enable some additional warnings.
+# Some of these aren't on by default, or under -Wall, or are subsets of warnings
+# turned off above.
+build:generic_clang --copt=-Wctad-maybe-unsupported
+build:generic_clang --copt=-Wfloat-overflow-conversion
+build:generic_clang --copt=-Wfloat-zero-conversion
+build:generic_clang --copt=-Wfor-loop-analysis
+build:generic_clang --copt=-Wformat-security
+build:generic_clang --copt=-Wgnu-redeclared-enum
+build:generic_clang --copt=-Wimplicit-fallthrough
+build:generic_clang --copt=-Winfinite-recursion
+build:generic_clang --copt=-Wliteral-conversion
+build:generic_clang --copt=-Wnon-virtual-dtor
+build:generic_clang --copt=-Woverloaded-virtual
+build:generic_clang --copt=-Wself-assign
+build:generic_clang --copt=-Wstring-conversion
+build:generic_clang --copt=-Wtautological-overlap-compare
+build:generic_clang --copt=-Wthread-safety
+build:generic_clang --copt=-Wthread-safety-beta
+build:generic_clang --copt=-Wunused-comparison
+build:generic_clang --copt=-Wvla
+
+###############################################################################
+# Options for building with address sanitizer.
+# https://github.com/google/sanitizers/wiki/AddressSanitizer
+###############################################################################
+
+# ASAN (address sanitizer)
+# https://clang.llvm.org/docs/AddressSanitizer.html
+build:asan --config=sanitizer
+build:asan --features=asan
+build:asan --copt=-fsanitize=address
+build:asan --copt=-fsanitize-address-use-after-scope
+build:asan --linkopt=-fsanitize=address
+build:asan --cc_output_directory_tag=asan
+build:asan --copt=-DADDRESS_SANITIZER
+
+# MSAN (memory sanitizer)
+# https://clang.llvm.org/docs/MemorySanitizer.html
+build:msan --config=sanitizer
+build:msan --features=msan
+build:msan --copt=-fsanitize=memory
+build:msan --copt=-fsanitize-memory-track-origins
+build:msan --linkopt=-fsanitize=memory
+build:msan --cc_output_directory_tag=msan
+build:msan --copt=-DMEMORY_SANITIZER
+
+# TSAN (thread sanitizer)
+# https://clang.llvm.org/docs/ThreadSanitizer.html
+build:tsan --config=sanitizer
+build:tsan --features=tsan
+build:tsan --copt=-fsanitize=thread
+build:tsan --linkopt=-fsanitize=thread
+build:tsan --cc_output_directory_tag=tsan
+build:tsan --copt=-DTHREAD_SANITIZER
+
+# UBSAN (undefined behavior sanitizer)
+# https://clang.llvm.org/docs/UndefinedBehaviorSanitizer.html
+build:ubsan --config=sanitizer
+build:ubsan --features=ubsan
+build:ubsan --copt=-fsanitize=undefined
+build:ubsan --linkopt=-fsanitize=undefined
+build:ubsan --linkopt=-lubsan
+build:ubsan --cc_output_directory_tag=ubsan
+
+# Don't strip debug info
+build:sanitizer --strip=never
+# Ignore settings of `linkopts = ["-static"]` which can screw up the sanitizer.
+build:sanitizer --force_ignore_dash_static
+# sanitizer tests tend to take longer, so increase the timeouts
+build:sanitizer --test_timeout=120,600,1800,-1
+# Get better stack traces
+build:sanitizer --copt=-fno-omit-frame-pointer

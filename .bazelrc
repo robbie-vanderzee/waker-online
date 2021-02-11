@@ -1,0 +1,5 @@
+try-import %workspace%/build/bazel/waker-online.bazelrc
+
+try-import %workspace/configured.bazelrc
+
+try-import %workspace/user.bazel

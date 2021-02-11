@@ -2,8 +2,6 @@
 
 #include "core/core.hpp"
 
-#include "core/system/interface/event/event.hpp"
-
 namespace Andromeda {
     class Monitor {
       public:
@@ -21,10 +19,7 @@ namespace Andromeda {
         };
       public:
         virtual ~Monitor() = default;
-
-        virtual void update() = 0;
         // Attributes
-        virtual void set_event_callback(const Event::Callback & callback) = 0;
         virtual std::any get_native_monitor() const = 0;
     };
 

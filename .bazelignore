@@ -1,0 +1,8 @@
+# Ingore 'experimental' folders. 
+experimental
+
+# Ignore submodule directories which contain BUILD files.
+includes
+
+# Ignore the bazel directories when this directory is used as a local repository
+bazel-*
