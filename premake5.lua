@@ -12,10 +12,10 @@ workspace "waker-online"
   binary_directory = "%{cfg.buildcfg}/%{cfg.system}"
 
   include_directories = {}
-  include_directories["spdlog"] = "%{wks.location}/waker-online/includes/spdlog/include"
-  include_directories["glfw"] = "%{wks.location}/waker-online/includes/glfw/include/GLFW"
-  include_directories["glm"] = "%{wks.location}/waker-online/includes/glm"
-  include_directories["shaderc"] = "%{wks.location}/waker-online/includes/shaderc/libshaderc/include"
+  include_directories["spdlog"] = "%{wks.location}/includes/spdlog/include"
+  include_directories["glfw"] = "%{wks.location}/includes/glfw/include/GLFW"
+  include_directories["glm"] = "%{wks.location}/includes/glm"
+  include_directories["shaderc"] = "%{wks.location}/includes/shaderc/libshaderc/include"
 
   newoption {
     trigger = "sanitize",

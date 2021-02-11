@@ -1,12 +1,15 @@
-[submodule "waker-online/includes/spdlog"]
-	path = waker-online/includes/spdlog
-	url = https://github.com/gabime/spdlog.git
-[submodule "waker-online/includes/glfw"]
-	path = waker-online/includes/glfw
-	url = https://github.com/glfw/glfw.git
-[submodule "waker-online/includes/vulkan"]
-	path = waker-online/includes/vulkan
-	url = https://github.com/LunarG/VulkanTools.git
-[submodule "waker-online/includes/glm"]
-	path = waker-online/includes/glm
-	url = https://github.com/g-truc/glm.git
+[submodule "includes/vulkan/headers"]
+	path = includes/vulkan/headers
+	url = https://github.com/KhronosGroup/Vulkan-Headers
+[submodule "includes/vulkan/sdk"]
+	path = includes/vulkan/sdk
+	url = https://github.com/LunarG/VulkanTools
+[submodule "includes/spdlog"]
+	path = includes/spdlog
+	url = git@github.com:gabime/spdlog.git
+[submodule "includes/glm"]
+	path = includes/glm
+	url = git@github.com:g-truc/glm.git
+[submodule "includes/glfw"]
+	path = includes/glfw
+	url = git@github.com:glfw/glfw.git

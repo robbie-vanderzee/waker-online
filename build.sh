@@ -26,11 +26,11 @@ run_style(){
     mapfile -t files < <(find . -path ./waker-online/includes -prune -false -o -type f -iname \*\.cpp -o -iname \*\.hpp -o -iname \*\.c -o -iname \*\.h)
     if [ "$logging" = true ] ; then
       for file in "${files[@]}" ; do
-        unbuffer astyle --style=google --suffix=none -N -L -w -U -W2 -c -S -p -H --indent=spaces -p "$file" | tee -a logging/build/style.log
+        unbuffer astyle --style=google --suffix=none -N -L -w -U -W2 -c -S -p -H --indent=spaces -p "$file" | tee -a logging/build/style.log &
       done
     else
       for file in "${files[@]}" ; do
-        unbuffer astyle --style=google --suffix=none -N -L -w -U -W2 -c -S -p -H --indent=spaces -p "$file" | tee -a logging/build/style.log
+        unbuffer astyle --style=google --suffix=none -N -L -w -U -W2 -c -S -p -H --indent=spaces -p "$file" | tee -a logging/build/style.log &
       done
     fi
   fi
