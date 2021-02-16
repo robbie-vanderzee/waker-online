@@ -1,6 +1,8 @@
 #include "api.hpp"
 #include "core/instance.hpp"
 
+#include <fstream>
+
 namespace Andromeda {
     namespace Graphics {
         namespace Vulkan {
@@ -174,7 +176,15 @@ namespace Andromeda {
             }
 
             void API::create_graphics_pipeline() {
+                ANDROMEDA_CORE_INFO("Loading shaders");
+                auto vertshaderbin = load_shader("./waker-online/waker-online/assets/shaders/compiled/test/test.vert.spv");
+                auto fragshaderbin = load_shader("./waker-online/waker-online/assets/shaders/compiled/test/test.frag.spv");
+                ANDROMEDA_CORE_ASSERT(!vertshaderbin.empty() && !fragshaderbin.empty(), "Failed to loaded shaders");
+                VkShaderModule vertshadermodule = create_shader_module(vertshaderbin);
+                VkShaderModule fragshadermodule = create_shader_module(fragshaderbin);
 
+                vkDestroyShaderModule(m_API_Instance.logical_device, vertshadermodule, nullptr);
+                vkDestroyShaderModule(m_API_Instance.logical_device, fragshadermodule, nullptr);
             }
 
             void API::create_application_info() {
@@ -702,6 +712,27 @@ namespace Andromeda {
                     return true;
                 });
                 return result;
+            }
+
+
+            std::vector<std::byte> API::load_shader(std::filesystem::path filepath) {
+                ANDROMEDA_CORE_ASSERT(!filepath.empty(), "Invalid filepath for shader.");
+                std::ifstream shader_file(filepath, std::ios::binary);
+                std::vector<std::byte> binary(std::filesystem::file_size(filepath));
+                shader_file.read(reinterpret_cast<char *>(binary.data()), binary.size());
+                return binary;
+            }
+
+
+            VkShaderModule API::create_shader_module(const std::vector<std::byte>& binary) {
+                VkShaderModuleCreateInfo create_shader_module_info{};
+                create_shader_module_info.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
+                create_shader_module_info.codeSize = binary.size();
+                create_shader_module_info.pCode = reinterpret_cast<const uint32_t*>(binary.data());
+                VkShaderModule module;
+                VkResult status = vkCreateShaderModule(m_API_Instance.logical_device, & create_shader_module_info, nullptr, & module);
+                ANDROMEDA_CORE_ASSERT(status == VK_SUCCESS, "Failed to create shader module");
+                return module;
             }
         } /* Vulkan */
     } /* Graphics */

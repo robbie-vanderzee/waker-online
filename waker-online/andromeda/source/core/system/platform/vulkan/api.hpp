@@ -4,6 +4,9 @@
 #include "core/graphics/renderer/context.hpp"
 #include "core/system/interface/display/window.hpp"
 
+#include <filesystem>
+#include <utility>
+
 #include <vulkan/vulkan.h>
 #include <GLFW/glfw3.h>
 
@@ -114,6 +117,10 @@ namespace Andromeda {
               private:
                 const std::vector<const char *> desired_validation_layers = { "VK_LAYER_KHRONOS_validation" };
                 bool verify_desired_validation_layer_support(const std::vector<const char *> & desired_validation_layers);
+
+              private:
+                std::vector<std::byte> load_shader(std::filesystem::path filepath);
+                VkShaderModule create_shader_module(const std::vector<std::byte>& binary);
 
               private:
                 API_Instance m_API_Instance;
