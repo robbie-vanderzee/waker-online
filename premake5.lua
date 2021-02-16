@@ -1,8 +1,5 @@
 workspace "waker-online"
   toolset "clang"
-  flags {
-    "LinkTimeOptimization"
-  }
 
   configurations {
     "debug",
@@ -72,6 +69,9 @@ workspace "waker-online"
   filter "configurations:release"
     defines {
       "RELEASE"
+    }
+    flags {
+      "LinkTimeOptimization"
     }
     warnings "Extra"
     runtime "Release"
