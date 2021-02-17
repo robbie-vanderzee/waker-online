@@ -45,6 +45,7 @@ namespace Andromeda {
                 VkExtent2D swap_chain_extent;
                 VkFormat swap_chain_image_format;
                 std::vector<VkImageView> swap_chain_image_views;
+                VkPipelineLayout pipeline_layout;
 
 
             };

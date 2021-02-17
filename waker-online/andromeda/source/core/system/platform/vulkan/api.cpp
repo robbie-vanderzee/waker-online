@@ -26,6 +26,7 @@ namespace Andromeda {
 
             void API::shutdown() {
                 ANDROMEDA_CORE_INFO("Terminating Vulkan API.");
+                vkDestroyPipelineLayout(m_API_Instance.logical_device, m_API_Instance.pipeline_layout, nullptr);
                 std::ranges::for_each(m_API_Instance.swap_chain_image_views, [this](const auto & view) {
                     vkDestroyImageView(m_API_Instance.logical_device, view, nullptr);
                 });
@@ -182,6 +183,108 @@ namespace Andromeda {
                 ANDROMEDA_CORE_ASSERT(!vertshaderbin.empty() && !fragshaderbin.empty(), "Failed to loaded shaders");
                 VkShaderModule vertshadermodule = create_shader_module(vertshaderbin);
                 VkShaderModule fragshadermodule = create_shader_module(fragshaderbin);
+
+                VkPipelineShaderStageCreateInfo vert_shader_stage_info{};
+                vert_shader_stage_info.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+                vert_shader_stage_info.stage = VK_SHADER_STAGE_VERTEX_BIT;
+                vert_shader_stage_info.module = vertshadermodule;
+                vert_shader_stage_info.pName = "main";
+
+
+                VkPipelineShaderStageCreateInfo frag_shader_stage_info{};
+                frag_shader_stage_info.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+                frag_shader_stage_info.stage = VK_SHADER_STAGE_FRAGMENT_BIT;
+                frag_shader_stage_info.module = fragshadermodule;
+                frag_shader_stage_info.pName = "main";
+
+                VkPipelineShaderStageCreateInfo shaderStages[] = {vert_shader_stage_info, frag_shader_stage_info};
+
+                VkPipelineVertexInputStateCreateInfo vertex_input_info{};
+                vertex_input_info.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
+                vertex_input_info.vertexBindingDescriptionCount = 0;
+                vertex_input_info.pVertexBindingDescriptions = nullptr;
+                vertex_input_info.vertexAttributeDescriptionCount = 0;
+                vertex_input_info.pVertexAttributeDescriptions = nullptr;
+
+                VkViewport viewport{};
+                viewport.x = 0.0f;
+                viewport.y = 0.0f;
+                viewport.width = (float) m_API_Instance.swap_chain_extent.width;
+                viewport.height = (float) m_API_Instance.swap_chain_extent.width;
+                viewport.minDepth = 0.0f;
+                viewport.maxDepth = 1.0f;
+
+                VkRect2D scissor{};
+                scissor.offset = {0, 0};
+                scissor.extent = m_API_Instance.swap_chain_extent;
+
+                VkPipelineViewportStateCreateInfo viewportState{};
+                viewportState.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
+                viewportState.viewportCount = 1;
+                viewportState.pViewports = &viewport;
+                viewportState.scissorCount = 1;
+                viewportState.pScissors = &scissor;
+
+                VkPipelineRasterizationStateCreateInfo rasterizer{};
+                rasterizer.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
+                rasterizer.depthClampEnable = VK_FALSE;
+                rasterizer.rasterizerDiscardEnable = VK_FALSE;
+                rasterizer.polygonMode = VK_POLYGON_MODE_FILL;
+                rasterizer.lineWidth = 1.0f;
+                rasterizer.cullMode = VK_CULL_MODE_BACK_BIT;
+                rasterizer.frontFace = VK_FRONT_FACE_CLOCKWISE;
+                rasterizer.cullMode = VK_CULL_MODE_BACK_BIT;
+                rasterizer.frontFace = VK_FRONT_FACE_CLOCKWISE;
+
+                VkPipelineMultisampleStateCreateInfo multisampling{};
+                multisampling.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
+                multisampling.sampleShadingEnable = VK_FALSE;
+                multisampling.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
+                multisampling.minSampleShading = 1.0f;
+                multisampling.pSampleMask = nullptr;
+                multisampling.alphaToCoverageEnable = VK_FALSE;
+                multisampling.alphaToOneEnable = VK_FALSE;
+
+                VkPipelineColorBlendAttachmentState colorBlendAttachment{};
+                colorBlendAttachment.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
+                colorBlendAttachment.blendEnable = VK_TRUE;
+                colorBlendAttachment.srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
+                colorBlendAttachment.dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
+                colorBlendAttachment.colorBlendOp = VK_BLEND_OP_ADD;
+                colorBlendAttachment.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
+                colorBlendAttachment.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
+                colorBlendAttachment.alphaBlendOp = VK_BLEND_OP_ADD;
+
+                VkPipelineColorBlendStateCreateInfo colorBlending{};
+                colorBlending.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
+                colorBlending.logicOpEnable = VK_TRUE;
+                colorBlending.logicOp = VK_LOGIC_OP_COPY; // Optional
+                colorBlending.attachmentCount = 1;
+                colorBlending.pAttachments = &colorBlendAttachment;
+                colorBlending.blendConstants[0] = 0.0f; // Optional
+                colorBlending.blendConstants[1] = 0.0f; // Optional
+                colorBlending.blendConstants[2] = 0.0f; // Optional
+                colorBlending.blendConstants[3] = 0.0f; // Optional
+
+                VkDynamicState dynamicStates[] = {
+                    VK_DYNAMIC_STATE_VIEWPORT,
+                    VK_DYNAMIC_STATE_LINE_WIDTH
+                };
+
+                VkPipelineDynamicStateCreateInfo dynamicState{};
+                dynamicState.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
+                dynamicState.dynamicStateCount = 2;
+                dynamicState.pDynamicStates = dynamicStates;
+
+                VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
+                pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
+                pipelineLayoutInfo.setLayoutCount = 0; // Optional
+                pipelineLayoutInfo.pSetLayouts = nullptr; // Optional
+                pipelineLayoutInfo.pushConstantRangeCount = 0; // Optional
+                pipelineLayoutInfo.pPushConstantRanges = nullptr; // Optional
+
+                auto status = vkCreatePipelineLayout(m_API_Instance.logical_device, & pipelineLayoutInfo, nullptr, & m_API_Instance.pipeline_layout);
+                ANDROMEDA_CORE_ASSERT(status == VK_SUCCESS, "Failed to create pipeline layout");
 
                 vkDestroyShaderModule(m_API_Instance.logical_device, vertshadermodule, nullptr);
                 vkDestroyShaderModule(m_API_Instance.logical_device, fragshadermodule, nullptr);
