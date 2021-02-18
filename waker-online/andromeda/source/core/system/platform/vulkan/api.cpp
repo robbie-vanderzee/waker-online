@@ -26,13 +26,17 @@ namespace Andromeda {
                 create_frame_buffers();
                 create_command_pool();
                 create_command_buffers();
-                create_semaphores();
+                create_sync_objects();
             }
 
             void API::shutdown() {
                 ANDROMEDA_CORE_INFO("Terminating Vulkan API.");
-                vkDestroySemaphore(m_API_Instance.logical_device, m_API_Instance.renderFinishedSemaphore, nullptr);
-                vkDestroySemaphore(m_API_Instance.logical_device, m_API_Instance.imageAvailableSemaphore, nullptr);
+                vkDeviceWaitIdle(m_API_Instance.logical_device);
+                for (std::size_t i = 0; i < m_API_Instance.imageAvailableSemaphores.size(); i++) {
+                    vkDestroySemaphore(m_API_Instance.logical_device, m_API_Instance.imageAvailableSemaphores[i], nullptr);
+                    vkDestroySemaphore(m_API_Instance.logical_device, m_API_Instance.renderFinishedSemaphores[i], nullptr);
+                    vkDestroyFence(m_API_Instance.logical_device, m_API_Instance.inFlightFences[i], nullptr);
+                }
                 vkDestroyCommandPool(m_API_Instance.logical_device, m_API_Instance.commandPool, nullptr);
                 std::ranges::for_each(m_API_Instance.swapChainFrameBuffers, [this](auto framebuffer) {
                     vkDestroyFramebuffer(m_API_Instance.logical_device, framebuffer, nullptr);
@@ -45,7 +49,6 @@ namespace Andromeda {
                 });
                 vkDestroySwapchainKHR(m_API_Instance.logical_device, m_API_Instance.swap_chain, nullptr);
                 if (m_Context) m_Context->shutdown();
-                vkDeviceWaitIdle(m_API_Instance.logical_device);
                 vkDestroyDevice(m_API_Instance.logical_device, nullptr);
                 vkDestroyInstance(m_API_Instance.instance, nullptr);
             }
@@ -185,6 +188,7 @@ namespace Andromeda {
                     create_image_view_info.subresourceRange.baseArrayLayer = 0;
                     create_image_view_info.subresourceRange.layerCount = 1;
                     auto create_image_view_status = create_image_view(&m_API_Instance.swap_chain_image_views[index++], &create_image_view_info);
+                    ANDROMEDA_CORE_INFO("View {0}", index);
                     ANDROMEDA_CORE_ASSERT(create_image_view_status == VK_SUCCESS, "Failed to create image view.");
                 });
 
@@ -388,6 +392,7 @@ namespace Andromeda {
                     framebufferInfo.layers = 1;
 
                     auto status = vkCreateFramebuffer(m_API_Instance.logical_device, &framebufferInfo, nullptr, &m_API_Instance.swapChainFrameBuffers[index++]);
+                    ANDROMEDA_CORE_INFO("Frame buffer {0}", index);
                     ANDROMEDA_CORE_ASSERT(status == VK_SUCCESS, "Failed to create frame buffer {0}", index);
                 });
             }
@@ -444,23 +449,45 @@ namespace Andromeda {
                 };
             }
 
-            void API::create_semaphores() {
+            void API::create_sync_objects() {
+
+                m_API_Instance.renderFinishedSemaphores.resize(m_API_Instance.max_frames_in_flight);
+                m_API_Instance.imageAvailableSemaphores.resize(m_API_Instance.max_frames_in_flight);
+                m_API_Instance.inFlightFences.resize(m_API_Instance.max_frames_in_flight);
+                m_API_Instance.imagesInFlight.resize(m_API_Instance.swap_chain_images.size(), VK_NULL_HANDLE);
+
                 VkSemaphoreCreateInfo semaphoreInfo{};
                 semaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
-                auto renderstatus = vkCreateSemaphore(m_API_Instance.logical_device, &semaphoreInfo, nullptr, &m_API_Instance.renderFinishedSemaphore);
-                auto imagestatus = vkCreateSemaphore(m_API_Instance.logical_device, &semaphoreInfo, nullptr, &m_API_Instance.imageAvailableSemaphore);
-                ANDROMEDA_CORE_ASSERT(renderstatus == VK_SUCCESS && imagestatus == VK_SUCCESS, "Failed semaphore creation.");
+
+                VkFenceCreateInfo fenceInfo{};
+                fenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
+                fenceInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
+
+                for (std::size_t i = 0; i < m_API_Instance.imageAvailableSemaphores.size(); i++) {
+                    auto renderstatus = vkCreateSemaphore(m_API_Instance.logical_device, &semaphoreInfo, nullptr, &m_API_Instance.renderFinishedSemaphores[i]);
+                    auto imagestatus = vkCreateSemaphore(m_API_Instance.logical_device, &semaphoreInfo, nullptr, &m_API_Instance.imageAvailableSemaphores[i]);
+                    ANDROMEDA_CORE_ASSERT(renderstatus == VK_SUCCESS && imagestatus == VK_SUCCESS, "Failed semaphore creation.");
+                    auto fencestatus = vkCreateFence(m_API_Instance.logical_device, &fenceInfo, nullptr, &m_API_Instance.inFlightFences[i]);
+                    ANDROMEDA_CORE_ASSERT(fencestatus == VK_SUCCESS && imagestatus == VK_SUCCESS, "Failed fence creation.");
+                }
             }
 
             void API::present() {
-                //ANDROMEDA_CORE_INFO("presenting swap chain image");
+                vkWaitForFences(m_API_Instance.logical_device, 1, &m_API_Instance.inFlightFences[m_API_Instance.current_frame], VK_TRUE, UINT64_MAX);
+
                 unsigned int index;
-                vkAcquireNextImageKHR(m_API_Instance.logical_device, m_API_Instance.swap_chain, UINT64_MAX, m_API_Instance.imageAvailableSemaphore, VK_NULL_HANDLE, &index);
+                vkAcquireNextImageKHR(m_API_Instance.logical_device, m_API_Instance.swap_chain, UINT64_MAX, m_API_Instance.imageAvailableSemaphores[m_API_Instance.current_frame], VK_NULL_HANDLE, &index);
+
+                if (m_API_Instance.imagesInFlight[m_API_Instance.current_frame] != VK_NULL_HANDLE) {
+                    vkWaitForFences(m_API_Instance.logical_device, 1, &m_API_Instance.imagesInFlight[m_API_Instance.current_frame], VK_TRUE, UINT64_MAX);
+                }
+
+                m_API_Instance.imagesInFlight[m_API_Instance.current_frame] = m_API_Instance.inFlightFences[m_API_Instance.current_frame];
 
                 VkSubmitInfo submitInfo{};
                 submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 
-                VkSemaphore waitSemaphores[] = {m_API_Instance.imageAvailableSemaphore};
+                VkSemaphore waitSemaphores[] = {m_API_Instance.imageAvailableSemaphores[m_API_Instance.current_frame]};
                 VkPipelineStageFlags waitStages[] = {VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT};
                 submitInfo.waitSemaphoreCount = 1;
                 submitInfo.pWaitSemaphores = waitSemaphores;
@@ -468,11 +495,13 @@ namespace Andromeda {
                 submitInfo.commandBufferCount = 1;
                 submitInfo.pCommandBuffers = &m_API_Instance.commandBuffers[index];
 
-                VkSemaphore signalSemaphores[] = {m_API_Instance.renderFinishedSemaphore};
+                VkSemaphore signalSemaphores[] = {m_API_Instance.renderFinishedSemaphores[m_API_Instance.current_frame]};
                 submitInfo.signalSemaphoreCount = 1;
                 submitInfo.pSignalSemaphores = signalSemaphores;
 
-                auto submit = vkQueueSubmit(m_API_Instance.graphics_queue, 1, &submitInfo, VK_NULL_HANDLE);
+                vkResetFences(m_API_Instance.logical_device, 1, &m_API_Instance.imagesInFlight[m_API_Instance.current_frame]);
+
+                auto submit = vkQueueSubmit(m_API_Instance.graphics_queue, 1, &submitInfo, m_API_Instance.inFlightFences[m_API_Instance.current_frame]);
                 ANDROMEDA_CORE_ASSERT(submit == VK_SUCCESS, "Failed to submit to graphics queue.");
 
                 VkPresentInfoKHR presentInfo{};
@@ -487,7 +516,7 @@ namespace Andromeda {
                 presentInfo.pImageIndices = &index;
                 presentInfo.pResults = nullptr; // Optional
                 vkQueuePresentKHR(m_API_Instance.present_queue, &presentInfo);
-                vkQueueWaitIdle(m_API_Instance.present_queue);
+                m_API_Instance.current_frame = (m_API_Instance.current_frame + 1) % m_API_Instance.max_frames_in_flight;
             }
 
             void API::create_application_info() {

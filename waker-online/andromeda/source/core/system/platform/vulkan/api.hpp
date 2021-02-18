@@ -54,8 +54,12 @@ namespace Andromeda {
                 VkCommandPool commandPool;
                 std::vector<VkCommandBuffer> commandBuffers;
                 /* Semaphores */
-                VkSemaphore imageAvailableSemaphore;
-                VkSemaphore renderFinishedSemaphore;
+                std::vector<VkSemaphore> imageAvailableSemaphores;
+                std::vector<VkSemaphore> renderFinishedSemaphores;
+                std::vector<VkFence> inFlightFences;
+                std::vector<VkFence> imagesInFlight;
+                std::size_t current_frame = 0;
+                const unsigned int max_frames_in_flight = 2;
 
             };
             class API : public Andromeda::Graphics::API {
@@ -83,7 +87,7 @@ namespace Andromeda {
                 void create_frame_buffers();
                 void create_command_pool();
                 void create_command_buffers();
-                void create_semaphores();
+                void create_sync_objects();
 
                 void present() override;
 
