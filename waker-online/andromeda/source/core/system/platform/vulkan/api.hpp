@@ -45,7 +45,9 @@ namespace Andromeda {
                 VkExtent2D swap_chain_extent;
                 VkFormat swap_chain_image_format;
                 std::vector<VkImageView> swap_chain_image_views;
+                VkRenderPass renderPass;
                 VkPipelineLayout pipeline_layout;
+                VkPipeline pipeline;
 
 
             };
@@ -70,6 +72,7 @@ namespace Andromeda {
                 void create_swap_chain();
                 void create_image_views();
                 void create_graphics_pipeline();
+                void create_render_pass();
 
               private:
                 void create_application_info();

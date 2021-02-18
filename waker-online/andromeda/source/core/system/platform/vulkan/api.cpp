@@ -21,11 +21,14 @@ namespace Andromeda {
                 create_logical_device();
                 create_swap_chain();
                 create_image_views();
+                create_render_pass();
                 create_graphics_pipeline();
             }
 
             void API::shutdown() {
                 ANDROMEDA_CORE_INFO("Terminating Vulkan API.");
+                vkDestroyRenderPass(m_API_Instance.logical_device, m_API_Instance.renderPass, nullptr);
+                vkDestroyPipeline(m_API_Instance.logical_device, m_API_Instance.pipeline, nullptr);
                 vkDestroyPipelineLayout(m_API_Instance.logical_device, m_API_Instance.pipeline_layout, nullptr);
                 std::ranges::for_each(m_API_Instance.swap_chain_image_views, [this](const auto & view) {
                     vkDestroyImageView(m_API_Instance.logical_device, view, nullptr);
@@ -218,6 +221,11 @@ namespace Andromeda {
                 scissor.offset = {0, 0};
                 scissor.extent = m_API_Instance.swap_chain_extent;
 
+                VkPipelineInputAssemblyStateCreateInfo inputAssembly{};
+                inputAssembly.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
+                inputAssembly.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
+                inputAssembly.primitiveRestartEnable = VK_FALSE;
+
                 VkPipelineViewportStateCreateInfo viewportState{};
                 viewportState.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
                 viewportState.viewportCount = 1;
@@ -257,7 +265,7 @@ namespace Andromeda {
 
                 VkPipelineColorBlendStateCreateInfo colorBlending{};
                 colorBlending.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
-                colorBlending.logicOpEnable = VK_TRUE;
+                colorBlending.logicOpEnable = VK_FALSE;
                 colorBlending.logicOp = VK_LOGIC_OP_COPY; // Optional
                 colorBlending.attachmentCount = 1;
                 colorBlending.pAttachments = &colorBlendAttachment;
@@ -283,11 +291,63 @@ namespace Andromeda {
                 pipelineLayoutInfo.pushConstantRangeCount = 0; // Optional
                 pipelineLayoutInfo.pPushConstantRanges = nullptr; // Optional
 
-                auto status = vkCreatePipelineLayout(m_API_Instance.logical_device, & pipelineLayoutInfo, nullptr, & m_API_Instance.pipeline_layout);
-                ANDROMEDA_CORE_ASSERT(status == VK_SUCCESS, "Failed to create pipeline layout");
+                auto pipeline_layout_status = vkCreatePipelineLayout(m_API_Instance.logical_device, & pipelineLayoutInfo, nullptr, & m_API_Instance.pipeline_layout);
+                ANDROMEDA_CORE_ASSERT(pipeline_layout_status == VK_SUCCESS, "Failed to create pipeline layout");
 
+                VkGraphicsPipelineCreateInfo pipelineInfo{};
+                pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
+                pipelineInfo.stageCount = 2;
+                pipelineInfo.pStages = shaderStages;
+                pipelineInfo.pVertexInputState = &vertex_input_info;
+                pipelineInfo.pInputAssemblyState = &inputAssembly;
+                pipelineInfo.pViewportState = &viewportState;
+                pipelineInfo.pRasterizationState = &rasterizer;
+                pipelineInfo.pMultisampleState = &multisampling;
+                pipelineInfo.pDepthStencilState = nullptr; // Optional
+                pipelineInfo.pColorBlendState = &colorBlending;
+                pipelineInfo.pDynamicState = nullptr; // Optional
+                pipelineInfo.layout = m_API_Instance.pipeline_layout;
+                pipelineInfo.renderPass = m_API_Instance.renderPass;
+                pipelineInfo.subpass = 0;
+
+                auto graphics_pipeline_status = vkCreateGraphicsPipelines(m_API_Instance.logical_device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &m_API_Instance.pipeline);
+                ANDROMEDA_CORE_ASSERT(graphics_pipeline_status == VK_SUCCESS, "Failed to create graphics pipeline");
                 vkDestroyShaderModule(m_API_Instance.logical_device, vertshadermodule, nullptr);
                 vkDestroyShaderModule(m_API_Instance.logical_device, fragshadermodule, nullptr);
+            }
+
+            void API::create_render_pass() {
+                VkAttachmentDescription colorAttachment{};
+                colorAttachment.format = m_API_Instance.swap_chain_image_format;
+                colorAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
+                colorAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+                colorAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
+
+                colorAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+                colorAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+
+                colorAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+                colorAttachment.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+
+                VkAttachmentReference colorAttachmentRef{};
+                colorAttachmentRef.attachment = 0;
+                colorAttachmentRef.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+
+                VkSubpassDescription subpass{};
+                subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
+                subpass.colorAttachmentCount = 1;
+                subpass.pColorAttachments = &colorAttachmentRef;
+
+                VkRenderPassCreateInfo renderPassInfo{};
+                renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
+                renderPassInfo.attachmentCount = 1;
+                renderPassInfo.pAttachments = &colorAttachment;
+                renderPassInfo.subpassCount = 1;
+                renderPassInfo.pSubpasses = &subpass;
+
+                auto status = vkCreateRenderPass(m_API_Instance.logical_device, &renderPassInfo, nullptr, &m_API_Instance.renderPass);
+                ANDROMEDA_CORE_ASSERT(status == VK_SUCCESS, "Failed to create render pass");
+
             }
 
             void API::create_application_info() {
