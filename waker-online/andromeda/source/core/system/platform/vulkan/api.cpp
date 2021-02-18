@@ -23,18 +23,29 @@ namespace Andromeda {
                 create_image_views();
                 create_render_pass();
                 create_graphics_pipeline();
+                create_frame_buffers();
+                create_command_pool();
+                create_command_buffers();
+                create_semaphores();
             }
 
             void API::shutdown() {
                 ANDROMEDA_CORE_INFO("Terminating Vulkan API.");
+                vkDestroySemaphore(m_API_Instance.logical_device, m_API_Instance.renderFinishedSemaphore, nullptr);
+                vkDestroySemaphore(m_API_Instance.logical_device, m_API_Instance.imageAvailableSemaphore, nullptr);
+                vkDestroyCommandPool(m_API_Instance.logical_device, m_API_Instance.commandPool, nullptr);
+                std::ranges::for_each(m_API_Instance.swapChainFrameBuffers, [this](auto framebuffer) {
+                    vkDestroyFramebuffer(m_API_Instance.logical_device, framebuffer, nullptr);
+                });
                 vkDestroyRenderPass(m_API_Instance.logical_device, m_API_Instance.renderPass, nullptr);
                 vkDestroyPipeline(m_API_Instance.logical_device, m_API_Instance.pipeline, nullptr);
                 vkDestroyPipelineLayout(m_API_Instance.logical_device, m_API_Instance.pipeline_layout, nullptr);
-                std::ranges::for_each(m_API_Instance.swap_chain_image_views, [this](const auto & view) {
+                std::ranges::for_each(m_API_Instance.swap_chain_image_views, [this](auto view) {
                     vkDestroyImageView(m_API_Instance.logical_device, view, nullptr);
                 });
                 vkDestroySwapchainKHR(m_API_Instance.logical_device, m_API_Instance.swap_chain, nullptr);
                 if (m_Context) m_Context->shutdown();
+                vkDeviceWaitIdle(m_API_Instance.logical_device);
                 vkDestroyDevice(m_API_Instance.logical_device, nullptr);
                 vkDestroyInstance(m_API_Instance.instance, nullptr);
             }
@@ -345,9 +356,138 @@ namespace Andromeda {
                 renderPassInfo.subpassCount = 1;
                 renderPassInfo.pSubpasses = &subpass;
 
+                VkSubpassDependency dependency{};
+                dependency.srcSubpass = VK_SUBPASS_EXTERNAL;
+                dependency.dstSubpass = 0;
+
+                dependency.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+                dependency.srcAccessMask = 0;
+                dependency.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+                dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+
+                renderPassInfo.dependencyCount = 1;
+                renderPassInfo.pDependencies = &dependency;
+
                 auto status = vkCreateRenderPass(m_API_Instance.logical_device, &renderPassInfo, nullptr, &m_API_Instance.renderPass);
                 ANDROMEDA_CORE_ASSERT(status == VK_SUCCESS, "Failed to create render pass");
 
+            }
+
+            void API::create_frame_buffers() {
+                m_API_Instance.swapChainFrameBuffers.resize(m_API_Instance.swap_chain_image_views.size());
+                std::ranges::for_each(m_API_Instance.swap_chain_image_views, [ &, index = 0](auto image) mutable {
+                    VkImageView attachments[] = { image };
+
+                    VkFramebufferCreateInfo framebufferInfo{};
+                    framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
+                    framebufferInfo.renderPass = m_API_Instance.renderPass;
+                    framebufferInfo.attachmentCount = 1;
+                    framebufferInfo.pAttachments = attachments;
+                    framebufferInfo.width = m_API_Instance.swap_chain_extent.width;
+                    framebufferInfo.height = m_API_Instance.swap_chain_extent.height;
+                    framebufferInfo.layers = 1;
+
+                    auto status = vkCreateFramebuffer(m_API_Instance.logical_device, &framebufferInfo, nullptr, &m_API_Instance.swapChainFrameBuffers[index++]);
+                    ANDROMEDA_CORE_ASSERT(status == VK_SUCCESS, "Failed to create frame buffer {0}", index);
+                });
+            }
+
+            void API::create_command_pool() {
+                auto graphics_family = std::ranges::find_if(m_API_Instance.queue_family_properties, [](const auto & property) {
+                    return property.queueFlags & VK_QUEUE_GRAPHICS_BIT;
+                });
+
+                VkCommandPoolCreateInfo poolInfo{};
+                poolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
+                poolInfo.queueFamilyIndex = std::distance(graphics_family, std::begin(m_API_Instance.queue_family_properties));
+                poolInfo.flags = 0; // Optional
+                ANDROMEDA_CORE_INFO("Queue familly found at index {0}", poolInfo.queueFamilyIndex);
+                auto status = vkCreateCommandPool(m_API_Instance.logical_device, &poolInfo, nullptr, &m_API_Instance.commandPool);
+                ANDROMEDA_CORE_ASSERT(status == VK_SUCCESS, "Failed to create command pool.");
+            }
+
+            void API::create_command_buffers() {
+                m_API_Instance.commandBuffers.resize(m_API_Instance.swapChainFrameBuffers.size());
+                VkCommandBufferAllocateInfo allocInfo{};
+                allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+                allocInfo.commandPool = m_API_Instance.commandPool;
+                allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+                allocInfo.commandBufferCount = m_API_Instance.commandBuffers.size();
+
+                auto status = vkAllocateCommandBuffers(m_API_Instance.logical_device, &allocInfo, m_API_Instance.commandBuffers.data());
+                ANDROMEDA_CORE_ASSERT(status == VK_SUCCESS, "Failed to create command buffers.");
+
+                for (std::size_t index = 0; index < m_API_Instance.commandBuffers.size(); index++) {
+                    VkCommandBufferBeginInfo beginInfo{};
+                    beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+                    beginInfo.flags = 0; // Optional
+                    beginInfo.pInheritanceInfo = nullptr; // Optional
+                    auto status = vkBeginCommandBuffer(m_API_Instance.commandBuffers[index], &beginInfo);
+                    ANDROMEDA_CORE_ASSERT(status == VK_SUCCESS, "Failed to begin recording command buffer.");
+
+                    VkRenderPassBeginInfo renderPassInfo{};
+                    renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+                    renderPassInfo.renderPass = m_API_Instance.renderPass;
+                    renderPassInfo.framebuffer = m_API_Instance.swapChainFrameBuffers[index];
+                    renderPassInfo.renderArea.offset = {0, 0};
+                    renderPassInfo.renderArea.extent = m_API_Instance.swap_chain_extent;
+
+                    VkClearValue clearColor = { .color {.float32 = {0.0f, 0.0f, 0.0f, 1.0f}}};
+                    renderPassInfo.clearValueCount = 1;
+                    renderPassInfo.pClearValues = &clearColor;
+                    vkCmdBeginRenderPass(m_API_Instance.commandBuffers[index], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+                    vkCmdBindPipeline(m_API_Instance.commandBuffers[index], VK_PIPELINE_BIND_POINT_GRAPHICS, m_API_Instance.pipeline);
+                    vkCmdDraw(m_API_Instance.commandBuffers[index], 3, 1, 0, 0);
+                    vkCmdEndRenderPass(m_API_Instance.commandBuffers[index]);
+                    auto end = vkEndCommandBuffer(m_API_Instance.commandBuffers[index]);
+                    ANDROMEDA_CORE_ASSERT(end == VK_SUCCESS, "Failed to bind cmd to pipeline {0}", index);
+                };
+            }
+
+            void API::create_semaphores() {
+                VkSemaphoreCreateInfo semaphoreInfo{};
+                semaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
+                auto renderstatus = vkCreateSemaphore(m_API_Instance.logical_device, &semaphoreInfo, nullptr, &m_API_Instance.renderFinishedSemaphore);
+                auto imagestatus = vkCreateSemaphore(m_API_Instance.logical_device, &semaphoreInfo, nullptr, &m_API_Instance.imageAvailableSemaphore);
+                ANDROMEDA_CORE_ASSERT(renderstatus == VK_SUCCESS && imagestatus == VK_SUCCESS, "Failed semaphore creation.");
+            }
+
+            void API::present() {
+                //ANDROMEDA_CORE_INFO("presenting swap chain image");
+                unsigned int index;
+                vkAcquireNextImageKHR(m_API_Instance.logical_device, m_API_Instance.swap_chain, UINT64_MAX, m_API_Instance.imageAvailableSemaphore, VK_NULL_HANDLE, &index);
+
+                VkSubmitInfo submitInfo{};
+                submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+
+                VkSemaphore waitSemaphores[] = {m_API_Instance.imageAvailableSemaphore};
+                VkPipelineStageFlags waitStages[] = {VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT};
+                submitInfo.waitSemaphoreCount = 1;
+                submitInfo.pWaitSemaphores = waitSemaphores;
+                submitInfo.pWaitDstStageMask = waitStages;
+                submitInfo.commandBufferCount = 1;
+                submitInfo.pCommandBuffers = &m_API_Instance.commandBuffers[index];
+
+                VkSemaphore signalSemaphores[] = {m_API_Instance.renderFinishedSemaphore};
+                submitInfo.signalSemaphoreCount = 1;
+                submitInfo.pSignalSemaphores = signalSemaphores;
+
+                auto submit = vkQueueSubmit(m_API_Instance.graphics_queue, 1, &submitInfo, VK_NULL_HANDLE);
+                ANDROMEDA_CORE_ASSERT(submit == VK_SUCCESS, "Failed to submit to graphics queue.");
+
+                VkPresentInfoKHR presentInfo{};
+                presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
+
+                presentInfo.waitSemaphoreCount = 1;
+                presentInfo.pWaitSemaphores = signalSemaphores;
+
+                VkSwapchainKHR swapChains[] = {m_API_Instance.swap_chain};
+                presentInfo.swapchainCount = 1;
+                presentInfo.pSwapchains = swapChains;
+                presentInfo.pImageIndices = &index;
+                presentInfo.pResults = nullptr; // Optional
+                vkQueuePresentKHR(m_API_Instance.present_queue, &presentInfo);
+                vkQueueWaitIdle(m_API_Instance.present_queue);
             }
 
             void API::create_application_info() {
@@ -359,6 +499,7 @@ namespace Andromeda {
                 m_API_Instance.application_info.engineVersion = VK_MAKE_VERSION(1, 0, 0);
                 m_API_Instance.application_info.apiVersion = VK_MAKE_VERSION(1, 2, 0);
             }
+
 
             void API::create_instance_create_info() {
                 unsigned int glfw_instance_extension_count = 0;
@@ -887,7 +1028,7 @@ namespace Andromeda {
             }
 
 
-            VkShaderModule API::create_shader_module(const std::vector<std::byte>& binary) {
+            VkShaderModule API::create_shader_module(const std::vector<std::byte> & binary) {
                 VkShaderModuleCreateInfo create_shader_module_info{};
                 create_shader_module_info.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
                 create_shader_module_info.codeSize = binary.size();

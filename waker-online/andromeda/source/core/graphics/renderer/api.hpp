@@ -25,6 +25,8 @@ namespace Andromeda {
 
             virtual void set_window_context(std::shared_ptr<Window> window) = 0;
 
+            virtual void present() = 0;
+
             virtual Type get_API_Type() const = 0;
 
             static std::unique_ptr<API> create_API(Graphics::Info info, API::Type type);

@@ -10,7 +10,6 @@ namespace Andromeda {
     namespace Graphics {
         class Renderer {
           public:
-            class Command;
             class Context;
           public:
             static void initialize(Graphics::Info info, API::Type type);
@@ -23,6 +22,9 @@ namespace Andromeda {
 
             static void set_window_context(std::shared_ptr<Window> window);
 
+            static void present() {
+                s_API->present();
+            };
           private:
             static std::unique_ptr<API> s_API;
             static Info m_Info;

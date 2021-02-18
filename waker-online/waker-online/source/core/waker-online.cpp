@@ -25,6 +25,7 @@ namespace Waker {
             std::ranges::for_each(m_Layers, [](const auto & layer) {
                 layer->on_update();
             });
+            Andromeda::Graphics::Renderer::present();
             if (m_Window) m_Window->on_update();
         }
     }

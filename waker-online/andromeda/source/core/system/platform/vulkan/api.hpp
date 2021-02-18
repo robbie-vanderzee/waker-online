@@ -48,7 +48,14 @@ namespace Andromeda {
                 VkRenderPass renderPass;
                 VkPipelineLayout pipeline_layout;
                 VkPipeline pipeline;
-
+                /* Framebuffers */
+                std::vector<VkFramebuffer> swapChainFrameBuffers;
+                /* Command pool */
+                VkCommandPool commandPool;
+                std::vector<VkCommandBuffer> commandBuffers;
+                /* Semaphores */
+                VkSemaphore imageAvailableSemaphore;
+                VkSemaphore renderFinishedSemaphore;
 
             };
             class API : public Andromeda::Graphics::API {
@@ -73,6 +80,12 @@ namespace Andromeda {
                 void create_image_views();
                 void create_graphics_pipeline();
                 void create_render_pass();
+                void create_frame_buffers();
+                void create_command_pool();
+                void create_command_buffers();
+                void create_semaphores();
+
+                void present() override;
 
               private:
                 void create_application_info();
@@ -124,7 +137,7 @@ namespace Andromeda {
 
               private:
                 std::vector<std::byte> load_shader(std::filesystem::path filepath);
-                VkShaderModule create_shader_module(const std::vector<std::byte>& binary);
+                VkShaderModule create_shader_module(const std::vector<std::byte> & binary);
 
               private:
                 API_Instance m_API_Instance;
