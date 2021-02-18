@@ -224,7 +224,7 @@ namespace Andromeda {
                 viewport.x = 0.0f;
                 viewport.y = 0.0f;
                 viewport.width = (float) m_API_Instance.swap_chain_extent.width;
-                viewport.height = (float) m_API_Instance.swap_chain_extent.width;
+                viewport.height = (float) m_API_Instance.swap_chain_extent.height;
                 viewport.minDepth = 0.0f;
                 viewport.maxDepth = 1.0f;
 
